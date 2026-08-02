@@ -1,0 +1,55 @@
+generate_diet_candidates_task:
+  description: >
+    Generate 6-8 candidate iron-rich foods matching the patient's diet type (vegetarian/non-vegetarian/vegan/eggetarian). Tag each as heme or non-heme iron source, defaulting to accessible Indian food options.
+  expected_output: >
+    A JSON object with a list `candidate_foods` where each item includes `name` and `iron_type` ("heme" or "non-heme").
+  agent: diet_type_agent
+
+filter_allergies_task:
+  description: >
+    Remove any candidate food that matches a logged allergy or intolerance. Output the filtered list plus a list of removed items with reasons.
+  expected_output: >
+    A JSON object with `filtered_foods` and `removed_items` (each with `name` and `reason`).
+  agent: allergy_filter_agent
+  context:
+    - generate_diet_candidates_task
+
+adjust_for_conditions_task:
+  description: >
+    Adjust the food list based on the patient's medical conditions (e.g., lower‑glycemic iron sources for diabetes, limit high‑potassium/phosphorus for CKD, note PCOS considerations). Output the adjusted list with a one‑line reason per change.
+  expected_output: >
+    A JSON object with `adjusted_foods` (list of foods) and `adjustments` (list of reasons).
+  agent: condition_adjustment_agent
+  context:
+    - filter_allergies_task
+
+adjust_for_pregnancy_task:
+  description: >
+    If the patient is pregnant or lactating, adjust iron/folate/B12 emphasis by trimester or lactation status. Otherwise, pass the list unchanged.
+  expected_output: >
+    A JSON object with `pregnancy_adjusted_foods` (list) and optionally `pregnancy_notes`.
+  agent: pregnancy_lactation_agent
+  context:
+    - adjust_for_conditions_task
+
+optimize_absorption_timing_task:
+  description: >
+    Pair foods with vitamin‑C enhancers, flag inhibitors (tea, coffee, calcium, phytates), and assign each item a time slot (morning / afternoon‑evening / night). Flag the 60+ minute tea/coffee‑iron spacing rule.
+  expected_output: >
+    A JSON object with `timed_foods` (list with `name`, `time_slot`, `enhancers`, `inhibitors`).
+  agent: absorption_optimizer_agent
+  context:
+    - adjust_for_pregnancy_task
+
+check_medication_interactions_task:
+  description: >
+    Check for known interactions between logged medications and iron timing/absorption. Pass through the `timed_foods` list unchanged from the previous task and add a `medication_interactions` field (list) or the string "none" if no medications are logged.
+  expected_output: >
+    A JSON object merging the previous output and medication warnings:
+    {
+      "timed_foods": [...],   // unchanged list from optimize_absorption_timing_task
+      "medication_interactions": [...] or "none"
+    }
+  agent: medication_interaction_agent
+  context:
+    - optimize_absorption_timing_task
