@@ -1,0 +1,23 @@
+detect_inflammation_task:
+  description: >
+    Detect signals of concurrent inflammation (PCOS, IBD, chronic illness, elevated CRP/ESR) in the provided biomarkers and existing_conditions. Output a JSON object with `inflammation_flag` (true/false) and a one‑line `reason`.
+  expected_output: >
+    A JSON object with `inflammation_flag` (boolean) and `reason` (string). If uncertain, set `inflammation_flag` to false.
+  agent: inflammation_confounder_agent
+  context: []
+
+interpret_biomarkers_task:
+  description: >
+    Interpret ferritin, TIBC, transferrin saturation, reticulocyte hemoglobin, RDW, MCV, and sTfR values against standard reference ranges. Use the inflammation‑adjusted ferritin cutoff (~100 ng/mL) when `inflammation_flag` is true, otherwise the normal cutoff (~30 ng/mL). Weight reticulocyte hemoglobin and sTfR more heavily when inflammation is present. Always state which cutoff was used and why. If `biomarkers` is empty or missing, output a clear no‑lab‑data result.
+  expected_output: >
+    If biomarkers are present:
+      {
+        "observations": ["..."],
+        "cutoff_used": "inflamed" | "normal",
+        "reason": "..."
+      }
+    If no biomarkers:
+      {"status": "no_lab_data", "message": "No laboratory data available for interpretation."}
+  agent: biomarker_interpretation_agent
+  context:
+    - detect_inflammation_task

@@ -1,0 +1,33 @@
+parse_feedback_task:
+  description: >
+    Parse short patient feedback (button taps or brief text) into a structured JSON with `feedback_type`, optional `target_item`, and a normalized `note`. Use `raw_feedback_text` and the most recent `current_plan` (timed_foods list) as inputs.
+  expected_output: >
+    A JSON object with keys:
+      - feedback_type (string, e.g., "dislike", "symptom", "diet_switch", "adherence_comment")
+      - target_item (string or null)
+      - note (string)
+  agent: feedback_intake_agent
+  context: []
+
+track_adherence_task:
+  description: >
+    Compare the patient's logged meals against the `current_plan` (timed_foods) and produce a structured adherence summary. Include which items were followed, skipped, or replaced, and add a `pattern_note` if the same item is skipped three days in a row.
+  expected_output: >
+    A JSON object with keys:
+      - adherence_summary (list of objects with `item`, `status` ("followed"/"skipped"/"replaced"))
+      - pattern_note (string, may be empty)
+  agent: adherence_agent
+  context: []
+
+revise_plan_task:
+  description: >
+    Using the parsed feedback from `parse_feedback_task` and the adherence summary from `track_adherence_task`, regenerate ONLY the affected part of the `current_plan`. If feedback indicates a missed allergy or safety issue, set `requires_allergy_recheck` to true; otherwise false. Return the revised plan segment and an encouraging note.
+  expected_output: >
+    A JSON object with keys:
+      - revised_plan (list of food items or plan segment)
+      - requires_allergy_recheck (boolean)
+      - note (string)
+  agent: plan_reviser_agent
+  context:
+    - parse_feedback_task
+    - track_adherence_task
