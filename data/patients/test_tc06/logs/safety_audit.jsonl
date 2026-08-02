@@ -1,0 +1,1 @@
+{"timestamp": "2026-08-02T13:27:02.321246+00:00", "patient_id": "test_tc06", "tier": "MONITOR", "rules_fired": ["Any tagged symptom with clinical_flag == 'watch' and no higher-tier rules fire"], "redacted_input": [{"name": "fatigue", "severity": "mild"}, {"name": "dizziness", "severity": "moderate"}]}

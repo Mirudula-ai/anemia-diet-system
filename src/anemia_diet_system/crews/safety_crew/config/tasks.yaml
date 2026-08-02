@@ -1,0 +1,104 @@
+symptom_tagging_task:
+  description: >
+    You will receive a patient input object containing one or more of:
+    - logged_symptoms: a list of free-text symptom descriptions
+    - tagged_symptoms: a pre-tagged list (if tagging was done upstream)
+    - life_stage: a string describing the patient's current life stage
+      (e.g., "menstruating", "pregnant", "menopausal", "PCOS", "thyroid-flagged")
+    - is_pregnant: boolean flag (optional)
+    - biomarkers: a dict of lab values with flag indicators (optional)
+    - family_history_flags: a list of family history conditions (optional)
+    - prior_monitor_flags_last_window: boolean indicating whether a
+      MONITOR-tier event fired in the prior 7-day window (optional)
+
+    Parse all free-text symptoms into structured tags. Each tag must include:
+    - name: normalised symptom name (e.g., "fatigue", "chest pain")
+    - severity: one of "mild", "moderate", or "severe"
+    - clinical_flag: one of "routine", "watch", "red_flag" (must be a STRING, not a boolean)
+    - raw_text: the original text fragment that triggered this tag
+
+    IMPORTANT: Ensure the clinical_flag field is returned as a string exactly matching one of the allowed values.
+    Also extract life_stage_context from the input and pass it through.
+    Preserve any pre-tagged symptoms (tagged_symptoms) as-is.
+    Preserve all other fields from the input (biomarkers, family_history_flags,
+    prior_monitor_flags_last_window, is_pregnant) so the next task has full context.
+
+    Output ONLY a valid JSON object — no markdown, no explanation, no preamble.
+  expected_output: >
+    A JSON object with the following structure:
+    {
+      "tagged_symptoms": [
+        {
+          "name": "string",
+          "severity": "mild|moderate|severe",
+          "clinical_flag": "routine|watch|red_flag",
+          "raw_text": "string"
+        }
+      ],
+      "life_stage_context": {
+        "life_stage": "string",
+        "is_pregnant": false,
+        "trimester": null
+      },
+      "biomarkers": {},
+      "family_history_flags": [],
+      "prior_monitor_flags_last_window": false
+    }
+  agent: symptom_tagger_agent
+
+safety_tier_evaluation_task:
+  description: >
+    You will receive the structured JSON output from the symptom tagging task.
+    Apply the following safety rule hierarchy to determine the escalation tier.
+    Rules are evaluated from highest to lowest severity; the highest matching
+    tier wins.
+
+    EMERGENCY triggers (any ONE is sufficient):
+    - Symptom name contains any of: "faint", "syncope", "lost consciousness",
+      "blacked out", "chest pain", "shortness of breath at rest",
+      "out of breath sitting", "black stool", "tarry stool", "melena",
+      "soaking through protection every hour", "soaking pad", "heavy bleeding hourly"
+
+    URGENT triggers (any ONE is sufficient, only if EMERGENCY not already triggered):
+    - life_stage is "menopausal" (or "postmenopausal") AND any tagged symptom
+      with clinical_flag == "red_flag" or severity in ["moderate", "severe"]
+    - life_stage is "pregnant" (or is_pregnant == true) AND a tagged symptom
+      whose name is "fatigue" or "dizziness"/"dizzy" with severity "severe"
+    - Any tagged symptom with name containing "palpitation", "racing heart",
+      "heart racing", "tachycardia" together with any symptom containing
+      "dizzy", "dizziness", "lightheaded"
+    - Any tagged symptom with name/raw_text containing "weight loss" with
+      severity in ["moderate", "severe"] OR quantity >= 5% of body weight in a month (if body_weight_kg is provided in patient input). If body_weight_kg is NOT provided, use >= 3kg/month as the fallback flat threshold.
+    - Three or more tagged symptoms with severity == "moderate" (regardless of life stage)
+    - prior_monitor_flags_last_window == true AND the current tagged symptoms contain
+      the SAME symptom name/pattern that caused the prior MONITOR trigger (not just any new unrelated symptom)
+
+    MONITOR triggers (any ONE is sufficient, only if EMERGENCY and URGENT not already triggered):
+    - biomarkers contains MCV with flag == "low" AND family_history_flags
+      contains "thalassemia" or "haemoglobinopathy"
+    - Any tagged symptom with clinical_flag == "watch" and no higher-tier rules fire
+
+    NONE:
+    - No rules from EMERGENCY, URGENT, or MONITOR fired
+    - OR tagged_symptoms list is empty
+
+    After determining the tier, produce a structured JSON output with:
+    - tier: the determined tier (EMERGENCY | URGENT | MONITOR | NONE)
+    - rules_fired: list of rule descriptions that were triggered
+    - rationale: a brief, plain-language explanation for the patient
+    - tagged_symptoms: pass through from input (for audit logging)
+    - life_stage_context: pass through from input
+
+    Output ONLY a valid JSON object — no markdown, no explanation, no preamble.
+  expected_output: >
+    A JSON object with the following structure:
+    {
+      "tier": "EMERGENCY|URGENT|MONITOR|NONE",
+      "rules_fired": ["string"],
+      "rationale": "string",
+      "tagged_symptoms": [],
+      "life_stage_context": {}
+    }
+  agent: symptom_escalation_agent
+  context:
+    - symptom_tagging_task

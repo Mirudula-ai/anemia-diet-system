@@ -1,0 +1,36 @@
+  1: Running TC01: Heavy bleeding hourly -> EMERGENCY
+  2: Expected tier: EMERGENCY
+  4: --- About to kickoff TC01 with Groq! ---
+ 31:   Also extract life_stage_context from the input and pass it through.        
+ 94:   EMERGENCY triggers (any ONE is sufficient): - Symptom name contains any    
+100:   URGENT triggers (any ONE is sufficient, only if EMERGENCY not already      
+119:   MONITOR triggers (any ONE is sufficient, only if EMERGENCY and URGENT not  
+125:   NONE: - No rules from EMERGENCY, URGENT, or MONITOR fired - OR             
+128:   tier: the determined tier (EMERGENCY | URGENT | MONITOR | NONE) -          
+130:   brief, plain-language explanation for the patient - tagged_symptoms: pass  
+131:   through from input (for audit logging) - life_stage_context: pass through  
+141:     "tier": "EMERGENCY",                                                     
+184:     "tier": "EMERGENCY",                                                     
+195:         "raw_text": "I'm feeling a bit tired"                                --- Finished kickoff for TC01 ---
+196: Actual tier:   EMERGENCY
+197: Result:         PASS
+201: ID     Expected     Actual       Status     Description
+203: TC01   EMERGENCY    EMERGENCY     PASS     Heavy bleeding hourly -> EMERGENCY
+205: TOTAL: 1/1 passed
+206:  Audit Log Verification 
+234:    TC01 (test_tc01): EMERGENCY logged
+235:   ️  TC02 (test_tc02): no audit log entry found
+236:   ️  TC03 (test_tc03): no audit log entry found
+237:   ️  TC04 (test_tc04): no audit log entry found
+238:   ️  TC05 (test_tc05): no audit log entry found
+239:   ️  TC06 (test_tc06): no audit log entry found
+240:   ️  TC07 (test_tc07): no audit log entry found
+241:   ️  TC08 (test_tc08): no audit log entry found
+242:   ️  TC09 (test_tc09): no audit log entry found
+243:   ️  TC10 (test_tc10): no audit log entry found
+244:   ️  TC11 (test_tc11): no audit log entry found
+245:   ️  TC13 (test_tc13): no audit log entry found
+246:   ️  TC15 (test_tc15): no audit log entry found
+247: Audit entries found: 1/13 non-NONE cases
+248:  All tests passed.
+249: --- STDERR ---

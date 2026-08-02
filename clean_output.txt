@@ -1,0 +1,250 @@
+============================================================
+Running TC01: Heavy bleeding hourly -> EMERGENCY
+Expected tier: EMERGENCY
+============================================================
+--- About to kickoff TC01 with Groq! ---
+ 🚀 Crew Execution Started 
+  Crew Execution Started                                                     
+  Name: SafetyCrew                                                           
+  ID: d1b09f33-f549-466e-acf3-dea620016354                                   
+ 📋 Task Started 
+  Task Started                                                               
+  Name: symptom_tagging_task                                                 
+  ID: ad13d523-a53a-4c65-929d-2f8bc83eb7c8                                   
+ 🤖 Agent Started 
+  Agent: Clinical Symptom Tagger                                             
+  Task: You will receive a patient input object containing one or more of:   
+  - logged_symptoms: a list of free-text symptom descriptions -              
+  tagged_symptoms: a pre-tagged list (if tagging was done upstream) -        
+  life_stage: a string describing the patient's current life stage           
+    (e.g., "menstruating", "pregnant", "menopausal", "PCOS",                 
+  "thyroid-flagged")                                                         
+  - is_pregnant: boolean flag (optional) - biomarkers: a dict of lab values  
+  with flag indicators (optional) - family_history_flags: a list of family   
+  history conditions (optional) - prior_monitor_flags_last_window: boolean   
+  indicating whether a                                                       
+    MONITOR-tier event fired in the prior 7-day window (optional)            
+  Parse all free-text symptoms into structured tags. Each tag must include:  
+  - name: normalised symptom name (e.g., "fatigue", "chest pain") -          
+  severity: one of "mild", "moderate", or "severe" - clinical_flag: one of   
+  "routine", "watch", "red_flag" - raw_text: the original text fragment      
+  that triggered this tag                                                    
+  Also extract life_stage_context from the input and pass it through.        
+  Preserve any pre-tagged symptoms (tagged_symptoms) as-is. Preserve all     
+  other fields from the input (biomarkers, family_history_flags,             
+  prior_monitor_flags_last_window, is_pregnant) so the next task has full    
+  context.                                                                   
+  Output ONLY a valid JSON object — no markdown, no explanation, no          
+  preamble.                                                                  
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
+  Agent Final Answer 
+  Agent: Clinical Symptom Tagger                                             
+  Final Answer:                                                              
+  ```json                                                                    
+  {                                                                          
+    "tagged_symptoms": [                                                     
+      {                                                                      
+        "name": "fatigue",                                                   
+        "severity": "mild",                                                  
+        "clinical_flag": "routine",                                          
+        "raw_text": "I'm feeling a bit tired"                                
+      },                                                                     
+      {                                                                      
+        "name": "dizziness",                                                 
+        "severity": "moderate",                                              
+        "clinical_flag": "watch",                                            
+        "raw_text": "I get dizzy when I stand up"                            
+      },                                                                     
+      {                                                                      
+        "name": "chest pain",                                                
+        "severity": "severe",                                                
+        "clinical_flag": "red_flag",                                         
+        "raw_text": "I have a sharp pain in my chest"                        
+      }                                                                      
+    ],                                                                       
+    "life_stage_context": {                                                  
+      "life_stage": "menstruating",                                          
+      "is_pregnant": false,                                                  
+      "trimester": null                                                      
+    },                                                                       
+    "biomarkers": {                                                          
+      "haemoglobin": 12.0,                                                   
+      "ferritin": 50.0                                                       
+    },                                                                       
+    "family_history_flags": [                                                
+      "anaemia",                                                             
+      "thyroid disorders"                                                    
+    ],                                                                       
+    "prior_monitor_flags_last_window": false                                 
+  }                                                                          
+  ```                                                                        
+ 📋 Task Completion 
+  Task Completed                                                             
+  Name: symptom_tagging_task                                                 
+  Agent: Clinical Symptom Tagger                                             
+ 📋 Task Started 
+  Task Started                                                               
+  Name: safety_tier_evaluation_task                                          
+  ID: dbd66be8-7c4b-48f3-a3a0-fd8a96caf264                                   
+ 🤖 Agent Started 
+  Agent: Safety Escalation Evaluator                                         
+  Task: You will receive the structured JSON output from the symptom         
+  tagging task. Apply the following safety rule hierarchy to determine the   
+  escalation tier. Rules are evaluated from highest to lowest severity; the  
+  highest matching tier wins.                                                
+  EMERGENCY triggers (any ONE is sufficient): - Symptom name contains any    
+  of: "faint", "syncope", "lost consciousness",                              
+    "blacked out", "chest pain", "shortness of breath at rest",              
+    "out of breath sitting", "black stool", "tarry stool", "melena",         
+    "soaking through protection every hour", "soaking pad", "heavy bleeding  
+  hourly"                                                                    
+  URGENT triggers (any ONE is sufficient, only if EMERGENCY not already      
+  triggered): - life_stage is "menopausal" (or "postmenopausal") AND any     
+  tagged symptom                                                             
+    with clinical_flag == "red_flag" or severity in ["moderate", "severe"]   
+  - life_stage is "pregnant" (or is_pregnant == true) AND a tagged symptom   
+    whose name is "fatigue" or "dizziness"/"dizzy" with severity "severe"    
+  - Any tagged symptom with name containing "palpitation", "racing heart",   
+    "heart racing", "tachycardia" together with any symptom containing       
+    "dizzy", "dizziness", "lightheaded"                                      
+  - Any tagged symptom with name/raw_text containing "weight loss" with      
+    severity in ["moderate", "severe"] OR quantity >= 5% of body weight in   
+  a month (if body_weight_kg is provided in patient input). If               
+  body_weight_kg is NOT provided, use >= 3kg/month as the fallback flat      
+  threshold.                                                                 
+  - Three or more tagged symptoms with severity == "moderate" (regardless    
+  of life stage) - prior_monitor_flags_last_window == true AND the current   
+  tagged symptoms contain                                                    
+    the SAME symptom name/pattern that caused the prior MONITOR trigger      
+  (not just any new unrelated symptom)                                       
+  MONITOR triggers (any ONE is sufficient, only if EMERGENCY and URGENT not  
+  already triggered): - biomarkers contains MCV with flag == "low" AND       
+  family_history_flags                                                       
+    contains "thalassemia" or "haemoglobinopathy"                            
+  - Any tagged symptom with clinical_flag == "watch" and no higher-tier      
+  rules fire                                                                 
+  NONE: - No rules from EMERGENCY, URGENT, or MONITOR fired - OR             
+  tagged_symptoms list is empty                                              
+  After determining the tier, produce a structured JSON output with: -       
+  tier: the determined tier (EMERGENCY | URGENT | MONITOR | NONE) -          
+  rules_fired: list of rule descriptions that were triggered - rationale: a  
+  brief, plain-language explanation for the patient - tagged_symptoms: pass  
+  through from input (for audit logging) - life_stage_context: pass through  
+  from input                                                                 
+  Output ONLY a valid JSON object — no markdown, no explanation, no          
+  preamble.                                                                  
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
+  Agent Final Answer 
+  Agent: Safety Escalation Evaluator                                         
+  Final Answer:                                                              
+  ```json                                                                    
+  {                                                                          
+    "tier": "EMERGENCY",                                                     
+    "rules_fired": [                                                         
+      "Symptom name contains 'chest pain'"                                   
+    ],                                                                       
+    "rationale": "You are experiencing severe chest pain, which is a         
+  serious symptom that requires immediate medical attention.",               
+    "tagged_symptoms": [                                                     
+      {                                                                      
+        "name": "fatigue",                                                   
+        "severity": "mild",                                                  
+        "clinical_flag": "routine",                                          
+        "raw_text": "I'm feeling a bit tired"                                
+      },                                                                     
+      {                                                                      
+        "name": "dizziness",                                                 
+        "severity": "moderate",                                              
+        "clinical_flag": "watch",                                            
+        "raw_text": "I get dizzy when I stand up"                            
+      },                                                                     
+      {                                                                      
+        "name": "chest pain",                                                
+        "severity": "severe",                                                
+        "clinical_flag": "red_flag",                                         
+        "raw_text": "I have a sharp pain in my chest"                        
+      }                                                                      
+    ],                                                                       
+    "life_stage_context": {                                                  
+      "life_stage": "menstruating",                                          
+      "is_pregnant": false,                                                  
+      "trimester": null                                                      
+    }                                                                        
+  }                                                                          
+  ```                                                                        
+ 📋 Task Completion 
+  Task Completed                                                             
+  Name: safety_tier_evaluation_task                                          
+  Agent: Safety Escalation Evaluator                                         
+ Crew Completion 
+  Crew Execution Completed                                                   
+  Name: SafetyCrew                                                           
+  ID: d1b09f33-f549-466e-acf3-dea620016354                                   
+  Final Output: ```json                                                      
+  {                                                                          
+    "tier": "EMERGENCY",                                                     
+    "rules_fired": [                                                         
+      "Symptom name contains 'chest pain'"                                   
+    ],                                                                       
+    "rationale": "You are experiencing severe chest pain, which is a         
+  serious symptom that requires immediate medical attention.",               
+    "tagged_symptoms": [                                                     
+      {                                                                      
+        "name": "fatigue",                                                   
+        "severity": "mild",                                                  
+        "clinical_flag": "routine",                                          
+        "raw_text": "I'm feeling a bit tired"                                --- Finished kickoff for TC01 ---
+Actual tier:   EMERGENCY
+Result:         PASS
+================================================================================
+SAFETY CREW — TEST RESULTS SUMMARY
+================================================================================
+ID     Expected     Actual       Status     Description
+--------------------------------------------------------------------------------
+TC01   EMERGENCY    EMERGENCY     PASS     Heavy bleeding hourly -> EMERGENCY
+================================================================================
+TOTAL: 1/1 passed
+ Audit Log Verification 
+      },                                                                     
+      {                                                                      
+        "name": "dizziness",                                                 
+        "severity": "moderate",                                              
+        "clinical_flag": "watch",                                            
+        "raw_text": "I get dizzy when I stand up"                            
+      },                                                                     
+      {                                                                      
+        "name": "chest pain",                                                
+        "severity": "severe",                                                
+        "clinical_flag": "red_flag",                                         
+        "raw_text": "I have a sharp pain in my chest"                        
+      }                                                                      
+    ],                                                                       
+    "life_stage_context": {                                                  
+      "life_stage": "menstruating",                                          
+      "is_pregnant": false,                                                  
+      "trimester": null                                                      
+    }                                                                        
+  }                                                                          
+  ```                                                                        
+ Tracing Status 
+  Info: Tracing is disabled.                                                 
+  To enable tracing, do any one of these:                                    
+  • Set tracing=True in your Crew/Flow code                                  
+  • Set CREWAI_TRACING_ENABLED=true in your project's .env file              
+  • Run: crewai traces enable                                                
+   TC01 (test_tc01): EMERGENCY logged
+  ️  TC02 (test_tc02): no audit log entry found
+  ️  TC03 (test_tc03): no audit log entry found
+  ️  TC04 (test_tc04): no audit log entry found
+  ️  TC05 (test_tc05): no audit log entry found
+  ️  TC06 (test_tc06): no audit log entry found
+  ️  TC07 (test_tc07): no audit log entry found
+  ️  TC08 (test_tc08): no audit log entry found
+  ️  TC09 (test_tc09): no audit log entry found
+  ️  TC10 (test_tc10): no audit log entry found
+  ️  TC11 (test_tc11): no audit log entry found
+  ️  TC13 (test_tc13): no audit log entry found
+  ️  TC15 (test_tc15): no audit log entry found
+Audit entries found: 1/13 non-NONE cases
+ All tests passed.
+--- STDERR ---
