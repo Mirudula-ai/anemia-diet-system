@@ -1,0 +1,5 @@
+EXC: <class 'litellm.exceptions.RateLimitError'> litellm.RateLimitError: RateLimitError: GroqException - {"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kz0tfydvfj8bmp9a1k26q6c5` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99309, Requested 1666. Please try again in 14m2.4s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+RESP: 
+MSG: litellm.RateLimitError: RateLimitError: GroqException - {"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kz0tfydvfj8bmp9a1k26q6c5` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99309, Requested 1666. Please try again in 14m2.4s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+

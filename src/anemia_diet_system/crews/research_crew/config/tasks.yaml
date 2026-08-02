@@ -1,0 +1,10 @@
+research_query_task:
+  description: >
+    Search for authoritative sources to answer the following research query: "{research_query}". Return a structured JSON response.
+    If no reliable source is found after searching, set sources_found to false and make the summary explicitly say that no reliable information was found -- never present an unsourced guess as if it were established guidance.
+    After searching, critically evaluate whether the search results actually answer the specific query asked -- not just whether the search returned any results at all. If the results are only tangentially related, off-topic, or clearly don't address what was asked (for example, a garbled or nonsensical query returning unrelated medical topics), set sources_found to false and state in summary that no relevant information was found for this specific query, rather than reporting unrelated search results as if they were the answer.
+  expected_output: >
+    A JSON object with keys "summary", "sources_found" (boolean), and "source_notes" (string or null).
+    summary MUST be a single string, never a nested object.
+  agent: medical_deep_search_agent
+  # No extra tools needed; the agent will have the web search tool attached.

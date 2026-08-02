@@ -1,0 +1,795 @@
+﻿
+==============================================================
+  TC-R02: meaningless query -> no reliable information
+==============================================================
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒÜÇ Crew Execution Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Crew Execution Started                                                     Γöé
+Γöé  Name: ResearchCrew                                                         Γöé
+Γöé  ID: 13303f7e-df3d-4694-8001-46583ce493b7                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Started                                                               Γöé
+Γöé  Name: research_query_task                                                  Γöé
+Γöé  ID: 8651b26f-e5d4-44b8-b529-c01dfbacb999                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒñû Agent Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Medical and Nutritional Research Specialist                         Γöé
+Γöé                                                                             Γöé
+Γöé  Task: Search for authoritative sources to answer the following research    Γöé
+Γöé  query: "asdkjfh qwerty nonsense medical term xyz123". Return a structured  Γöé
+Γöé  JSON response. If no reliable source is found after searching, set         Γöé
+Γöé  sources_found to false and make the summary explicitly say that no         Γöé
+Γöé  reliable information was found -- never present an unsourced guess as if   Γöé
+Γöé  it were established guidance. After searching, critically evaluate         Γöé
+Γöé  whether the search results actually answer the specific query asked --     Γöé
+Γöé  not just whether the search returned any results at all. If the results    Γöé
+Γöé  are only tangentially related, off-topic, or clearly don't address what    Γöé
+Γöé  was asked (for example, a garbled or nonsensical query returning           Γöé
+Γöé  unrelated medical topics), set sources_found to false and state in         Γöé
+Γöé  summary that no relevant information was found for this specific query,    Γöé
+Γöé  rather than reporting unrelated search results as if they were the         Γöé
+Γöé  answer.                                                                    Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒöº Tool Execution Started (#1) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé
+Γöé  Args: {'search_query': 'authoritative sources for medical term xyz123'}    Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒöº Tool Execution Started (#2) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé
+Γöé  Args: {'search_query': 'meaning of xyz123 in medicine'}                    Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒöº Tool Execution Started (#3) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé
+Γöé  Args: {'search_query': 'definition of xyz123'}                             Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒöº Tool Execution Started (#4) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé
+Γöé  Args: {'search_query': 'xyz123 medical term'}                              Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒöº Tool Execution Started (#5) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé
+Γöé  Args: {'search_query': 'nonsense medical term xyz123'}                     Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒöº Tool Execution Started (#6) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé
+Γöé  Args: {'search_query': 'meaning of garbled term in medicine'}              Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£à Tool Execution Completed (#6) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool Completed                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé
+Γöé  Output: {'searchParameters': {'q': 'xyz123 medical term', 'type':          Γöé
+Γöé  'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Exam 4    Γöé
+Γöé  Review Questions for Medical Terminology (XYZ123)', 'link':                Γöé
+Γöé  'https://www.studocu.com/en-us/document/piedmont-university/human-anatomy  Γöé
+Γöé  -and-physiology/exam-4-review-questions-for-medical-terminology-xyz123/14  Γöé
+Γöé  1783980', 'snippet': 'This review document covers key medical conditions   Γöé
+Γöé  and terms, including kyphosis, paraplegia, gouty arthritis, and            Γöé
+Γöé  cerebrovascular accidents.', 'position': 1}, {'title': 'What do you know   Γöé
+Γöé  about medical abbreviations?', 'link':                                     Γöé
+Γöé  'https://www.facebook.com/61568157196133/posts/what-do-you-know-about-med  Γöé
+Γöé  ical-abbreviations/122141120666605239/', 'snippet': 'Medical important     Γöé
+Γöé  abbreviations words term and thier Meaning full . ... medical              Γöé
+Γöé  abbreviations: "Do you have XYZ? Ask your doctor..." I\'d ...',            Γöé
+Γöé  'position': 2}, {'title': 'Terminology Sheet - Medical Terms for Course    Γöé
+Γöé  XYZ123', 'link':                                                           Γöé
+Γöé  'https://www.studocu.com/en-us/document/rasmussen-university/mdc1/termino  Γöé
+Γöé  logy-sheet-terminiology-for-the-course/106400763', 'snippet': 'A prefix    Γöé
+Γöé  is an element of a word that is at the beginning of a word root. Some      Γöé
+Γöé  medical words do not have. a prefix. Suffixes (usually referring to        Γöé
+Γöé  pathology ...', 'position': 3}, {'title': 'Medical Dictionary of Health    Γöé
+Γöé  Terms: Q-Z', 'link': 'https://www.health.harvard.edu/q-through-z',         Γöé
+Γöé  'snippet': 'transient ischemic attack: A brain attack that resolves on     Γöé
+Γöé  its own within 24 hours. Sometimes called a mini-stroke or TIA, a          Γöé
+Γöé  transient ischemic attack is often ...', 'position': 4}, {'title': 'HLTH   Γöé
+Γöé  123: Medical Terminology', 'link':                                         Γöé
+Γöé  'https://catalog.wvc.edu/health/hlth-123', 'snippet': 'Includes study of   Γöé
+Γöé  terms in anatomy, physiology and pathology through word analysis with      Γöé
+Γöé  emphasis on word parts: prefix, root and suffix.', 'position': 5},         Γöé
+Γöé  {'title': 'Understanding Medical Terms', 'link':                           Γöé
+Γöé  'https://www.merckmanuals.com/home/resourcespages/medical-terms',          Γöé
+Γöé  'snippet': 'The key to understanding medical terms is focusing on their    Γöé
+Γöé  components (prefixes, roots, and suffixes).', 'position': 6}, {'title':    Γöé
+Γöé  'Ever wonder why medical orders look like alphabet soup ...', 'link':      Γöé
+Γöé  'https://www.instagram.com/reel/DS7nGH2kmfe/?hl=en', 'snippet': "From gtt  Γöé
+Γöé  to NPO to BID, q4h, and qHSΓÇöthese aren't random shortcuts, they're Latin   Γöé
+Γöé  roots that shaped how medicine communicates for centuries.", 'position':   Γöé
+Γöé  7}, {'title': 'HIM 1101 Medical Terminology - Course', 'link':             Γöé
+Γöé  'https://www.sinclair.edu/course/params/subject/HIM/courseNo/1101/',       Γöé
+Γöé  'snippet': 'Basic prefixes, roots and suffixes; terminology including      Γöé
+Γöé  anatomic, diagnostic, symptomatic, procedural, eponymic terms and          Γöé
+Γöé  standard abbreviations', 'position': 8}, {'title': 'Medical Dictionary',   Γöé
+Γöé  'link': 'https://www.merriam-webster.com/medical', 'snippet': 'Search      Γöé
+Γöé  medical terms and abbreviations with the most up-to-date and               Γöé
+Γöé  comprehensive medical dictionary from the reference experts at             Γöé
+Γöé  Merriam-Webster.', 'position': 9}], 'peopleAlsoAsk': [{'question': 'What   Γöé
+Γöé  does z mean in medical terms?', 'snippet': '', 'title': '', 'link': ''},   Γöé
+Γöé  {'question': 'What medical term starts with y?', 'snippet': 'Y\n___Y       Γöé
+Γöé  chromosome deletions.\n___Yaws.\n___Yeast infection.\n___Yellow            Γöé
+Γöé  fever.\n___Yellow nail syndrome.\n___Yemenite deaf-blind hypopigmentation  Γöé
+Γöé  syndrome.\n___Yersinia pestis infection.\n___Yersiniosis. Yersinia         Γöé
+Γöé  entercolitica infection. Yersinia pseudotuberculosis infection.',          Γöé
+Γöé  'title': 'List of diseases (Y) - Wikipedia', 'link':                       Γöé
+Γöé  'https://en.wikipedia.org/wiki/List_of_diseases_(Y)'}, {'question': 'What  Γöé
+Γöé  is in medical terminology?', 'snippet': '', 'title': '', 'link': ''},      Γöé
+Γöé  {'question': 'What does the suffix Y mean in medical terms?', 'snippet':   Γöé
+Γöé  '', 'title': '', 'link': ''}], 'credits': 1}                               Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£à Tool Execution Completed (#6) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool Completed                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé
+Γöé  Output: {'searchParameters': {'q': 'authoritative sources for medical      Γöé
+Γöé  term xyz123', 'type': 'search', 'num': 10, 'engine': 'google'},            Γöé
+Γöé  'organic': [{'title': 'Identifying Credible Sources of Health Information  Γöé
+Γöé  in Social ...', 'link':                                                    Γöé
+Γöé  'https://pmc.ncbi.nlm.nih.gov/articles/PMC8486420/', 'snippet': 'by RS     Γöé
+Γöé  Kington ┬╖ 2021 ┬╖ Cited by 293 ΓÇö ΓÇ£Authoritative: Any medical or health      Γöé
+Γöé  advice provided and hosted on this site will only be given by medically    Γöé
+Γöé  trained and qualified professionals unless a ...', 'position': 1},         Γöé
+Γöé  {'title': 'Medical Dictionary of Health Terms: A-C', 'link':               Γöé
+Γöé  'https://www.health.harvard.edu/a-through-c', 'snippet': 'A mineral that   Γöé
+Γöé  the body needs for many vital functions, including bone formation,         Γöé
+Γöé  regulation of heart rate and blood pressure, and muscle contraction.',     Γöé
+Γöé  'position': 2}, {'title': 'Identifying Credible Sources of Health          Γöé
+Γöé  Information in Social ...', 'link':                                        Γöé
+Γöé  'https://nam.edu/perspectives/identifying-credible-sources-of-health-info  Γöé
+Γöé  rmation-in-social-media-principles-and-attributes/', 'snippet': 'by RS     Γöé
+Γöé  Kington ┬╖ Cited by 294 ΓÇö Academic Health and Medical Journals. Academic    Γöé
+Γöé  journals are scholarly periodicals that publish research or reports        Γöé
+Γöé  specific to a profession or field of study.', 'position': 3}, {'title':    Γöé
+Γöé  'Authoritative Health Websites - Free Resources (for Health ...', 'link':  Γöé
+Γöé  'https://libguides.usc.edu/c.php?g=293762&p=1956526', 'snippet':           Γöé
+Γöé  'Government resource including broad coverage of: health topics,           Γöé
+Γöé  Evidence-based Practice Center reports, US government programs, research   Γöé
+Γöé  tools, ...', 'position': 4}, {'title': 'Medical Encyclopedia', 'link':     Γöé
+Γöé  'https://medlineplus.gov/encyclopedia.html', 'snippet': 'The A.D.A.M.      Γöé
+Γöé  Medical Encyclopedia includes articles about diseases, tests, symptoms,    Γöé
+Γöé  injuries, and surgeries. Search encyclopedia articles from A to Z.',       Γöé
+Γöé  'position': 5}, {'title': 'Medical Reference Sources - Health & Medical    Γöé
+Γöé  Information', 'link':                                                      Γöé
+Γöé  'https://libguides.law.villanova.edu/healthandmedicalinfo', 'snippet':     Γöé
+Γöé  'This link takes the user to a list of electronic medical reference        Γöé
+Γöé  sources available to Villanova students, faculty and staff.', 'position':  Γöé
+Γöé  6}, {'title': 'Health Care Legal Research: Secondary Sources', 'link':     Γöé
+Γöé  'https://law-richmond.libguides.com/healthlaw/healthsecondary',            Γöé
+Γöé  'snippet': "If you come across a medical term you do not understand, try   Γöé
+Γöé  a health care-specific reference resource to get a definition. Often,      Γöé
+Γöé  you'll ...", 'position': 7}, {'title': 'Medical Dictionary', 'link':       Γöé
+Γöé  'https://www.merriam-webster.com/medical', 'snippet': 'Search medical      Γöé
+Γöé  terms and abbreviations with the most up-to-date and comprehensive         Γöé
+Γöé  medical dictionary from the reference experts at Merriam-Webster.',        Γöé
+Γöé  'position': 8}, {'title': 'A-Z of medical terms', 'link':                  Γöé
+Γöé  'https://www.rcog.org.uk/for-the-public/a-z-of-medical-terms/',            Γöé
+Γöé  'snippet': 'A to Z of medical terms. This alphabetical list contains       Γöé
+Γöé  explanations of medical words you may come across on the RCOG website or   Γöé
+Γöé  when you see your doctor.', 'position': 9}], 'peopleAlsoAsk':              Γöé
+Γöé  [{'question': 'What are the sources of medical terms?', 'snippet':         Γöé
+Γöé  'Origins of Medical Language\n\nGreek and Latin are the primary sources    Γöé
+Γöé  of medical terminology. Examples: pelvis (Latin), thorax (Greek), artery   Γöé
+Γöé  (Latin: arteria).', 'title': 'Medical Terminology Study Guide: Key         Γöé
+Γöé  Concepts & Word Parts | Notes', 'link':                                    Γöé
+Γöé  'https://www.pearson.com/channels/medical-terminology/study-guides/introd  Γöé
+Γöé  uction-to-medical-terminology-foundations-structure-and#:~:text=Origins%2  Γöé
+Γöé  0of%20Medical%20Language&text=Greek%20and%20Latin%20are%20the,artery%20(L  Γöé
+Γöé  atin%3A%20arteria).'}, {'question': 'What are 5 reliable sources of        Γöé
+Γöé  health information?', 'snippet': "Medical and health care organizations,   Γöé
+Γöé  hospitals, and academic medical institutions may also be reliable sources  Γöé
+Γöé  of health information. Your health care provider can also suggest ideal    Γöé
+Γöé  sources of online information. If your doctor's office has a website, it   Γöé
+Γöé  may include a list of recommended links.Jan 12, 2023", 'title': 'How To    Γöé
+Γöé  Find Reliable Health Information Online', 'link':                          Γöé
+Γöé  'https://www.nia.nih.gov/health/healthy-aging/how-find-reliable-health-in  Γöé
+Γöé  formation-online#:~:text=Medical%20and%20health%20care%20organizations,a%  Γöé
+Γöé  20list%20of%20recommended%20links.'}, {'question': 'Is Medline a           Γöé
+Γöé  secondary source?', 'snippet': "Many studies and reviews rely on MEDLINE   Γöé
+Γöé  as a primary source when surveying existing knowledge in a field. From a   Γöé
+Γöé  research-literacy perspective, MEDLINE matters because it: Provides        Γöé
+Γöé  systematic access to peer-reviewed biomedical literature, as described in  Γöé
+Γöé  PubMed's database overview.Feb 2, 2026", 'title': 'What Is MEDLINE? A      Γöé
+Γöé  Simple Guide to the Biomedical Literature Database', 'link':               Γöé
+Γöé  "https://www.pubmed.ai/blog/what-is-medline#:~:text=Many%20studies%20and%  Γöé
+Γöé  20reviews%20rely,described%20in%20PubMed's%20database%20overview"},        Γöé
+Γöé  {'question': 'What is a reliable source to confirm the spelling of a       Γöé
+Γöé  medical term?', 'snippet': 'Answer. The most reliable source to confirm    Γöé
+Γöé  the spelling of a medical term is a Medical dictionary.', 'title':         Γöé
+Γöé  '[Solved] Which of the following terms is a reliable source to confirm     Γöé
+Γöé  the', 'link':                                                              Γöé
+Γöé  'https://www.studocu.com/en-au/messages/question/9440501/which-of-the-fol  Γöé
+Γöé  lowing-terms-is-a-reliable-source-to-confirm-the-spelling-of-a-medical-te  Γöé
+Γöé  rmselect#:~:text=1%20year%20ago-,Answer,term%20is%20a%20Medical%20diction  Γöé
+Γöé  ary.'}], 'relatedSearches': [{'query': '50 medical terms'}, {'query':      Γöé
+Γöé  '100 most common medical words'}, {'query': 'Medical terms a to z'},       Γöé
+Γöé  {'query': 'Beautiful medical terms'}, {'query': '50 medical terms with     Γöé
+Γöé  meaning'}, {'query': 'Medical terminology dictionary'}, {'query':          Γöé
+Γöé  'Harvard medical dictionary'}, {'query': 'Best medical dictionary'}],      Γöé
+Γöé  'credits': 1}                                                              Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£à Tool Execution Completed (#6) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool Completed                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé
+Γöé  Output: {'searchParameters': {'q': 'nonsense medical term xyz123',         Γöé
+Γöé  'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title':    Γöé
+Γöé  'Aphasia - Symptoms & causes', 'link':                                     Γöé
+Γöé  'https://www.mayoclinic.org/diseases-conditions/aphasia/symptoms-causes/s  Γöé
+Γöé  yc-20369518', 'snippet': 'Aphasia is a disorder that affects how you       Γöé
+Γöé  communicate. It can impact your speech, as well as the way you write and   Γöé
+Γöé  understand both spoken and written language.', 'position': 1}, {'title':   Γöé
+Γöé  'Aphasia: Symptoms, Causes & Treatment', 'link':                           Γöé
+Γöé  'https://my.clevelandclinic.org/health/diseases/5502-aphasia', 'snippet':  Γöé
+Γöé  'Aphasia is a language disorder that affects your ability to speak and     Γöé
+Γöé  understand what others say. You might have trouble reading or writing.',   Γöé
+Γöé  'position': 2}, {'title': 'Types of aphasia', 'link':                      Γöé
+Γöé  'https://www.stroke.org.uk/stroke/effects/aphasia/types-of-aphasia',       Γöé
+Γöé  'snippet': "Expressive aphasia, also called non-fluent aphasia or Broca's  Γöé
+Γöé  aphasia, is due to damage in the 'Broca's area' of the brain.",            Γöé
+Γöé  'position': 3}, {'title': 'Aphasia', 'link':                               Γöé
+Γöé  'https://en.wikipedia.org/wiki/Aphasia', 'snippet': "Aphasia, also known   Γöé
+Γöé  as dysphasia, is an impairment in a person's ability to comprehend or      Γöé
+Γöé  formulate language because of dysfunction in specific brain regions.",     Γöé
+Γöé  'position': 4}, {'title': '6 Types of Aphasia', 'link':                    Γöé
+Γöé  'https://regionalneurological.com/types-of-aphasia/', 'snippet': 'Aphasia  Γöé
+Γöé  is an impairment language caused by an injury to the brain, usually due    Γöé
+Γöé  to stroke. There are several types of aphasia that affect language skills  Γöé
+Γöé  in ...', 'position': 5}, {'title': 'Aphasia is a word we have heard quite  Γöé
+Γöé  often in the news lately ...', 'link':                                     Γöé
+Γöé  'https://www.facebook.com/CoopermanBarnabasMedicalCenter/videos/aphasia-i  Γöé
+Γöé  s-a-word-we-have-heard-quite-often-in-the-news-lately-but-didyouknow-84/1  Γöé
+Γöé  019746902246018/?locale=ms_MY', 'snippet': "Over 2 million people have     Γöé
+Γöé  #aphasia, which is a disorder that affects someone's ability to            Γöé
+Γöé  understand or express speech.", 'position': 6}, {'title': "aphasia |       Γöé
+Γöé  Taber's Medical Dictionary", 'link':                                       Γöé
+Γöé  'https://www.tabers.com/tabersonline/view/Tabers-Dictionary/750368/25/aph  Γöé
+Γöé  asia', 'snippet': 'aphasia, speechlessness] Absent or impaired ability to  Γöé
+Γöé  communicate by speech, writing, or signs because of brain dysfunction.',   Γöé
+Γöé  'position': 7}, {'title': 'What is Aphasia? A Neurologist Explains',       Γöé
+Γöé  'link': 'https://www.youtube.com/watch?v=fYkXPG0iVk8', 'snippet':          Γöé
+Γöé  'Aphasia is a symptom of something happening within the body. it impact    Γöé
+Γöé  language comprehension and expression?', 'position': 8}, {'title': 'What   Γöé
+Γöé  is Aphasia? Symptoms, Types and Treatment', 'link':                        Γöé
+Γöé  'https://www.brownhealth.org/be-well/what-aphasia-symptoms-types-and-trea  Γöé
+Γöé  tment', 'snippet': 'Aphasia is an acquired communication disorder that     Γöé
+Γöé  results in loss of the ability to produce or understand language. Aphasia  Γöé
+Γöé  is not a loss of intelligence.', 'position': 9}], 'peopleAlsoAsk':         Γöé
+Γöé  [{'question': 'How do you say gibberish in medical terms?', 'snippet':     Γöé
+Γöé  '', 'title': '', 'link': ''}, {'question': 'What are the three types of    Γöé
+Γöé  dysphasia?', 'snippet': '', 'title': '', 'link': ''}, {'question': 'What   Γöé
+Γöé  are the three most common causes of aphasia?', 'snippet': '', 'title':     Γöé
+Γöé  '', 'link': ''}, {'question': 'What can be mistaken for aphasia?',         Γöé
+Γöé  'snippet': '', 'title': '', 'link': ''}], 'relatedSearches': [{'query':    Γöé
+Γöé  'Aphasia medical term'}, {'query': 'What are the 3 types of aphasia'},     Γöé
+Γöé  {'query': 'Inability to speak medical term'}, {'query': 'Dysphasia'},      Γöé
+Γöé  {'query': 'Aphasia vs dysphasia'}, {'query': 'Anomic aphasia'}, {'query':  Γöé
+Γöé  'Expressive aphasia'}, {'query': 'Aphasia treatment'}], 'credits': 1}      Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£à Tool Execution Completed (#6) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool Completed                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé
+Γöé  Output: {'searchParameters': {'q': 'meaning of garbled term in medicine',  Γöé
+Γöé  'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title':    Γöé
+Γöé  'What does garbled mean in English language?', 'link':                     Γöé
+Γöé  'https://www.facebook.com/PWCSAdultEd/posts/the-word-of-the-week-is-garbl  Γöé
+Γöé  ed-garbled-is-an-adjective-that-means-made-unclear-/1552941253202638/',    Γöé
+Γöé  'snippet': 'Garbled is an adjective that means "made unclear or            Γöé
+Γöé  confusing." Garble means "to so alter or distort as to create a wrong      Γöé
+Γöé  impression or change ...', 'position': 1}, {'title': 'GARBLED Definition   Γöé
+Γöé  & Meaning', 'link': 'https://www.merriam-webster.com/dictionary/garbled',  Γöé
+Γöé  'snippet': 'The meaning of GARBLED is made unclear or confusing :          Γöé
+Γöé  distorted or mixed up. How to use garbled in a sentence.', 'position':     Γöé
+Γöé  2}, {'title': 'GARBLED Definition & Meaning', 'link':                      Γöé
+Γöé  'https://www.dictionary.com/browse/garbled', 'snippet': 'GARBLED           Γöé
+Γöé  definition: jumbled or unclear because of distortion or omissions See      Γöé
+Γöé  examples of garbled used in a sentence.', 'position': 3}, {'title':        Γöé
+Γöé  'Garbled - Etymology, Origin & Meaning', 'link':                           Γöé
+Γöé  'https://www.etymonline.com/word/garbled', 'snippet': 'in a general sense  Γöé
+Γöé  of "sort out the finer parts" of anything, "removal of what is             Γöé
+Γöé  objectionable," then "distort for some devious purpose or to give false    Γöé
+Γöé  ...', 'position': 4}, {'title': 'What Does Garbled Mean? Expert Answers    Γöé
+Γöé  on JustAnswer', 'link':                                                    Γöé
+Γöé  'https://www.justanswer.com/health/07xz8-does-garbled-mean.html',          Γöé
+Γöé  'snippet': "'Garbled' refers to information that is distorted, unclear,    Γöé
+Γöé  or jumbled, making it difficult to understand. In medical communication,   Γöé
+Γöé  this can ...", 'position': 5}, {'title': 'GARBLED definition in American   Γöé
+Γöé  English', 'link':                                                          Γöé
+Γöé  'https://www.collinsdictionary.com/us/dictionary/english/garbled',         Γöé
+Γöé  'snippet': 'A garbled message or report contains confused or wrong         Γöé
+Γöé  details, often because it is spoken by someone who is nervous or in a      Γöé
+Γöé  hurry. Synonyms: jumbled, confused ...', 'position': 6}, {'title':         Γöé
+Γöé  'Garbled Meaning in English, Definition, and ...', 'link':                 Γöé
+Γöé  'https://www.youtube.com/watch?v=2JJEBwbAo0A', 'snippet': "In today's      Γöé
+Γöé  episode, we unravel the word 'garbled.' Discover its meaning, definition,  Γöé
+Γöé  and an array of synonyms to enhance your vocabulary ...", 'position': 7},  Γöé
+Γöé  {'title': 'Meaning of garbled in English - Cambridge Dictionary', 'link':  Γöé
+Γöé  'https://dictionary.cambridge.org/us/dictionary/english/garbled',          Γöé
+Γöé  'snippet': '(of something said) confused and unclear, or giving a false    Γöé
+Γöé  idea: He left a garbled message on my answering machine.', 'position':     Γöé
+Γöé  8}, {'title': 'Garbled', 'link':                                           Γöé
+Γöé  'https://www.thefreedictionary.com/garbled', 'snippet': 'garbled.          Γöé
+Γöé  adjective jumbled, confused, distorted, mixed up, muddled,                 Γöé
+Γöé  incomprehensible, unintelligible He gave a garbled version of the          Γöé
+Γöé  story.', 'position': 9}], 'peopleAlsoAsk': [{'question': 'What does        Γöé
+Γöé  garbled mean?', 'snippet': '', 'title': '', 'link': ''}, {'question':      Γöé
+Γöé  'What is an example of garbled?', 'snippet': '', 'title': '', 'link':      Γöé
+Γöé  ''}, {'question': 'What is another word for garbled?', 'snippet': '',      Γöé
+Γöé  'title': '', 'link': ''}, {'question': 'What does "garbled" mean in        Γöé
+Γöé  communication?', 'snippet': '', 'title': 'Garbled communication produces   Γöé
+Γöé  confusion. That happens when a ...', 'link':                               Γöé
+Γöé  'https://www.facebook.com/michaelhyatt/videos/garbled-communication-produ  Γöé
+Γöé  ces-confusion-that-happens-when-a-speaker-lacks-clari/709204946495545/'}]  Γöé
+Γöé  , 'relatedSearches': [{'query': 'What does garbled mean'}, {'query':       Γöé
+Γöé  'Garbled synonym'}, {'query': 'Garbled up meaning'}, {'query': 'Garbled    Γöé
+Γöé  message meaning'}, {'query': 'Speech Garbled meaning'}, {'query':          Γöé
+Γöé  'Garbled pronunciation'}, {'query': 'Garbled in a sentence'}, {'query':    Γöé
+Γöé  'Garbled display'}], 'credits': 1}                                         Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£à Tool Execution Completed (#6) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool Completed                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé
+Γöé  Output: {'searchParameters': {'q': 'meaning of xyz123 in medicine',        Γöé
+Γöé  'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title':    Γöé
+Γöé  'Tocilizumab (intravenous route, subcutaneous route)', 'link':             Γöé
+Γöé  'https://www.mayoclinic.org/drugs-supplements/tocilizumab-intravenous-rou  Γöé
+Γöé  te-subcutaneous-route/description/drg-20073821', 'snippet': 'Tocilizumab   Γöé
+Γöé  injection is used alone or together with other medicines to reduce the     Γöé
+Γöé  signs and symptoms of moderate to severe active rheumatoid arthritis.',    Γöé
+Γöé  'position': 1}, {'title': 'Tocilizumab Injection: MedlinePlus Drug         Γöé
+Γöé  Information', 'link':                                                      Γöé
+Γöé  'https://medlineplus.gov/druginfo/meds/a611004.html', 'snippet':           Γöé
+Γöé  'Tocilizumab injection is in a class of medications called interleukin-6   Γöé
+Γöé  (IL-6) receptor inhibitors. It work by blocking the activity of ...',      Γöé
+Γöé  'position': 2}, {'title': 'Tocilizumab (Actemra) - PMC - NIH', 'link':     Γöé
+Γöé  'https://pmc.ncbi.nlm.nih.gov/articles/PMC5612212/', 'snippet': 'by M      Γöé
+Γöé  Sheppard ┬╖ 2017 ┬╖ Cited by 360 ΓÇö Tocilizumab (TCZ), is a recombinant       Γöé
+Γöé  humanized anti-interleukin-6 receptor (IL-6R) monoclonal antibody which    Γöé
+Γöé  has a main use in the treatment of rheumatoid ...', 'position': 3},        Γöé
+Γöé  {'title': 'Tocilizumab | Biologic | Uses, side effects, how it is taken',  Γöé
+Γöé  'link':                                                                    Γöé
+Γöé  'https://www.arthritis-uk.org/information-and-support/understanding-arthr  Γöé
+Γöé  itis/arthritis-treatments/drugs/tocilizumab/', 'snippet': 'Tocilizumab is  Γöé
+Γöé  a biological therapy given as injection or infusion for rheumatoid         Γöé
+Γöé  arthritis and juvenile idiopathic arthritis (JIA).', 'position': 4},       Γöé
+Γöé  {'title': 'Tocilizumab Injection for Intravenous Infusion', 'link':        Γöé
+Γöé  'https://www.uhcprovider.com/content/dam/provider/docs/public/policies/co  Γöé
+Γöé  mm-medical-drug/tocilizumab.pdf', 'snippet': 'Tofidence for intraveneous   Γöé
+Γöé  use is indicated for the treatment of adult patients with moderately to    Γöé
+Γöé  severely active rheumatoid arthritis', 'position': 5}, {'title':           Γöé
+Γöé  'NCT01007435 | A Study of Tocilizumab as Monotherapy ...', 'link':         Γöé
+Γöé  'https://clinicaltrials.gov/study/NCT01007435', 'snippet': 'This           Γöé
+Γöé  randomized, double-blind, parallel group study will assess the safety,     Γöé
+Γöé  disease remission, and prevention of structural joint damage in            Γöé
+Γöé  patients', 'position': 6}, {'title': 'Tocilizumab as a first line          Γöé
+Γöé  biologic agent in rheumatoid ...', 'link':                                 Γöé
+Γöé  'https://www.clinexprheumatol.org/article.asp?a=19697', 'snippet': 'by O   Γöé
+Γöé  Karadag ┬╖ 2024 ┬╖ Cited by 3 ΓÇö tocilizumab (TCZ) as first-line biologic     Γöé
+Γöé  treatment in rheumatoid arthritis (RA) patients with inadequate response   Γöé
+Γöé  to disease-modifying anti-rheumatic drugs ( ...', 'position': 7},          Γöé
+Γöé  {'title': 'CIMZIA┬« for Moderate-to-Severe Rheumatoid Arthritis', 'link':   Γöé
+Γöé  'https://www.cimzia.com/rheumatoid-arthritis', 'snippet': 'CIMZIA is a     Γöé
+Γöé  prescription medicine called a Tumor Necrosis Factor (TNF) blocker that    Γöé
+Γöé  can lower the ability of your immune system to fight infections.',         Γöé
+Γöé  'position': 8}, {'title': 'Tocilizumab Intravenous Products UM Medical     Γöé
+Γöé  Policy (1). ...', 'link':                                                  Γöé
+Γöé  'https://www.caresource.com/documents/medicare-multi-policy-pharmacy-tyen  Γöé
+Γöé  ne-20250423.pdf', 'snippet': 'OVERVIEW. Tocilizumab intravenous infusion,  Γöé
+Γöé  an interleukin-6 (IL-6) receptor inhibitor, is indicated for the           Γöé
+Γöé  following conditions:1.', 'position': 9}], 'peopleAlsoAsk': [{'question':  Γöé
+Γöé  'What is the new treatment for rheumatoid arthritis in 2026?', 'snippet':  Γöé
+Γöé  '', 'title': '', 'link': ''}, {'question': 'What is another name for       Γöé
+Γöé  tocilizumab?', 'snippet': '', 'title': '', 'link': ''}, {'question':       Γöé
+Γöé  'What is the best injection for rheumatoid arthritis?', 'snippet': '',     Γöé
+Γöé  'title': '', 'link': ''}, {'question': 'Does Tyenne cause weight gain?',   Γöé
+Γöé  'snippet': '', 'title': '', 'link': ''}], 'relatedSearches': [{'query':    Γöé
+Γöé  'Tyenne side effects'}, {'query': 'Is tocilizumab A chemotherapy drug'},   Γöé
+Γöé  {'query': 'Actemra side effects fatigue'}, {'query': 'Actemra side         Γöé
+Γöé  effects weight gain'}, {'query': 'Tocilizumab immunosuppression'},         Γöé
+Γöé  {'query': 'Tyenne vs Actemra'}, {'query': 'Actemra side effects on         Γöé
+Γöé  kidney'}, {'query': 'Tocilizumab infusion protocol'}], 'credits': 1}       Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£à Tool Execution Completed (#6) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool Completed                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'authoritative sources for medical term xyz123', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Identifying Credible Sources of Health Information ...[0m
+[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'meaning of xyz123 in medicine', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Tocilizumab (intravenous route, subcutaneous route)', 'link': 'http...[0m
+[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'definition of xyz123', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Comprehensive Study Notes for Course Code: XYZ123 - Final ...', 'link': 'htt...[0m
+[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'xyz123 medical term', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Exam 4 Review Questions for Medical Terminology (XYZ123)', 'link': 'https://w...[0m
+[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'nonsense medical term xyz123', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Aphasia - Symptoms & causes', 'link': 'https://www.mayoclinic.org/di...[0m
+[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'meaning of garbled term in medicine', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'What does garbled mean in English language?', 'link': 'https:...[0m
+
+Γöé  Output: {'searchParameters': {'q': 'definition of xyz123', 'type':         Γöé
+Γöé  'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title':            Γöé
+Γöé  'Comprehensive Study Notes for Course Code: XYZ123 - Final ...', 'link':   Γöé
+Γöé  'https://www.studocu.com/en-us/document/marshall-university/cognitive-and  Γöé
+Γöé  -emotional-bases-of-behavior/comprehensive-study-notes-for-course-code-xy  Γöé
+Γöé  z123-final-exam-review/120004111', 'snippet': 'The content explores the    Γöé
+Γöé  nuances of intercultural communication, emphasizing the importance of      Γöé
+Γöé  understanding and navigating cultural differences in various.',            Γöé
+Γöé  'position': 1}, {'title': 'Community name defined in the security product  Γöé
+Γöé  for each ...', 'link':                                                     Γöé
+Γöé  'https://www.ibm.com/docs/en/zos/3.1.0?topic=suaub-community-name-defined  Γöé
+Γöé  -in-security-product-each-cpc', 'snippet': "This RACF example assigns a    Γöé
+Γöé  BCPii community name of XYZ123 to an existing CPC definition ΓÇª 001         Γöé
+Γöé  APPLDATA('XYZ123') A community name definition must be defined ...",       Γöé
+Γöé  'position': 2}, {'title': 'Custom Field URL definition', 'link':           Γöé
+Γöé  'https://community.atlassian.com/forums/Jira-questions/Custom-Field-URL-d  Γöé
+Γöé  efinition/qaq-p/580562', 'snippet': 'define custom field to get order      Γöé
+Γöé  number from customer and define url. For example: order ID: XYZ123         Γöé
+Γöé  Backoffice', 'position': 3}, {'title': "TLS negotiation failed, the        Γöé
+Γöé  certificate doesn't match the host", 'link':                               Γöé
+Γöé  'https://support.google.com/mail/thread/40534527', 'snippet': 'Just        Γöé
+Γöé  define mail.xyz123.com as a subdomain to your origial site which already   Γöé
+Γöé  has the SSL certificate and Save. Then come back to the SSL ...',          Γöé
+Γöé  'position': 4}, {'title': 'Defining refractory rheumatoid arthritis',      Γöé
+Γöé  'link': 'https://pubmed.ncbi.nlm.nih.gov/29588276/', 'snippet': 'by MH     Γöé
+Γöé  Buch ┬╖ 2018 ┬╖ Cited by 234 ΓÇö Definitions of refractory RA. This viewpoint  Γöé
+Γöé  discusses an opinion of refractory RA disease and proposes key principles  Γöé
+Γöé  to accurately identify refractory ...', 'position': 5}, {'title': 'Is      Γöé
+Γöé  there any ACF2 information on setting up BCPii?', 'link':                  Γöé
+Γöé  'https://knowledge.broadcom.com/external/article/11012/is-there-any-acf2-  Γöé
+Γöé  information-on-setting.html', 'snippet': 'This is an RACF example to       Γöé
+Γöé  assign a BCPii community name of "XYZ123" to an existing CPC definition.   Γöé
+Γöé  APPLDATA(\'XYZ123\')', 'position': 6}, {'title': 'allogeneic               Γöé
+Γöé  CD123-specific universal CAR123-expressing T ...', 'link':                 Γöé
+Γöé  'https://www.cancer.gov/publications/dictionaries/cancer-drug/def/allogen  Γöé
+Γöé  eic-cd123-specific-universal-car123-expressing-t-lymphocytes', 'snippet':  Γöé
+Γöé  'Allogeneic, off-the-shelf, universal transcription activator-like         Γöé
+Γöé  effector. CD123 is normally expressed on committed blood progenitor cells  Γöé
+Γöé  in the bone marrow;', 'position': 7}, {'title': 'Defining Refractory RA    Γöé
+Γöé  by Biologic Use', 'link':                                                  Γöé
+Γöé  'https://rheumnow.com/content/defining-refractory-ra-biologic-use',        Γöé
+Γöé  'snippet': 'Biologic refractory disease is seen in at least 6% of          Γöé
+Γöé  patients who have ever received a biologic DMARD (bDMARDs).', 'position':  Γöé
+Γöé  8}, {'title': 'Terminologies-binding-examples - FHIR v6.0.0-ballot4',      Γöé
+Γöé  'link': 'https://build.fhir.org/terminologies-binding-examples.html',      Γöé
+Γöé  'snippet': '", "code": "XYZ123", This Condition instance contains a local  Γöé
+Γöé  code. meaning which "covers" ΓÇ£Identification of the condition, problem or  Γöé
+Γöé  diagnosis.ΓÇ¥?', 'position': 9}], 'credits': 1}                              Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+[96m
+[2026-08-03 00:04:06][0m[93m[INFO]: [0m[1m[93mMax RPM reached, waiting for next minute to start.[0m
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ¥î LLM Error ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+uv : Error executing 
+listener 
+call_llm_native_tools: 
+litellm.RateLimitError: 
+RateLimitError: 
+GroqException - {"error":{
+"message":"Request too 
+large for model 
+`llama-3.1-8b-instant` in 
+organization `org_01kz0tfy
+dvfj8bmp9a1k26q6c5` 
+service tier `on_demand` 
+on tokens per minute 
+(TPM): Limit 6000, 
+Requested 7032, please 
+reduce your message size 
+and try again. Need more 
+tokens? Upgrade to Dev 
+Tier today at https://cons
+ole.groq.com/settings/bill
+ing","type":"tokens","code
+":"rate_limit_exceeded"}}
+At line:1 char:32
++ ... nv:PYTHONIOENCODING=
+'utf-8'; uv run python 
+run_tc_r02.py 2>&1 | 
+Out-F ...
++                         
+         ~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (E  
+  rror executing...mit_   
+ exceeded"}}:String) [    
+], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+
+Γöé                                                                             Γöé
+Γöé  LLM Call Failed                                                            Γöé
+Γöé  Error: litellm.RateLimitError: RateLimitError: GroqException -             Γöé
+Γöé  {"error":{"message":"Request too large for model `llama-3.1-8b-instant`    Γöé
+Γöé  in organization `org_01kz0tfydvfj8bmp9a1k26q6c5` service tier `on_demand`  Γöé
+Γöé  on tokens per minute (TPM): Limit 6000, Requested 7032, please reduce      Γöé
+Γöé  your message size and try again. Need more tokens? Upgrade to Dev Tier     Γöé
+Γöé  today at                                                                   Γöé
+Γöé  https://console.groq.com/settings/billing","type":"tokens","code":"rate_l  Γöé
+Γöé  imit_exceeded"}}                                                           Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Failure ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Failed                                                                Γöé
+Γöé  Name: research_query_task                                                  Γöé
+Γöé  Agent: Medical and Nutritional Research Specialist                         Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Crew Failure ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Crew Execution Failed                                                      Γöé
+Γöé  Name: ResearchCrew                                                         Γöé
+Γöé  ID: 13303f7e-df3d-4694-8001-46583ce493b7                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+  ΓÜá∩╕Å  Rate-limit (attempt 1/5). Sleeping 65sΓÇª
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Tracing Status ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Info: Tracing is disabled.                                                 Γöé
+Γöé                                                                             Γöé
+Γöé  To enable tracing, do any one of these:                                    Γöé
+Γöé  ΓÇó Set tracing=True in your Crew/Flow code                                  Γöé
+Γöé  ΓÇó Set CREWAI_TRACING_ENABLED=true in your project's .env file              Γöé
+Γöé  ΓÇó Run: crewai traces enable                                                Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒÜÇ Crew Execution Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Crew Execution Started                                                     Γöé
+Γöé  Name: ResearchCrew                                                         Γöé
+Γöé  ID: a35de09f-d5cb-4827-bd3c-4b347bc3d90e                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Started                                                               Γöé
+Γöé  Name: research_query_task                                                  Γöé
+Γöé  ID: 23a917c9-bc7c-49cb-bf2b-1b09c671a97f                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒñû Agent Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Medical and Nutritional Research Specialist                         Γöé
+Γöé                                                                             Γöé
+Γöé  Task: Search for authoritative sources to answer the following research    Γöé
+Γöé  query: "asdkjfh qwerty nonsense medical term xyz123". Return a structured  Γöé
+Γöé  JSON response. If no reliable source is found after searching, set         Γöé
+Γöé  sources_found to false and make the summary explicitly say that no         Γöé
+Γöé  reliable information was found -- never present an unsourced guess as if   Γöé
+Γöé  it were established guidance. After searching, critically evaluate         Γöé
+Γöé  whether the search results actually answer the specific query asked --     Γöé
+Γöé  not just whether the search returned any results at all. If the results    Γöé
+Γöé  are only tangentially related, off-topic, or clearly don't address what    Γöé
+Γöé  was asked (for example, a garbled or nonsensical query returning           Γöé
+Γöé  unrelated medical topics), set sources_found to false and state in         Γöé
+Γöé  summary that no relevant information was found for this specific query,    Γöé
+Γöé  rather than reporting unrelated search results as if they were the         Γöé
+Γöé  answer.                                                                    Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒöº Tool Execution Started (#7) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé
+Γöé  Args: {'search_query': 'asdkjfh qwerty nonsense medical term xyz123'}      Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'asdkjfh qwerty nonsense medical term xyz123', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Aphasia - Symptoms & causes', 'link': 'https://www.ma...[0m
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£à Tool Execution Completed (#7) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Tool Completed                                                             Γöé
+Γöé  Tool: search_the_internet_with_serper                                      Γöé
+Γöé  Output: {'searchParameters': {'q': 'asdkjfh qwerty nonsense medical term   Γöé
+Γöé  xyz123', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic':      Γöé
+Γöé  [{'title': 'Aphasia - Symptoms & causes', 'link':                          Γöé
+Γöé  'https://www.mayoclinic.org/diseases-conditions/aphasia/symptoms-causes/s  Γöé
+Γöé  yc-20369518', 'snippet': 'Aphasia is a disorder that affects how you       Γöé
+Γöé  communicate. Aphasia usually happens suddenly after a stroke or a head     Γöé
+Γöé  injury.', 'position': 1}, {'title': 'Aphasia: Symptoms, Causes &           Γöé
+Γöé  Treatment', 'link':                                                        Γöé
+Γöé  'https://my.clevelandclinic.org/health/diseases/5502-aphasia', 'snippet':  Γöé
+Γöé  'Aphasia is a language disorder that affects your ability to speak and     Γöé
+Γöé  understand what others say. You might have trouble reading or writing.', [96m
+[2026-08-03 00:06:15][0m[93m[INFO]: [0m[1m[93mMax RPM reached, waiting for next minute to start.[0m
+  Γöé
+Γöé  'position': 2}, {'title': 'Types of aphasia', 'link':                      Γöé
+Γöé  'https://www.stroke.org.uk/stroke/effects/aphasia/types-of-aphasia',       Γöé
+Γöé  'snippet': "Expressive aphasia, also called non-fluent aphasia or Broca's  Γöé
+Γöé  aphasia, is due to damage in the 'Broca's area' of the brain.",            Γöé
+Γöé  'position': 3}, {'title': 'Aphasia is a word we have heard quite often in  Γöé
+Γöé  the news lately ...', 'link':                                              Γöé
+Γöé  'https://www.facebook.com/CoopermanBarnabasMedicalCenter/videos/aphasia-i  Γöé
+Γöé  s-a-word-we-have-heard-quite-often-in-the-news-lately-but-didyouknow-84/1  Γöé
+Γöé  019746902246018/?locale=ms_MY', 'snippet': "Over 2 million people have     Γöé
+Γöé  #aphasia, which is a disorder that affects someone's ability to            Γöé
+Γöé  understand or express speech.", 'position': 4}, {'title': 'Doctor          Γöé
+Γöé  explains APHASIA - definition, symptoms, causes ...', 'link':              Γöé
+Γöé  'https://www.youtube.com/watch?v=nvaZXSsvF4I', 'snippet': "In this video   Γöé
+Γöé  Doctor O'Donovan explains Aphasia including, What is aphasia? What causes  Γöé
+Γöé  it? Plus different types of aphasia and how it is ...", 'position': 5},    Γöé
+Γöé  {'title': 'Aphasia', 'link': 'https://en.wikipedia.org/wiki/Aphasia',      Γöé
+Γöé  'snippet': "Aphasia, also known as dysphasia, is an impairment in a        Γöé
+Γöé  person's ability to comprehend or formulate language because of            Γöé
+Γöé  dysfunction in specific brain regions.", 'position': 6}, {'title':         Γöé
+Γöé  "aphasia | Taber's Medical Dictionary", 'link':                            Γöé
+Γöé  'https://www.tabers.com/tabersonline/view/Tabers-Dictionary/750368/25/aph  Γöé
+Γöé  asia', 'snippet': '(─â-f─üΓÇ▓zh(─ô-)─â ) [Gr. aphasia, speechlessness] Absent    Γöé
+Γöé  or impaired ability to communicate by speech, writing, or signs because    Γöé
+Γöé  of brain dysfunction.', 'position': 7}, {'title': 'Aphasia', 'link':       Γöé
+Γöé  'https://www.hopkinsmedicine.org/health/conditions-and-diseases/aphasia',  Γöé
+Γöé  'snippet': 'Aphasia is a language disorder caused by damage in a specific  Γöé
+Γöé  area of the brain that controls language expression and comprehension.',   Γöé
+Γöé  'position': 8}, {'title': '6 Types of Aphasia', 'link':                    Γöé
+Γöé  'https://regionalneurological.com/types-of-aphasia/', 'snippet': 'Aphasia  Γöé
+Γöé  is an impairment language caused by an injury to the brain, usually due    Γöé
+Γöé  to stroke. There are several types of aphasia that affect language skills  Γöé
+Γöé  in ...', 'position': 9}], 'peopleAlsoAsk': [{'question': 'How do you say   Γöé
+Γöé  gibberish in medical terms?', 'snippet': '', 'title': '', 'link': ''},     Γöé
+Γöé  {'question': 'What is the medical term for speaking nonsense?',            Γöé
+Γöé  'snippet': "Aphasia is a symptom of some other condition, such as a        Γöé
+Γöé  stroke or a brain tumor. A person with aphasia may: Speak in short or      Γöé
+Γöé  incomplete sentences. Speak in sentences that don't make sense.",          Γöé
+Γöé  'title': 'Aphasia - Symptoms & causes - Mayo Clinic', 'link':              Γöé
+Γöé  "https://www.mayoclinic.org/diseases-conditions/aphasia/symptoms-causes/s  Γöé
+Γöé  yc-20369518#:~:text=Aphasia%20is%20a%20symptom%20of,that%20don't%20make%2  Γöé
+Γöé  0sense"}, {'question': 'What are the 4 types of aphasia?', 'snippet': '',  Γöé
+Γöé  'title': '', 'link': ''}, {'question': 'What are the 7 types of            Γöé
+Γöé  aphasia?', 'snippet': '', 'title': '', 'link': ''}], 'relatedSearches':    Γöé
+Γöé  [{'query': 'What are the 3 types of aphasia'}, {'query': 'Dysphasia'},     Γöé
+Γöé  {'query': 'Expressive aphasia'}, {'query': 'Inability to speak medical     Γöé
+Γöé  term'}, {'query': 'Sudden difficulty finding words when speaking'},        Γöé
+Γöé  {'query': 'Aphasia medical term'}, {'query': 'Anomic aphasia'}, {'query':  Γöé
+Γöé  'Receptive aphasia'}], 'credits': 1}                                       Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£à Agent Final Answer ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Medical and Nutritional Research Specialist                         Γöé
+Γöé                                                                             Γöé
+Γöé  Final Answer:                                                              Γöé
+Γöé  Upon reviewing the search results, it appears that the query "asdkjfh      Γöé
+Γöé  qwerty nonsense medical term xyz123" is likely a garbled or nonsense       Γöé
+Γöé  medical term and the search results are only tangentially related to the   Γöé
+Γöé  actual query asked. The search results all appear to discuss a condition   Γöé
+Γöé  called "aphasia," which is a disorder that affects a person's ability to   Γöé
+Γöé  understand or express speech, but it is not clearly related to the query   Γöé
+Γöé  asked.                                                                     Γöé
+Γöé                                                                             Γöé
+Γöé  Since no relevant information was found for this specific query, and the   Γöé
+Γöé  search results only return information about a different medical           Γöé
+Γöé  condition, we cannot rely on these results.                                Γöé
+Γöé                                                                             Γöé
+Γöé  Here is the result:                                                        Γöé
+Γöé                                                                             Γöé
+Γöé  {'summary': 'No relevant information was found for this specific query.',  Γöé
+Γöé  'sources_found': False, 'source_notes': None}                              Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Completion ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Completed                                                             Γöé
+Γöé  Name: research_query_task                                                  Γöé
+Γöé  Agent: Medical and Nutritional Research Specialist                         Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Crew Completion ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Crew Execution Completed                                                   Γöé
+Γöé  Name: ResearchCrew                                                         Γöé
+Γöé  ID: a35de09f-d5cb-4827-bd3c-4b347bc3d90e                                   Γöé
+Γöé  Final Output: Upon reviewing the search results, it appears that the       Γöé
+Γöé  query "asdkjfh qwerty nonsense medical term xyz123" is likely a garbled    Γöé
+Γöé  or nonsense medical term and the search results are only tangentially      Γöé
+Γöé  
+RAW OUTPUT:
+Upon reviewing the search results, it appears that the query "asdkjfh qwerty nonsense medical term xyz123" is likely a garbled or nonsense medical term and the search results are only tangentially related to the actual query asked. The search results all appear to discuss a condition called "aphasia," which is a disorder that affects a person's ability to understand or express speech, but it is not clearly related to the query asked.
+
+Since no relevant information was found for this specific query, and the search results only return information about a different medical condition, we cannot rely on these results.
+
+Here is the result:
+
+{'summary': 'No relevant information was found for this specific query.', 'sources_found': False, 'source_notes': None}
+
+PARSED OUTPUT:
+{}
+
+==============================================================
+  TC-R02 Result: Γ¥î FAIL
+==============================================================
+related to the actual query asked. The search results all appear to        Γöé
+Γöé  discuss a condition called "aphasia," which is a disorder that affects a   Γöé
+Γöé  person's ability to understand or express speech, but it is not clearly    Γöé
+Γöé  related to the query asked.                                                Γöé
+Γöé                                                                             Γöé
+Γöé  Since no relevant information was found for this specific query, and the   Γöé
+Γöé  search results only return information about a different medical           Γöé
+Γöé  condition, we cannot rely on these results.                                Γöé
+Γöé                                                                             Γöé
+Γöé  Here is the result:                                                        Γöé
+Γöé                                                                             Γöé
+Γöé  {'summary': 'No relevant information was found for this specific query.',  Γöé
+Γöé  'sources_found': False, 'source_notes': None}                              Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Tracing Status ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Info: Tracing is disabled.                                                 Γöé
+Γöé                                                                             Γöé
+Γöé  To enable tracing, do any one of these:                                    Γöé
+Γöé  ΓÇó Set tracing=True in your Crew/Flow code                                  Γöé
+Γöé  ΓÇó Set CREWAI_TRACING_ENABLED=true in your project's .env file              Γöé
+Γöé  ΓÇó Run: crewai traces enable                                                Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ

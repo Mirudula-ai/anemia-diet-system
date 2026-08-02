@@ -1,0 +1,1103 @@
+﻿
+==============================================================
+  TC-R02: meaningless query ΓåÆ no reliable information
+==============================================================
+ΓöîΓöÇ ≡ƒÜÇ Crew Execution StaΓöÇΓöÉ
+Γöé                        Γöé
+Γöé  Crew Execution        Γöé
+Γöé  Started               Γöé
+Γöé  Name: ResearchCrew    Γöé
+Γöé  ID:                   Γöé
+Γöé  8dc6d981-362f-411f-9  Γöé
+Γöé  008-07ae46a1fde2      Γöé
+Γöé                        Γöé
+Γöé                        Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇ ≡ƒôï Task Started ΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                        Γöé
+Γöé  Task Started          Γöé
+Γöé  Name:                 Γöé
+Γöé  research_query_task   Γöé
+Γöé  ID:                   Γöé
+Γöé  db695dd6-91fd-4019-8  Γöé
+Γöé  52d-c9f3970e52d0      Γöé
+Γöé                        Γöé
+Γöé                        Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇ ≡ƒñû Agent Started ΓöÇΓöÇΓöÇΓöÉ
+Γöé                        Γöé
+Γöé  Agent: Medical and    Γöé
+Γöé  Nutritional Research  Γöé
+Γöé  Specialist            Γöé
+Γöé                        Γöé
+Γöé  Task: Search for      Γöé
+Γöé  authoritative         Γöé
+Γöé  sources to answer     Γöé
+Γöé  the following         Γöé
+Γöé  research query:       Γöé
+Γöé  "asdkjfh qwerty       Γöé
+Γöé  nonsense medical      Γöé
+Γöé  term xyz123". Return  Γöé
+Γöé  a structured JSON     Γöé
+Γöé  response. If no       Γöé
+Γöé  reliable source is    Γöé
+Γöé  found after           Γöé
+Γöé  searching, set        Γöé
+Γöé  sources_found to      Γöé
+Γöé  false and make the    Γöé
+Γöé  summary explicitly    Γöé
+Γöé  say that no reliable  Γöé
+Γöé  information was       Γöé
+Γöé  found -- never        Γöé
+Γöé  present an unsourced  Γöé
+Γöé  guess as if it were   Γöé
+Γöé  established           Γöé
+Γöé  guidance. After       Γöé
+Γöé  searching,            Γöé
+Γöé  critically evaluate   Γöé
+Γöé  whether the search    Γöé
+Γöé  results actually      Γöé
+Γöé  answer the specific   Γöé
+Γöé  query asked -- not    Γöé
+Γöé  just whether the      Γöé
+Γöé  search returned any   Γöé
+Γöé  results at all. If    Γöé
+Γöé  the results are only  Γöé
+Γöé  tangentially          Γöé
+Γöé  related, off-topic,   Γöé
+Γöé  or clearly don't      Γöé
+Γöé  address what was      Γöé
+Γöé  asked (for example,   Γöé
+Γöé  a garbled or          Γöé
+Γöé  nonsensical query     Γöé
+Γöé  returning unrelated   Γöé
+Γöé  medical topics), set  Γöé
+Γöé  sources_found to      Γöé
+Γöé  false and state in    Γöé
+Γöé  summary that no       Γöé
+Γöé  relevant information  Γöé
+Γöé  was found for this    Γöé
+Γöé  specific query,       Γöé
+Γöé  rather than           Γöé
+Γöé  reporting unrelated   Γöé
+Γöé  search results as if  Γöé
+Γöé  they were the         Γöé
+Γöé  answer.               Γöé
+Γöé                        Γöé
+Γöé                        Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇ ≡ƒöº Tool Execution StaΓöÇΓöÉ
+Γöé                        Γöé
+Γöé  Tool:                 Γöé
+Γöé  search_the_internet_  Γöé
+Γöé  with_serper           Γöé
+Γöé  Args:                 Γöé
+Γöé  {'search_query':      Γöé
+Γöé  'authoritative        Γöé
+Γöé  sources for xyz123    Γöé
+Γöé  medical term'}        Γöé
+Γöé                        Γöé
+Γöé                        Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇ ≡ƒöº Tool Execution StaΓöÇΓöÉ
+Γöé                        Γöé
+Γöé  Tool:                 Γöé
+Γöé  search_the_internet_  Γöé
+Γöé  with_serper           Γöé
+Γöé  Args:                 Γöé
+Γöé  {'search_query':      Γöé
+Γöé  'xyz123 medical term  Γöé
+Γöé  definition'}          Γöé
+Γöé                        Γöé
+Γöé                        Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇ ≡ƒöº Tool Execution StaΓöÇΓöÉ
+Γöé                        Γöé
+Γöé  Tool:                 Γöé
+Γöé  search_the_internet_  Γöé
+Γöé  with_serper           Γöé
+Γöé  Args:                 Γöé
+Γöé  {'search_query':      Γöé
+Γöé  'xyz123 medical term  Γöé
+Γöé  medical literature'}  Γöé
+Γöé                        Γöé
+Γöé                        Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇ Γ£à Tool Execution ComΓöÇΓöÉ
+Γöé                        Γöé
+Γöé  Tool Completed        Γöé
+Γöé  Tool:                 Γöé
+Γöé  search_the_internet_  Γöé
+Γöé  with_serper           Γöé
+Γöé  Output:               Γöé
+Γöé  {'searchParameters':  Γöé
+Γöé  {'q': 'authoritative  Γöé
+Γöé  sources for xyz123    Γöé
+Γöé  medical term',        Γöé
+Γöé  'type': 'search',     Γöé
+Γöé  'num': 10, 'engine':  Γöé
+Γöé  'google'},            Γöé
+Γöé  'organic':            Γöé
+Γöé  [{'title': 'Medical   Γöé
+Γöé  Terminology: Library  Γöé
+Γöé  Resources - Research  Γöé
+Γöé  Guides', 'link':      Γöé
+Γöé  'https://southcentra  Γöé
+Γöé  l.libguides.com/medi  Γöé
+Γöé  calterminology',      Γöé
+Γöé  'snippet': 'Medical   Γöé
+Γöé  Dictionary, Second    Γöé
+Γöé  Edition, which        Γöé
+Γöé  provides              Γöé
+Γöé  authoritative         Γöé
+Γöé  descriptions of       Γöé
+Γöé  medical conditions,   Γöé
+Γöé  medications,          Γöé
+Γöé  anatomical terms,     Γöé
+Γöé  noted ...',           Γöé
+Γöé  'position': 1},       Γöé
+Γöé  {'title': 'VTCSOM     Γöé
+Γöé  Library & Learning    Γöé
+Γöé  Commons: Medical      Γöé
+Γöé  Terminology',         Γöé
+Γöé  'link':               Γöé
+Γöé  'https://guides.lib.  Γöé
+Γöé  vt.edu/vtcsom_librar  Γöé
+Γöé  y/terminology',       Γöé
+Γöé  'snippet': 'It        Γöé
+Γöé  contains over 5000    Γöé
+Γöé  definitions and       Γöé
+Γöé  descriptions of       Γöé
+Γöé  medical terms and     Γöé
+Γöé  concepts with over    Γöé
+Γöé  1000 diagrams,        Γöé
+Γöé  drawings and colour   Γöé
+Γöé  illustrations.',      Γöé
+Γöé  'position': 2},       Γöé
+Γöé  {'title':             Γöé
+Γöé  'Representation of    Γöé
+Γöé  Social Determinants   Γöé
+Γöé  of Health             Γöé
+Γöé  terminology ...',     Γöé
+Γöé  'link':               Γöé
+Γöé  'https://pubmed.ncbi  Γöé
+Γöé  .nlm.nih.gov/3904729  Γöé
+Γöé  6/', 'snippet': 'by   Γöé
+Γöé  C Suda-King ┬╖ 2024 ┬╖  Γöé
+Γöé  Cited by 2 ΓÇö High     Γöé
+Γöé  priority SDoH terms   Γöé
+Γöé  and definitions were  Γöé
+Γöé  collated from         Γöé
+Γöé  authoritative         Γöé
+Γöé  sources, curated      Γöé
+Γöé  based on publication  Γöé
+Γöé  frequencies, and      Γöé
+Γöé  refined by ...',      Γöé
+Γöé  'position': 3},       Γöé
+Γöé  {'title': 'Directory  Γöé
+Γöé  of Medical            Γöé
+Γöé  Dictionaries',        Γöé
+Γöé  'link':               Γöé
+Γöé  'https://openmd.com/  Γöé
+Γöé  dictionary/medical-d  Γöé
+Γöé  ictionaries',         Γöé
+Γöé  'snippet':            Γöé
+Γöé  'Authoritative        Γöé
+Γöé  descriptions of       Γöé
+Γöé  medical conditions,   Γöé
+Γöé  medications,          Γöé
+Γöé  anatomical terms,     Γöé
+Γöé  and abbreviations.    Γöé
+Γöé  thefreedictionary.co  Γöé
+Γöé  m.', 'position': 4},  Γöé
+Γöé  {'title': 'Medical    Γöé
+Γöé  Terminology: Finding  Γöé
+Γöé  Articles - Research   Γöé
+Γöé  Guides', 'link':      Γöé
+Γöé  'https://libguides.l  Γöé
+Γöé  cc.edu/c.php?g=16787  Γöé
+Γöé  9&p=1102774',         Γöé
+Γöé  'snippet': 'Start by  Γöé
+Γöé  using the library     Γöé
+Γöé  OneSearch to search   Γöé
+Γöé  for a specific        Γöé
+Γöé  health and medicine   Γöé
+Γöé  related topic.        Γöé
+Γöé  medical, and allied   Γöé
+Γöé  health journals.',    Γöé
+Γöé  'position': 5},       Γöé
+Γöé  {'title': 'Medical    Γöé
+Γöé  Reference Sources -   Γöé
+Γöé  Health & Medical      Γöé
+Γöé  Information',         Γöé
+Γöé  'link':               Γöé
+Γöé  'https://libguides.l  Γöé
+Γöé  aw.villanova.edu/hea  Γöé
+Γöé  lthandmedicalinfo',   Γöé
+Γöé  'snippet': 'This      Γöé
+Γöé  link takes the user   Γöé
+Γöé  to a list of          Γöé
+Γöé  electronic medical    Γöé
+Γöé  reference sources     Γöé
+Γöé  available to          Γöé
+Γöé  Villanova students,   Γöé
+Γöé  faculty and staff.',  Γöé
+Γöé  'position': 6},       Γöé
+Γöé  {'title': 'Medical    Γöé
+Γöé  Dictionary', 'link':  Γöé
+Γöé  'https://medical-dic  Γöé
+Γöé  tionary.thefreedicti  Γöé
+Γöé  onary.com/',          Γöé
+Γöé  'snippet': 'Provides  Γöé
+Γöé  authoritative         Γöé
+Γöé  descriptions of       Γöé
+Γöé  medical conditions,   Γöé
+Γöé  medications,          Γöé
+Γöé  anatomical terms,     Γöé
+Γöé  noted medical         Γöé
+Γöé  personalities and     Γöé
+Γöé  much more.',          Γöé
+Γöé  'position': 7},       Γöé
+Γöé  {'title':             Γöé
+Γöé  'Systematized         Γöé
+Γöé  Nomenclature of       Γöé
+Γöé  MedicineΓÇôClinical     Γöé
+Γöé  Terminology ...',     Γöé
+Γöé  'link':               Γöé
+Γöé  'https://medinform.j  Γöé
+Γöé  mir.org/2023/1/e4375  Γöé
+Γöé  0/', 'snippet': 'by   Γöé
+Γöé  R Vuokko ┬╖ 2023 ┬╖     Γöé
+Γöé  Cited by 73 ΓÇö The     Γöé
+Γöé  Systematized Medical  Γöé
+Γöé  Nomenclature for      Γöé
+Γöé  MedicineΓÇôClinical     Γöé
+Γöé  Terminology (SNOMED   Γöé
+Γöé  CT) is an extensive,  Γöé
+Γöé  multi-hierarchical    Γöé
+Γöé  clinical terminology  Γöé
+Γöé  ...', 'position':     Γöé
+Γöé  8}, {'title':         Γöé
+Γöé  'Deciphering Medical  Γöé
+Γöé  Research -            Γöé
+Γöé  Evaluating Health     Γöé
+Γöé  ...', 'link':         Γöé
+Γöé  'https://library.pla  Γöé
+Γöé  netree-sv.org/evalua  Γöé
+Γöé  ting-health-info/dec  Γöé
+Γöé  iphering',            Γöé
+Γöé  'snippet':            Γöé
+Γöé  'MedlinePlus          Γöé
+Γöé  includes a wealth of  Γöé
+Γöé  information from      Γöé
+Γöé  medical dictionaries  Γöé
+Γöé  and encyclopedias to  Γöé
+Γöé  help interpret        Γöé
+Γöé  health-related        Γöé
+Γöé  jargon and            Γöé
+Γöé  terminology.          Γöé
+Γöé  MedlinePlus ( ...',   Γöé
+Γöé  'position': 9}],      Γöé
+Γöé  'peopleAlsoAsk':      Γöé
+Γöé  [{'question': 'What   Γöé
+Γöé  are the sources of    Γöé
+Γöé  medical               Γöé
+Γöé  terminology?',        Γöé
+Γöé  'snippet': '',        Γöé
+Γöé  'title': '', 'link':  Γöé
+Γöé  ''}, {'question':     Γöé
+Γöé  'Is Medline a         Γöé
+Γöé  secondary source?',   Γöé
+Γöé  'snippet': "Many      Γöé
+Γöé  studies and reviews   Γöé
+Γöé  rely on MEDLINE as a  Γöé
+Γöé  primary source when   Γöé
+Γöé  surveying existing    Γöé
+Γöé  knowledge in a        Γöé
+Γöé  field. From a         Γöé
+Γöé  research-literacy     Γöé
+Γöé  perspective, MEDLINE  Γöé
+Γöé  matters because it:   Γöé
+Γöé  Provides systematic   Γöé
+Γöé  access to             Γöé
+Γöé  peer-reviewed         Γöé
+Γöé  biomedical            Γöé
+Γöé  literature, as        Γöé
+Γöé  described in          Γöé
+Γöé  PubMed's database     Γöé
+Γöé  overview.Feb 2,       Γöé
+Γöé  2026", 'title':       Γöé
+Γöé  'What Is MEDLINE? A   Γöé
+Γöé  Simple Guide to the   Γöé
+Γöé  Biomedical            Γöé
+Γöé  Literature            Γöé
+Γöé  Database', 'link':    Γöé
+Γöé  "https://www.pubmed.  Γöé
+Γöé  ai/blog/what-is-medl  Γöé
+Γöé  ine#:~:text=Many%20s  Γöé
+Γöé  tudies%20and%20revie  Γöé
+Γöé  ws%20rely,described%  Γöé
+Γöé  20in%20PubMed's%20da  Γöé
+Γöé  tabase%20overview"},  Γöé
+Γöé   {'question': 'What   Γöé
+Γöé  is a primary data     Γöé
+Γöé  source in             Γöé
+Γöé  healthcare?',         Γöé
+Γöé  'snippet': 'Primary   Γöé
+Γöé  data sources.         Γöé
+Γöé  Primary data is       Γöé
+Γöé  collected to          Γöé
+Γöé  populate your         Γöé
+Γöé  registry database.    Γöé
+Γöé  Primary data sources  Γöé
+Γöé  are typically used    Γöé
+Γöé  when the data of      Γöé
+Γöé  interest are          Γöé
+Γöé  unavailable           Γöé
+Γöé  elsewhere or, if      Γöé
+Γöé  available, are        Γöé
+Γöé  unlikely to be of     Γöé
+Γöé  good enough quality   Γöé
+Γöé  for use in your       Γöé
+Γöé  registry. Primary     Γöé
+Γöé  data includes         Γöé
+Γöé  clinician- and        Γöé
+Γöé  patient-reported      Γöé
+Γöé  data ...', 'title':   Γöé
+Γöé  'Data sources and     Γöé
+Γöé  management -          Γöé
+Γöé  International         Γöé
+Γöé  Society of            Γöé
+Γöé  Nephrology', 'link':  Γöé
+Γöé  'https://www.theisn.  Γöé
+Γöé  org/in-action/resear  Γöé
+Γöé  ch/share-rr/data-sou  Γöé
+Γöé  rces-and-management/  Γöé
+Γöé  #:~:text=Primary%20d  Γöé
+Γöé  ata%20sources,clinic  Γöé
+Γöé  ian%2D%20and%20patie  Γöé
+Γöé  nt%2Dreported%20data  Γöé
+Γöé  '}, {'question':      Γöé
+Γöé  'What are the 4       Γöé
+Γöé  components of a       Γöé
+Γöé  medical term?',       Γöé
+Γöé  'snippet': '',        Γöé
+Γöé  'title': '', 'link':  Γöé
+Γöé  ''}],                 Γöé
+Γöé  'relatedSearches':    Γöé
+Γöé  [{'query': 'Medical   Γöé
+Γöé  Terminology for       Γöé
+Γöé  Health Professions    Γöé
+Γöé  PDF'}, {'query':      Γöé
+Γöé  'Medical Terminology  Γöé
+Γöé  for Health            Γöé
+Γöé  Professions 9th       Γöé
+Γöé  Edition'}, {'query':  Γöé
+Γöé  'Medical Terminology  Γöé
+Γöé  for Health            Γöé
+Γöé  Professions 9th       Γöé
+Γöé  Edition PDF'},        Γöé
+Γöé  {'query': 'Clinical   Γöé
+Γöé  information           Γöé
+Γöé  standards are         Γöé
+Γöé  necessary except      Γöé
+Γöé  for'}, {'query':      Γöé
+Γöé  'What is the use of   Γöé
+Γöé  technology to manage  Γöé
+Γöé  patient care          Γöé
+Γöé  information'}],       Γöé
+Γöé  'credits': 1}         Γöé
+Γöé                        Γöé
+Γöé                        Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇ Γ£à Tool Execution ComΓöÇΓöÉ
+Γöé                        Γöé
+Γöé  Tool Completed        Γöé
+Γöé  Tool:                 Γöé
+Γöé  search_the_internet_  Γöé
+Γöé  with_serper           Γöé
+Γöé  Output:               Γöé
+Γöé  {'searchParameters':  Γöé
+Γöé  {'q': 'xyz123         Γöé
+Γöé  medical term          Γöé
+Γöé  definition', 'type':  Γöé
+Γöé  'search', 'num': 10,  Γöé
+Γöé  'engine': 'google'},  Γöé
+Γöé  'organic':            Γöé
+Γöé  [{'title': 'Medical   Γöé
+Γöé  Dictionary', 'link':  Γöé
+Γöé  'https://www.merriam  Γöé
+Γöé  -webster.com/medical  Γöé
+Γöé  ', 'snippet':         Γöé
+Γöé  'Search medical       Γöé
+Γöé  terms and             Γöé
+Γöé  abbreviations with    Γöé
+Γöé  the most up-to-date   Γöé
+Γöé  and comprehensive     Γöé
+Γöé  medical dictionary    Γöé
+Γöé  from the reference    Γöé
+Γöé  experts at            Γöé
+Γöé  Merriam-Webster.',    Γöé
+Γöé  'position': 1},       Γöé
+Γöé  {'title': 'Medical    Γöé
+Γöé  Dictionary of Health  Γöé
+Γöé  Terms: Q-Z', 'link':  Γöé
+Γöé  'https://www.health.  Γöé
+Γöé  harvard.edu/q-throug  Γöé
+Γöé  h-z', 'snippet':      Γöé
+Γöé  'REM behavior         Γöé
+Γöé  disorder: A sleep     Γöé
+Γöé  disorder marked by    Γöé
+Γöé  movement during REM   Γöé
+Γöé  sleep, when muscles   Γöé
+Γöé  are normally          Γöé
+Γöé  paralyzed. REM        Γöé
+Γöé  rebound: An increase  Γöé
+Γöé  in REM sleep, often   Γöé
+Γöé  ...', 'position':     Γöé
+Γöé  2}, {'title': '75     Γöé
+Γöé  Must-Know Medical     Γöé
+Γöé  Terms,                Γöé
+Γöé  Abbreviations, and    Γöé
+Γöé  Acronyms', 'link':    Γöé
+Γöé  'https://www.sgu.edu  Γöé
+Γöé  /school-of-medicine/  Γöé
+Γöé  blog/medical-terms-a  Γöé
+Γöé  bbreviations-and-acr  Γöé
+Γöé  onyms/', 'snippet':   Γöé
+Γöé  "1. Abrasion: A cut   Γöé
+Γöé  or scrape that        Γöé
+Γöé  typically isn't       Γöé
+Γöé  serious. 2. Abscess:  Γöé
+Γöé  A tender,             Γöé
+Γöé  fluid-filled pocket   Γöé
+Γöé  that forms in         Γöé
+Γöé  tissue, usually due   Γöé
+Γöé  to infection.",       Γöé
+Γöé  'position': 3},       Γöé
+Γöé  {'title': 'A-Z of     Γöé
+Γöé  medical terms',       Γöé
+Γöé  'link':               Γöé
+Γöé  'https://www.rcog.or  Γöé
+Γöé  g.uk/for-the-public/  Γöé
+Γöé  a-z-of-medical-terms  Γöé
+Γöé  /', 'snippet': 'This  Γöé
+Γöé  alphabetical list     Γöé
+Γöé  contains              Γöé
+Γöé  explanations of       Γöé
+Γöé  medical words you     Γöé
+Γöé  may come across on    Γöé
+Γöé  the RCOG website or   Γöé
+Γöé  when you see your     Γöé
+Γöé  doctor.',             Γöé
+Γöé  'position': 4},       Γöé
+Γöé  {'title': 'What do    Γöé
+Γöé  you know about        Γöé
+Γöé  medical               Γöé
+Γöé  abbreviations?',      Γöé
+Γöé  'link':               Γöé
+Γöé  'https://www.faceboo  Γöé
+Γöé  k.com/61568157196133  Γöé
+Γöé  /posts/what-do-you-k  Γöé
+Γöé  now-about-medical-ab  Γöé
+Γöé  breviations/12214112  Γöé
+Γöé  0666605239/',         Γöé
+Γöé  'snippet': 'A         Γöé
+Γöé  medical abbreviation  Γöé
+Γöé  is a shortened form   Γöé
+Γöé  of a medical term,    Γöé
+Γöé  phrase or             Γöé
+Γöé  instruction used by   Γöé
+Γöé  healthcare            Γöé
+Γöé  professionals to      Γöé
+Γöé  simplify ...',        Γöé
+Γöé  'position': 5},       Γöé
+Γöé  {'title': "Medical    Γöé
+Γöé  Abbreviations |       Γöé
+Γöé  Taber's Medical       Γöé
+Γöé  Dictionary", 'link':  Γöé
+Γöé  'https://www.tabers.  Γöé
+Γöé  com/tabersonline/vie  Γöé
+Γöé  w/Tabers-Dictionary/  Γöé
+Γöé  767492/all/Medical_A  Γöé
+Γöé  bbreviations',        Γöé
+Γöé  'snippet': "Medical   Γöé
+Γöé  Abbreviations         Γöé
+Γöé  answers are found in  Γöé
+Γöé  the Taber's Medical   Γöé
+Γöé  Dictionary powered    Γöé
+Γöé  by Unbound Medicine.  Γöé
+Γöé  Available for         Γöé
+Γöé  iPhone, iPad,         Γöé
+Γöé  Android, and Web.",   Γöé
+Γöé  'position': 6},       Γöé
+Γöé  {'title': 'Medical    Γöé
+Γöé  Dictionary', 'link':  Γöé
+Γöé  'https://medical-dic  Γöé
+Γöé  tionary.thefreedicti  Γöé
+Γöé  onary.com/',          Γöé
+Γöé  'snippet': 'provides  Γöé
+Γöé  authoritative         Γöé
+Γöé  descriptions of       Γöé
+Γöé  medical conditions,   Γöé
+Γöé  medications,          Γöé
+Γöé  anatomical terms,     Γöé
+Γöé  noted medical         Γöé
+Γöé  personalities and     Γöé
+Γöé  much more.',          Γöé
+Γöé  'position': 7},       Γöé
+Γöé  {'title': 'Medical    Γöé
+Γöé  Abbreviations',       Γöé
+Γöé  'link':               Γöé
+Γöé  'https://www.actx.ed  Γöé
+Γöé  u/respiratory/files/  Γöé
+Γöé  filecabinet/folder5/  Γöé
+Γöé  1101_abbreviations.p  Γöé
+Γöé  df', 'snippet': 'x    Γöé
+Γöé  dash above any        Γöé
+Γöé  symbol indicates a    Γöé
+Γöé  mean value. ╦Ö x dot   Γöé
+Γöé  above any symbol      Γöé
+Γöé  indicates a timed     Γöé
+Γöé  event a before abd    Γöé
+Γöé  abdomen. ABG          Γöé
+Γöé  arterial blood        Γöé
+Γöé  gas.', 'position':    Γöé
+Γöé  8}],                  Γöé
+Γöé  'peopleAlsoAsk':      Γöé
+Γöé  [{'question': 'What   Γöé
+Γöé  does y mean in        Γöé
+Γöé  medical               Γöé
+Γöé  terminology?',        Γöé
+Γöé  'snippet': '',        Γöé
+Γöé  'title': '', 'link':  Γöé
+Γöé  ''}, {'question':     Γöé
+Γöé  'What is dL in        Γöé
+Γöé  medical terms?',      Γöé
+Γöé  'snippet': '',        Γöé
+Γöé  'title': '', 'link':  Γöé
+Γöé  ''}, {'question':     Γöé
+Γöé  'What does the        Γöé
+Γöé  medical term mean?',  Γöé
+Γöé  'snippet': '',        Γöé
+Γöé  'title': '', 'link':  Γöé
+Γöé  ''}, {'question':     Γöé
+Γöé  'What is the prefix   Γöé
+Γöé  and suffix for        Γöé
+Γöé  endoscopy?',          Γöé
+Γöé  'snippet': '',        Γöé
+Γöé  'title': 'Break It    Γöé
+Γöé  Down: Endoscopy -     Γöé
+Γöé  YouTube', 'link':     Γöé
+Γöé  '/goto?url=CAESYgHuR  Γöé
+Γöé  6pNtojZEkkuaWS_TN2kb  Γöé
+Γöé  t1R8bTIqLCfjfbOGCaQR  Γöé
+Γöé  _AGxmkHSz2ASLg--kGVu  Γöé
+Γöé  q9lie7mUpu7jy3pwsR7b  Γöé
+Γöé  lhZyh4fmBNPRwPU76Ex1  Γöé
+Γöé  _VEASNEC3DKf3glr8Cqs  Γöé
+Γöé  ID81gwY'}],           Γöé
+Γöé  'relatedSearches':    Γöé
+Γöé  [{'query': 'Xyz123    Γöé
+Γöé  medical term          Γöé
+Γöé  definition pdf'},     Γöé
+Γöé  {'query': '50         Γöé
+Γöé  medical terms'},      Γöé
+Γöé  {'query': 'Xyz123     Γöé
+Γöé  medical term          Γöé
+Γöé  definition            Γöé
+Γöé  example'}, {'query':  Γöé
+Γöé  'Xyz123 medical term  Γöé
+Γöé  definition cancer'},  Γöé
+Γöé  {'query': '100 most   Γöé
+Γöé  common medical        Γöé
+Γöé  words'}, {'query':    Γöé
+Γöé  '50 medical terms     Γöé
+Γöé  with meaning'},       Γöé
+Γöé  {'query': 'Medical    Γöé
+Γöé  terms a to z'},       Γöé
+Γöé  {'query': 'Medical    Γöé
+Γöé  terms a to Z pdf'}],  Γöé
+Γöé  'credits': 1}         Γöé
+Γöé                        Γöé
+Γöé                        Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇ[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'authoritative sources for xyz123 medical term', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Medical Terminology: Library Resources - Research G...[0m
+[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'xyz123 medical term definition', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Medical Dictionary', 'link': 'https://www.merriam-webster.com/medi...[0m
+[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'xyz123 medical term medical literature', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Medical Subject Headings Used to Search the Biomedical ......[0m
+ Γ£à Tool Execution ComΓöÇΓöÉ
+Γöé                        Γöé
+Γöé  Tool Completed        Γöé
+Γöé  Tool:                 Γöé
+Γöé  search_the_internet_  Γöé
+Γöé  with_serper           Γöé
+Γöé  Output:               Γöé
+Γöé  {'searchParameters':  Γöé
+Γöé  {'q': 'xyz123         Γöé
+Γöé  medical term medical  Γöé
+Γöé  literature', 'type':  Γöé
+Γöé  'search', 'num': 10,  Γöé
+Γöé  'engine': 'google'},  Γöé
+Γöé  'organic':            Γöé
+Γöé  [{'title': 'Medical   Γöé
+Γöé  Subject Headings      Γöé
+Γöé  Used to Search the    Γöé
+Γöé  Biomedical ...',      Γöé
+Γöé  'link':               Γöé
+Γöé  'https://pmc.ncbi.nl  Γöé
+Γöé  m.nih.gov/articles/P  Γöé
+Γöé  MC130076/',           Γöé
+Γöé  'snippet': 'by MH     Γöé
+Γöé  Coletti ┬╖ 2001 ┬╖      Γöé
+Γöé  Cited by 335 ΓÇö The    Γöé
+Γöé  listΓÇöcalled Medical   Γöé
+Γöé  Subject Headings, or  Γöé
+Γöé  MeSHΓÇöconsists of      Γöé
+Γöé  single- and           Γöé
+Γöé  multi-word terms      Γöé
+Γöé  that are used to      Γöé
+Γöé  index and catalog     Γöé
+Γöé  the medical           Γöé
+Γöé  literature.',         Γöé
+Γöé  'position': 1},       Γöé
+Γöé  {'title': 'Added      Γöé
+Γöé  Value of Medical      Γöé
+Γöé  Subject Headings      Γöé
+Γöé  Terms in ...',        Γöé
+Γöé  'link':               Γöé
+Γöé  'https://www.jmir.or  Γöé
+Γöé  g/2024/1/e53781/',    Γöé
+Γöé  'snippet': 'by V      Γöé
+Γöé  Leblanc ┬╖ 2024 ┬╖      Γöé
+Γöé  Cited by 26 ΓÇö The     Γöé
+Γöé  objective of this     Γöé
+Γöé  study was to          Γöé
+Γöé  estimate the added    Γöé
+Γöé  value of using MeSH   Γöé
+Γöé  terms in PubMed       Γöé
+Γöé  queries for           Γöé
+Γöé  systematic reviews    Γöé
+Γöé  (SRs).', 'position':  Γöé
+Γöé  2}, {'title':         Γöé
+Γöé  'Deciphering Medical  Γöé
+Γöé  Research -            Γöé
+Γöé  Evaluating Health     Γöé
+Γöé  ...', 'link':         Γöé
+Γöé  'https://library.pla  Γöé
+Γöé  netree-sv.org/evalua  Γöé
+Γöé  ting-health-info/dec  Γöé
+Γöé  iphering',            Γöé
+Γöé  'snippet': 'Medical   Γöé
+Γöé  literature is         Γöé
+Γöé  notorious for using   Γöé
+Γöé  jargon words and      Γöé
+Γöé  abbreviations. Here   Γöé
+Γöé  are some              Γöé
+Γöé  dictionaries to help  Γöé
+Γöé  translate: What Did   Γöé
+Γöé  My Doctor Say? from   Γöé
+Γöé  medical ...',         Γöé
+Γöé  'position': 3},       Γöé
+Γöé  {'title': 'What is    Γöé
+Γöé  MeSH (Medical         Γöé
+Γöé  Subject Headings)     Γöé
+Γöé  for biomedical ...',  Γöé
+Γöé  'link':               Γöé
+Γöé  'https://www.faceboo  Γöé
+Γöé  k.com/groups/1462094  Γöé
+Γöé  437292524/posts/3538  Γöé
+Γöé  111966357417/',       Γöé
+Γöé  'snippet': 'MeSH      Γöé
+Γöé  stands for Medical    Γöé
+Γöé  Subject Headings.     Γöé
+Γöé  used primarily to     Γöé
+Γöé  index, catalog, and   Γöé
+Γöé  search biomedical     Γöé
+Γöé  and health-related    Γöé
+Γöé  literature',          Γöé
+Γöé  'position': 4},       Γöé
+Γöé  {'title':             Γöé
+Γöé  'Literature           Γöé
+Γöé  Searching: Step 3 -   Γöé
+Γöé  Locate subject        Γöé
+Γöé  headings ...',        Γöé
+Γöé  'link':               Γöé
+Γöé  'https://laneguides.  Γöé
+Γöé  stanford.edu/LitSear  Γöé
+Γöé  ch/step3',            Γöé
+Γöé  'snippet': 'You can   Γöé
+Γöé  search the MeSH       Γöé
+Γöé  database that can be  Γöé
+Γöé  accessed through the  Γöé
+Γöé  PubMed homepage.      Γöé
+Γöé  Type a concept in     Γöé
+Γöé  the search bar to     Γöé
+Γöé  see the suggested     Γöé
+Γöé  MeSH terms.',         Γöé
+Γöé  'position': 5},       Γöé
+Γöé  {'title': 'Search     Γöé
+Γöé  terms - Conducting a  Γöé
+Γöé  literature search',   Γöé
+Γöé  'link':               Γöé
+Γöé  'https://hslguides.m  Γöé
+Γöé  ed.nyu.edu/literatur  Γöé
+Γöé  esearch/searchterms'  Γöé
+Γöé  , 'snippet': "MeSH,   Γöé
+Γöé  or ΓÇ£Medical Subject   Γöé
+Γöé  HeadingsΓÇ¥, is the     Γöé
+Γöé  National Library of   Γöé
+Γöé  Medicine's            Γöé
+Γöé  controlled            Γöé
+Γöé  vocabulary thesaurus  Γöé
+Γöé  used for indexing     Γöé
+Γöé  PubMed citations.",   Γöé
+Γöé  'position': 6},       Γöé
+Γöé  {'title': 'Scoping    Γöé
+Γöé  Reviews: Medical      Γöé
+Γöé  Subject Headings      Γöé
+Γöé  (MeSH)', 'link':      Γöé
+Γöé  'https://libguides.w  Γöé
+Γöé  ustl.edu/c.php?g=131  Γöé
+Γöé  6625&p=9681271',      Γöé
+Γöé  'snippet': 'Medical   Γöé
+Γöé  Subject Headings      Γöé
+Γöé  (MeSH) is a           Γöé
+Γöé  controlled            Γöé
+Γöé  vocabulary thesaurus  Γöé
+Γöé  of terms created by   Γöé
+Γöé  the National Library  Γöé
+Γöé  of Medicine and used  Γöé
+Γöé  for MEDLINE ...',     Γöé
+Γöé  'position': 7},       Γöé
+Γöé  {'title': 'BE 1251:   Γöé
+Γöé  Understanding         Γöé
+Γöé  Medical               Γöé
+Γöé  Terminology',         Γöé
+Γöé  'link':               Γöé
+Γöé  'https://guides.lib.  Γöé
+Γöé  lsu.edu/c.php?g=8805  Γöé
+Γöé  55&p=6327726',        Γöé
+Γöé  'snippet': 'BE 1251:  Γöé
+Γöé  Understanding         Γöé
+Γöé  Medical Terminology.  Γöé
+Γöé  A starting guide for  Γöé
+Γöé  BE 1251. Background   Γöé
+Γöé  ┬╖ Understanding       Γöé
+Γöé  Medical Terminology   Γöé
+Γöé  ┬╖ Research Resources  Γöé
+Γöé  ...', 'position':     Γöé
+Γöé  8}, {'title': 'MeSH   Γöé
+Γöé  - PubMed - LibGuides  Γöé
+Γöé  at Ohio State         Γöé
+Γöé  University-Health     Γöé
+Γöé  ...', 'link':         Γöé
+Γöé  'https://hslguides.o  Γöé
+Γöé  su.edu/pubmed/mesh',  Γöé
+Γöé   'snippet': 'MeSH     Γöé
+Γöé  stands for the        Γöé
+Γöé  Medical Subject       Γöé
+Γöé  Headings. These are   Γöé
+Γöé  the "official" terms  Γöé
+Γöé  used by the National  Γöé
+Γöé  Library of Medicine   Γöé
+Γöé  to index items that   Γöé
+Γöé  are added to          Γöé
+Γöé  MEDLINE/ ...',        Γöé
+Γöé  'position': 9}],      Γöé
+Γöé  'peopleAlsoAsk':      Γöé
+Γöé  [{'question': "What   Γöé
+Γöé  is MEDLINE's          Γöé
+Γöé  controlled            Γöé
+Γöé  vocabulary called?",  Γöé
+Γöé  'snippet': 'The       Γöé
+Γöé  Medical Subject       Γöé
+Γöé  Headings (MeSH)       Γöé
+Γöé  thesaurus is a        Γöé
+Γöé  controlled and        Γöé
+Γöé  hierarchically-organ  Γöé
+Γöé  ized vocabulary       Γöé
+Γöé  produced by the       Γöé
+Γöé  National Library of   Γöé
+Γöé  Medicine. It is used  Γöé
+Γöé  for indexing,         Γöé
+Γöé  cataloging, and       Γöé
+Γöé  searching of          Γöé
+Γöé  biomedical and        Γöé
+Γöé  health-related        Γöé
+Γöé  information.',        Γöé
+Γöé  'title': 'Medical     Γöé
+Γöé  Subject Headings -    Γöé
+Γöé  Home Page - National  Γöé
+Γöé  Library of            Γöé
+Γöé  Medicine', 'link':    Γöé
+Γöé  'https://www.nlm.nih  Γöé
+Γöé  .gov/mesh/meshhome.h  Γöé
+Γöé  tml#:~:text=The%20Me  Γöé
+Γöé  dical%20Subject%20He  [96m
+[2026-08-03 00:14:51][0m[93m[INFO]: [0m[1m[93mMax RPM reached, waiting for next minute to start.[0m
+Γöé
+Γöé  adings%20(MeSH,biome  Γöé
+Γöé  dical%20and%20health  Γöé
+Γöé  %2Drelated%20informa  Γöé
+Γöé  tion.'},              Γöé
+Γöé  {'question': 'What    Γöé
+Γöé  does medical          Γöé
+Γöé  literature mean?',    Γöé
+Γöé  'snippet': 'Medical   Γöé
+Γöé  literature is the     Γöé
+Γöé  scientific            Γöé
+Γöé  literature of         Γöé
+Γöé  medicine: articles    Γöé
+Γöé  in journals and       Γöé
+Γöé  texts in books        Γöé
+Γöé  devoted to the field  Γöé
+Γöé  of medicine.',        Γöé
+Γöé  'title': 'Medical     Γöé
+Γöé  literature -          Γöé
+Γöé  Wikipedia', 'link':   Γöé
+Γöé  'https://en.wikipedi  Γöé
+Γöé  a.org/wiki/Medical_l  Γöé
+Γöé  iterature#:~:text=Me  Γöé
+Γöé  dical%20literature%2  Γöé
+Γöé  0is%20the%20scientif  Γöé
+Γöé  ic,to%20the%20field%  Γöé
+Γöé  20of%20medicine.'},   Γöé
+Γöé  {'question': 'What    Γöé
+Γöé  are medical           Γöé
+Γöé  terminologies?',      Γöé
+Γöé  'snippet': 'Medical   Γöé
+Γöé  terminology refers    Γöé
+Γöé  to the specialized    Γöé
+Γöé  language used in      Γöé
+Γöé  biomedical science    Γöé
+Γöé  and clinical          Γöé
+Γöé  medicine, which       Γöé
+Γöé  includes              Γöé
+Γöé  terminology, jargon,  Γöé
+Γöé  and acronyms not      Γöé
+Γöé  commonly understood   Γöé
+Γöé  by the general        Γöé
+Γöé  public or new         Γöé
+Γöé  medical students.',   Γöé
+Γöé  'title': 'Medical     Γöé
+Γöé  Terminology - an      Γöé
+Γöé  overview |            Γöé
+Γöé  ScienceDirect         Γöé
+Γöé  Topics', 'link':      Γöé
+Γöé  'https://www.science  Γöé
+Γöé  direct.com/topics/so  Γöé
+Γöé  cial-sciences/medica  Γöé
+Γöé  l-terminology#:~:tex  Γöé
+Γöé  t=Medical%20terminol  Γöé
+Γöé  ogy%20refers%20to%20  Γöé
+Γöé  the,public%20or%20ne  Γöé
+Γöé  w%20medical%20studen  Γöé
+Γöé  ts.'}, {'question':   Γöé
+Γöé  'What is a MeSH term  Γöé
+Γöé  in research?',        Γöé
+Γöé  'snippet': '',        Γöé
+Γöé  'title': '', 'link':  Γöé
+Γöé  ''}],                 Γöé
+Γöé  'relatedSearches':    Γöé
+Γöé  [{'query': 'MeSH      Γöé
+Γöé  Terms list'},         Γöé
+Γöé  {'query': 'MeSH       Γöé
+Γöé  terms search'},       Γöé
+Γöé  {'query': 'Medical    Γöé
+Γöé  Subject Headings      Γöé
+Γöé  PDF'}, {'query':      Γöé
+Γöé  'How to search MeSH   Γöé
+Γöé  terms in PubMed'},    Γöé
+Γöé  {'query': 'Mesh       Γöé
+Γöé  medical               Γöé
+Γöé  abbreviation'},       Γöé
+Γöé  {'query': 'Examples   Γöé
+Γöé  of MeSH terms'},      Γöé
+Γöé  {'query': 'MeSH       Γöé
+Γöé  terms generator'},    Γöé
+Γöé  {'query': 'MeSH       Γöé
+Γöé  Terms browser'}],     Γöé
+Γöé  'credits': 1}         Γöé
+Γöé                        Γöé
+Γöé                        Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
+ΓöîΓöÇ Γ£à Agent Final AnswerΓöÇΓöÉ
+Γöé                        Γöé
+Γöé  Agent: Medical and    Γöé
+Γöé  Nutritional Research  Γöé
+Γöé  Specialist            Γöé
+Γöé                        Γöé
+Γöé  Final Answer:         Γöé
+Γöé  {"summary": "No       Γöé
+Γöé  relevant information  Γöé
+Γöé  was found for the     Γöé
+Γöé  specific query        Γöé
+Γöé  'asdkjfh qwerty       Γöé
+Γöé  nonsense medical      Γöé
+Γöé  term xyz123'. The     Γöé
+Γöé  search results are    Γöé
+Γöé  not related to the    Γöé
+Γöé  query and only        Γöé
+Γöé  provide general       Γöé
+Γöé  information about     Γöé
+Γöé  medical terminology,  Γöé
+Γöé  dictionaries, and     Γöé
+Γöé  literature            Γöé
+Γöé  searching. While      Γöé
+Γöé  there are             Γöé
+Γöé  authoritative         Γöé
+Γöé  sources for medical   Γöé
+Γöé  terms and             Γöé
+Γöé  definitions in the    Γöé
+Γöé  search results,       Γöé
+Γöé  there is no reliable  Γöé
+Γöé  information found     Γöé
+Γöé  for the specific      Γöé
+Γöé  query 'xyz123         Γöé
+Γöé  medical term'.        Γöé
+Γöé  However, the search   Γöé
+Γöé  results suggest that  Γöé
+Γöé  'xyz123' is likely a  Γöé
+Γöé  nonsensical or        Γöé
+Γöé  invalid term, and     Γöé
+Γöé  therefore, the query  Γöé
+Γöé  is not well-defined   Γöé
+Γöé  or relevant.          Γöé
+Γöé  Therefore, the        Γöé
+Γöé  'sources_found' is    Γöé
+Γöé  set to False and the  Γöé
+Γöé  'summary' states      Γöé
+Γöé  that no relevant      Γöé
+Γöé  information was       Γöé
+Γöé  found for this        Γöé
+Γöé  specific query.",     Γöé
+Γöé  "sources_found":      Γöé
+Γöé  false,                Γöé
+Γöé  "source_notes":       Γöé
+Γöé  null}                 Γöé
+Γöé                        Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇ ≡ƒôï Task Completion ΓöÇΓöÇΓöÉ
+Γöé                        Γöé
+Γöé  Task Completed        Γöé
+Γöé  Name:                 Γöé
+Γöé  research_query_task   Γöé
+Γöé  Agent: Medical and    Γöé
+Γöé  Nutritional Research  Γöé
+Γöé  Specialist            Γöé
+Γöé                        Γöé
+Γöé                        Γöé
+Γöé                        Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+
+RAW OUTPUT (truncated):
+{"summary": "No relevant information was found for the specific query 'asdkjfh qwerty nonsense medical term xyz123'. The search results are not related to the query and only provide general information about medical terminology, dictionaries, and literature searching. While there are authoritative sources for medical terms and definitions in the search results, there is no reliable information found for the specific query 'xyz123 medical term'. However, the search results suggest that 'xyz123' is likely a nonsensical or invalid term, and therefore, the query is not well-defined or relevant. Th
+
+PARSED:
+{
+  "summary": "No relevant information was found for the specific query 'asdkjfh qwerty nonsense medical term xyz123'. The search results are not related to the query and only provide general information about medical terminology, dictionaries, and literature searching. While there are authoritative sources for medical terms and definitions in the search results, there is no reliable information found for the specific query 'xyz123 medical term'. However, the search results suggest that 'xyz123' is likely a nonsensical or invalid term, and therefore, the query is not well-defined or relevant. Therefore, the 'sources_found' is set to False and the 'summary' states that no relevant information was found for this specific query.",
+  "sources_found": false,
+  "source_notes": null
+}
+
+  Result: Γ£à PASS
+
+================================================================================
+  RESEARCH CREW ΓÇö TEST RESULTS SUMMARY
+================================================================================
+  ID       Status    Description
+  ----------------------------------------------------------------------------
+  TC-R02   Γ£à PASS      meaningless query ΓåÆ no reliable information
+  ----------------------------------------------------------------------------
+  TOTAL: 1/1 passed
+
+ΓöîΓöÇΓöÇΓöÇ Crew Completion ΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                        Γöé
+Γöé  Crew Execution        Γöé
+Γöé  Completed             Γöé
+Γöé  Name: ResearchCrew    Γöé
+Γöé  ID:                   Γöé
+Γöé  8dc6d981-362f-411f-9  Γöé
+Γöé  008-07ae46a1fde2      Γöé
+Γöé  Final Output:         Γöé
+Γöé  {"summary": "No       Γöé
+Γöé  relevant information  Γöé
+Γöé  was found for the     Γöé
+Γöé  specific query        Γöé
+Γöé  'asdkjfh qwerty       Γöé
+Γöé  nonsense medical      Γöé
+Γöé  term xyz123'. The     Γöé
+Γöé  search results are    Γöé
+Γöé  not related to the    Γöé
+Γöé  query and only        Γöé
+Γöé  provide general       Γöé
+Γöé  information about     Γöé
+Γöé  medical terminology,  Γöé
+Γöé  dictionaries, and     Γöé
+Γöé  literature            Γöé
+Γöé  searching. While      Γöé
+Γöé  there are             Γöé
+Γöé  authoritative         Γöé
+Γöé  sources for medical   Γöé
+Γöé  terms and             Γöé
+Γöé  definitions in the    Γöé
+Γöé  search results,       Γöé
+Γöé  there is no reliable  Γöé
+Γöé  information found     Γöé
+Γöé  for the specific      Γöé
+Γöé  query 'xyz123         Γöé
+Γöé  medical term'.        Γöé
+Γöé  However, the search   Γöé
+Γöé  results suggest that  Γöé
+Γöé  'xyz123' is likely a  Γöé
+Γöé  nonsensical or        Γöé
+Γöé  invalid term, and     Γöé
+Γöé  therefore, the query  Γöé
+Γöé  is not well-defined   Γöé
+Γöé  or relevant.          Γöé
+Γöé  Therefore, the        Γöé
+Γöé  'sources_found' is    Γöé
+Γöé  set to False and the  Γöé
+Γöé  'summary' states      Γöé
+Γöé  that no relevant      Γöé
+Γöé  information was       Γöé
+Γöé  found for this        Γöé
+Γöé  specific query.",     Γöé
+Γöé  "sources_found":      Γöé
+Γöé  false,                Γöé
+Γöé  "source_notes":       Γöé
+Γöé  null}                 Γöé
+Γöé                        Γöé
+Γöé                        Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇ Tracing Status ΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                        Γöé
+Γöé  Info: Tracing is      Γöé
+Γöé  disabled.             Γöé
+Γöé                        Γöé
+Γöé  To enable tracing,    Γöé
+Γöé  do any one of these:  Γöé
+Γöé  ΓÇó Set tracing=True    Γöé
+Γöé  in your Crew/Flow     Γöé
+Γöé  code                  Γöé
+Γöé  ΓÇó Set                 Γöé
+Γöé  CREWAI_TRACING_ENABL  Γöé
+Γöé  ED=true in your       Γöé
+Γöé  project's .env file   Γöé
+Γöé  ΓÇó Run: crewai traces  Γöé
+Γöé  enable                Γöé
+Γöé                        Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
