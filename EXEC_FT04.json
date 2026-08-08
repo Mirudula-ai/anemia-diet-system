@@ -1,31 +1,13 @@
 {
   "passed": true,
-  "elapsed": 64.87663698196411,
+  "elapsed": 65.04963731765747,
   "output": {
     "safety_tier": "MONITOR",
     "content_mode": "full_plan",
-    "morning": [],
-    "afternoon_evening": [
-      {
-        "label": "apple",
-        "serving_size": "2"
-      },
-      {
-        "label": "broccoli",
-        "serving_size": "1"
-      }
-    ],
-    "night": [
-      {
-        "label": "chicken",
-        "serving_size": "4"
-      },
-      {
-        "label": "rice",
-        "serving_size": "1"
-      }
-    ],
-    "safety_note": "You are experiencing dizziness, which is a symptom that needs to be watched. Please monitor your symptoms and follow up with your doctor if they worsen or persist.",
+    "morning": null,
+    "afternoon_evening": null,
+    "night": null,
+    "safety_note": "You are experiencing fatigue with a clinical watch flag, which requires monitoring.",
     "closing_line": "This is food-based support, not a diagnosis."
   }
 }

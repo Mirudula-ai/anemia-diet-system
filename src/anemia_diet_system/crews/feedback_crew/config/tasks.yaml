@@ -22,6 +22,7 @@ track_adherence_task:
 revise_plan_task:
   description: >
     Using the parsed feedback from `parse_feedback_task` and the adherence summary from `track_adherence_task`, regenerate ONLY the affected part of the `current_plan`. If feedback indicates a missed allergy or safety issue, set `requires_allergy_recheck` to true; otherwise false. Return the revised plan segment and an encouraging note.
+    CRITICAL: Your response must be the JSON object itself, not code that generates it. Do not write function definitions, imports, or example usage. Just the final JSON data.
   expected_output: >
     A JSON object with keys:
       - revised_plan (list of food items or plan segment)

@@ -38,6 +38,11 @@ synthesize_final_output_task:
     all be null. Otherwise, include the plan slots (morning,
     afternoon_evening, night) populated from diet_plan, and optional
     safety_note, and always end with the closing line.
+    If diet_plan is null or not provided in patient_input, set morning,
+    afternoon_evening, and night to null or empty lists -- do NOT invent,
+    fabricate, or hallucinate food items that were not in the provided
+    diet_plan. Only use food items that actually appear in the diet_plan
+    field you received.
 
     Output ONLY a valid JSON object -- no markdown, no code blocks, no
     python/js code, no explanation, no preamble.
