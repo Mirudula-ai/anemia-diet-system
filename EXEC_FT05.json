@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "elapsed": 65.472576379776,
+  "output": {
+    "safety_tier": "URGENT",
+    "content_mode": "safety_override",
+    "safety_note": "You're experiencing severe dizziness and a moderate headache, which are concerning symptoms that require prompt medical attention.",
+    "morning": null,
+    "afternoon_evening": null,
+    "night": null,
+    "closing_line": null
+  }
+}

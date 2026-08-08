@@ -1,0 +1,95 @@
+{
+  "passed": true,
+  "elapsed": 194.38661408424377,
+  "output": {
+    "safety_tier": "NONE",
+    "content_mode": "full_plan",
+    "morning": [
+      {
+        "name": "Spinach and feta omelet",
+        "time_slot": "morning",
+        "enhancers": [
+          "vitamin C"
+        ],
+        "inhibitors": [
+          "caffeine",
+          "calcium",
+          "phytates"
+        ]
+      },
+      {
+        "name": "Scrambled eggs with spinach",
+        "time_slot": "morning",
+        "enhancers": [
+          "vitamin C"
+        ],
+        "inhibitors": [
+          "caffeine",
+          "phytates"
+        ]
+      },
+      {
+        "name": "Orange (as vitamin C enhancer)",
+        "time_slot": "morning",
+        "enhancers": null,
+        "inhibitors": null
+      },
+      {
+        "name": "Coffee",
+        "time_slot": "morning",
+        "enhancers": null,
+        "inhibitors": [
+          "iron absorption"
+        ]
+      },
+      {
+        "name": "Black tea",
+        "time_slot": "morning",
+        "enhancers": null,
+        "inhibitors": [
+          "iron absorption"
+        ]
+      },
+      {
+        "name": "Calcium-fortified yogurt",
+        "time_slot": "morning",
+        "enhancers": null,
+        "inhibitors": [
+          "iron absorption"
+        ]
+      }
+    ],
+    "afternoon_evening": [
+      {
+        "name": "Mushroom biryani",
+        "time_slot": "afternoon-evening",
+        "enhancers": [
+          "complex carbohydrates",
+          "high fiber foods"
+        ],
+        "inhibitors": null
+      },
+      {
+        "name": "Pumpkin seeds",
+        "time_slot": "afternoon-evening",
+        "enhancers": null,
+        "inhibitors": null
+      },
+      {
+        "name": "Roasted eggplant with herbs and egg",
+        "time_slot": "afternoon-evening",
+        "enhancers": null,
+        "inhibitors": null
+      },
+      {
+        "name": "Phytoene-rich vegetable juice",
+        "time_slot": "afternoon-evening",
+        "enhancers": null,
+        "inhibitors": null
+      }
+    ],
+    "night": null,
+    "safety_note": "No symptoms or risk factors were identified that require immediate attention or monitoring.",
+    "closing_line": "This is food-based support, not a diagnosis."
+  }
+}

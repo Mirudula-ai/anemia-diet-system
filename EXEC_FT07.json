@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "elapsed": 67.30186200141907,
+  "output": {
+    "revised_plan": [
+      {
+        "name": "Spinach (cooked)",
+        "time_slot": "morning"
+      },
+      {
+        "name": "Lentils (boiled)",
+        "time_slot": "afternoon-evening"
+      },
+      {
+        "name": "Chickpeas (roasted)",
+        "time_slot": "night"
+      }
+    ],
+    "requires_allergy_recheck": false,
+    "note": ""
+  }
+}

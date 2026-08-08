@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "elapsed": 65.48437356948853,
+  "output": {
+    "safety_tier": "NONE",
+    "content_mode": "full_plan",
+    "morning": [
+      {
+        "name": "Spinach (cooked)"
+      },
+      {
+        "name": "Lentils (boiled)"
+      },
+      {
+        "name": "Chickpeas (roasted)"
+      }
+    ],
+    "afternoon_evening": [
+      {
+        "name": "Chickpeas (roasted)"
+      }
+    ],
+    "night": [
+      {
+        "name": "Chickpeas (roasted)"
+      }
+    ],
+    "safety_note": "",
+    "closing_line": "This is food-based support, not a diagnosis."
+  }
+}
