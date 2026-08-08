@@ -1,5 +1,9 @@
 import json, os, sys, time
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv(override=True)
 
 # Ensure src on PYTHONPATH for imports
 project_root = Path(__file__).resolve().parents[1]

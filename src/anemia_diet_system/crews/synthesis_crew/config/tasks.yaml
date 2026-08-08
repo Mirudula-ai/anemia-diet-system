@@ -1,6 +1,8 @@
 track_symptom_trends_task:
   description: >
     Compare this week's logged symptoms (symptom_log) to prior weeks (symptom_log_history) and produce a list of recurring symptoms with their classification: "new_acute" if it appears for the first time this week, or "stable_chronic" if it was present in prior weeks as well. If symptom_log_history is empty, return an empty list under `symptom_trends`.
+
+    Output ONLY a valid JSON object — no markdown, no explanation, no preamble, no code blocks.
   expected_output: >
     A JSON object with a single key `symptom_trends` containing a list of objects, each with:
       - `symptom` (string)
@@ -11,6 +13,8 @@ track_symptom_trends_task:
 generate_adherence_feedback_task:
   description: >
     Analyze the adherence_summary (from the Feedback & Adaptation Crew) and the feedback_log to detect a clear pattern of missed meals or repeated issues. If a genuine pattern is found, output a single encouraging note describing the pattern (e.g., "You've skipped the iron‑rich breakfast three days this week"). If no pattern is evident, output an empty string under `adherence_note`.
+
+    Output ONLY a valid JSON object — no markdown, no explanation, no preamble, no code blocks.
   expected_output: >
     A JSON object with a single key `adherence_note` (string). Empty string when no pattern.
   agent: feedback_adherence_agent
@@ -18,7 +22,25 @@ generate_adherence_feedback_task:
 
 synthesize_final_output_task:
   description: >
-    Merge the diet plan, safety tier/message, biomarker observations, symptom trends, and adherence note into a single structured output. Follow the hard rule: if `safety_tier` is "URGENT" or "EMERGENCY", set `content_mode` to "safety_override" and include only the safety_note (full safety_message) with no plan or other content. Otherwise, include the plan slots (morning, afternoon_evening, night) and optional safety_note, and always end with the closing line.
+    You will receive the input as a JSON string under the key
+    patient_input: {patient_input}
+    Parse it first. It contains these fields: safety_tier
+    (string: NONE, MONITOR, URGENT, or EMERGENCY), safety_message (string),
+    diet_plan (list or null), biomarker_observations (object or null). You
+    will also receive context from track_symptom_trends_task (symptom_trends)
+    and generate_adherence_feedback_task (adherence_note).
+
+    Read safety_tier from the parsed patient_input FIRST, before doing
+    anything else. Follow this hard rule: if safety_tier is 'URGENT' or
+    'EMERGENCY', set content_mode to 'safety_override' and include only
+    the safety_note (the full safety_message) with no plan or other
+    content -- morning, afternoon_evening, night, and closing_line must
+    all be null. Otherwise, include the plan slots (morning,
+    afternoon_evening, night) populated from diet_plan, and optional
+    safety_note, and always end with the closing line.
+
+    Output ONLY a valid JSON object -- no markdown, no code blocks, no
+    python/js code, no explanation, no preamble.
   expected_output: >
     {
       "safety_tier": "NONE|MONITOR|URGENT|EMERGENCY",

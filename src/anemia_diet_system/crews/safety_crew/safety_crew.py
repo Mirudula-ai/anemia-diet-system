@@ -62,7 +62,9 @@ class SafetyCrew:
 
     @agent
     def symptom_tagger_agent(self) -> Agent:
-        model_name = os.getenv("LLM_MODEL", "groq/llama-3.3-70b-versatile")
+        # Safety classification MUST use a capable model.
+        # SAFETY_LLM_MODEL overrides LLM_MODEL for this crew.
+        model_name = os.getenv("SAFETY_LLM_MODEL", "groq/llama-3.3-70b-versatile")
         my_llm = LLM(
             model=model_name,
             timeout=30,
@@ -77,7 +79,9 @@ class SafetyCrew:
 
     @agent
     def symptom_escalation_agent(self) -> Agent:
-        model_name = os.getenv("LLM_MODEL", "groq/llama-3.3-70b-versatile")
+        # Safety classification MUST use a capable model.
+        # SAFETY_LLM_MODEL overrides LLM_MODEL for this crew.
+        model_name = os.getenv("SAFETY_LLM_MODEL", "groq/llama-3.3-70b-versatile")
         my_llm = LLM(
             model=model_name,
             timeout=30,
@@ -175,5 +179,6 @@ class SafetyCrew:
             tasks=self.tasks,
             process=Process.sequential,
             cache=False,
+            max_rpm=2,
             verbose=True,
         )

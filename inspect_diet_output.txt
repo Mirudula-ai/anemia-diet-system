@@ -1,0 +1,330 @@
+Starting DietPlanningCrew kickoff...
++---------+---------[CrewAIEventsBus] Sync handler error in 
+on_crew_started: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
++---------[CrewAIEventsBus] Sync handler error in 
+on_task_started: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
++---------[CrewAIEventsBus] Sync handler error in 
+on_agent_logs_started: 'charmap' codec can't
+encode character '\u2728' in position 1: 
+character maps to <undefined>
+
+================================================================================
+LITELLM CALL - Model: groq/llama-3.1-8b-instant
+================================================================================
+
+--- ROLE: system ---
+You are Dietary Iron Source Specialist
+. You know heme iron (animal sources) absorbs better than non-heme (plant sources), and you always note which type each food is.
+
+Your personal goal is: Generate 6-8 candidate iron-rich foods matching the patient's diet type (vegetarian/non-vegetarian/vegan/eggetarian), tagged as heme or non-heme iron sources, defaulting to accessible Indian food options.
+
+--- ROLE: user ---
+
+Current Task: Generate 6-8 candidate iron-rich foods matching the patient's diet type (vegetarian/non-vegetarian/vegan/eggetarian). Tag each as heme or non-heme iron source, defaulting to accessible Indian food options.
+
+
+This is the expected criteria for your final answer: A JSON object with a list `candidate_foods` where each item includes `name` and `iron_type` ("heme" or "non-heme").
+
+you MUST return the actual complete content as the final answer, not a summary.
+
+Provide your complete response:
+================================================================================
+
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
++---------[CrewAIEventsBus] Sync handler error in 
+on_agent_logs_execution: 'charmap' codec 
+can't encode character '\u2728' in position 
+1: character maps to <undefined>
++---------[CrewAIEventsBus] Sync handler error in 
+on_task_completed: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
++---------[CrewAIEventsBus] Sync handler error in 
+on_task_started: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
++---------[CrewAIEventsBus] Sync handler error in 
+on_agent_logs_started: 'charmap' codec can't
+encode character '\u2728' in position 1: 
+character maps to <undefined>
+
+================================================================================
+LITELLM CALL - Model: groq/llama-3.1-8b-instant
+================================================================================
+
+--- ROLE: system ---
+You are Allergy and Intolerance Safety Filter
+. You have veto power over food choices ù no other agent may reintroduce something you filtered out.
+
+Your personal goal is: Remove any candidate food matching a logged allergy or intolerance, with zero exceptions. Output the filtered list plus what was removed and why.
+
+--- ROLE: user ---
+
+Current Task: Remove any candidate food that matches a logged allergy or intolerance. Output the filtered list plus a list of removed items with reasons.
+
+
+This is the expected criteria for your final answer: A JSON object with `filtered_foods` and `removed_items` (each with `name` and `reason`).
+
+you MUST return the actual complete content as the final answer, not a summary.
+
+This is the context you're working with:
+```json
+{
+  "vegetarian": {
+    "candidate_foods": [
+      {
+        "name": "Spinach Dal (Palak Dal)",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Fortified Oats",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Spinach and Amaranth Saag",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Bengal Gram and Spinach Biryani",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Sesame Seeds and Jaggery Chutney",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Roasted Moong Sprouts with Spinach",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Mushroom and Spinach Biryani",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Lentil and Spinach Soup",
+        "iron_type": "non-heme"
+      }
+    ]
+  },
+  "non-vegetarian": {
+    "candidate_foods": [
+      {
+        "name": "Chicken Thigh Curry",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Beef Keema",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Fish Tikka Masala",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Chicken Liver Fry",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Duck Meat Korma",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Pork Vindaloo",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Egg Curry",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Lamb Dum Biryani",
+        "iron_type": "heme"
+      }
+    ]
+  },
+  "vegan": {
+    "candidate_foods": [
+      {
+        "name": "Fortified Oats",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Sesame Seeds and Jaggery Chutney",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Spinach and Lentil Curry",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Dark Chocolate and Nuts Biryani",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Lentil and Spinach Soup",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Roasted Pumpkin and Spinach Salad",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Spinach and Mushroom Biryani",
+        "iron_type": "non-heme"
+      },
+      {
+        "name": "Vegan Chickpea and Spinach Curry",
+        "iron_type": "non-heme"
+      }
+    ]
+  },
+  "eggetarian": {
+    "candidate_foods": [
+      {
+        "name": "Spinach and Egg Curry",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Beaten Egg Omelette",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Egg and Spinach Scramble",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Spinach and Mushroom Frittata",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Roasted Eggplant and Spinach Curry",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Egg and Spinach Biryani",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Spinach and Lentil Soup with Egg",
+        "iron_type": "heme"
+      },
+      {
+        "name": "Egg Curry with Spinach and Mushrooms",
+        "iron_type": "heme"
+      }
+    ]
+  }
+}
+```
+
+Provide your complete response:
+================================================================================
+
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
++---------[CrewAIEventsBus] Sync handler error in 
+on_agent_logs_execution: 'charmap' codec 
+can't encode character '\u2728' in position 
+1: character maps to <undefined>
++---------[CrewAIEventsBus] Sync handler error in 
+on_task_completed: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
++---------[CrewAIEventsBus] Sync handler error in 
+on_task_started: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
+[96m
+[2026-08-08 11:24:43][0m[93m[INFO]: [0m[1m[93mMax RPM reached, waiting for next minute to start.[0m
++---------[CrewAIEventsBus] Sync handler error in 
+on_agent_logs_started: 'charmap' codec can't
+encode character '\u2728' in position 1: 
+character maps to <undefined>
+
+================================================================================
+LITELLM CALL - Model: groq/llama-3.1-8b-instant
+================================================================================
+
+--- ROLE: system ---
++---------[CrewAIEventsBus] Sync handler error in 
+on_llm_call_failed: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
+[91mAn unknown error occurred. Please check the details below.[0m
+[91mError details: 'charmap' codec can't encode character '\u2011' in position 285: character maps to <undefined>[0m
+[91mAn unknown error occurred. Please check the details below.[0m
+[91mError details: 'charmap' codec can't encode character '\u2011' in position 285: character maps to <undefined>[0m
++------------[CrewAIEventsBus] Sync handler error in 
+on_agent_logs_started: 'charmap' codec can't
+encode character '\U0001f916' in position 1:
+character maps to <undefined>
+
+================================================================================
+LITELLM CALL - Model: groq/llama-3.1-8b-instant
+================================================================================
+
+--- ROLE: system ---
+[91mAn unknown error occurred. Please check the details below.[0m
+[91mError details: 'charmap' codec can't encode character '\u2011' in position 285: character maps to <undefined>[0m
++---------[CrewAIEventsBus] Sync handler error in 
+on_llm_call_failed: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
+[91mAn unknown error occurred. Please check the details below.[0m
+[91mError details: 'charmap' codec can't encode character '\u2011' in position 285: character maps to <undefined>[0m
++------------[CrewAIEventsBus] Sync handler error in 
+on_agent_logs_started: 'charmap' codec can't
+encode character '\U0001f916' in position 1:
+
+================================================================================
+LITELLM CALL - Model: groq/llama-3.1-8b-instant
+================================================================================
+
+--- ROLE: system ---
+[91mAn unknown error occurred. Please check the details below.[0m
+[91mError details: 'charmap' codec can't encode character '\u2011' in position 285: character maps to <undefined>[0m
+character maps to <undefined+--------->
+[CrewAIEventsBus] Sync handler error in 
+on_llm_call_failed: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
+[91mAn unknown error occurred. Please check the details below.[0m
+[91mError details: 'charmap' codec can't encode character '\u2011' in position 285: character maps to <undefined>[0m
+[CrewAIEventsBus] Warning: Event pairing 
+mismatch. 'task_failed' closed 
+'agent_execution_started' (expected 
+'task_started')
++---------[CrewAIEventsBus] Sync handler error in 
+on_task_failed: 'charmap' codec can't encode
+character '\u2728' in position 1: character 
+maps to <undefined>
+[CrewAIEventsBus] Warning: Event pairing 
+mismatch. 'crew_kickoff_failed' closed 
+'agent_execution_started' (expected 
+'crew_kickoff_started')
++-------------- Crew Failure --------------+
+|                                          |
+|  Crew Execution Failed                   |
+|  Name: DietPlanningCrew                  |
+|  ID:                                     |
+|  76f96436-c663-4bc6-9247-d7257ab39b6a    |
+|                                          |
+|                                          |
++------------------------------------------+
+
++------------- Tracing Status -------------+
+|                                          |
+|  Info: Tracing is disabled.              |
+|                                          |
+|  To enable tracing, do any one of        |
+|  these:                                  |
+|  ò Set tracing=True in your Crew/Flow    |
+|  code                                    |
+|  ò Set CREWAI_TRACING_ENABLED=true in    |
+|  your project's .env file                |
+|  ò Run: crewai traces enable             |
+|                                          |
++------------------------------------------+

@@ -15,11 +15,21 @@ def _clean_dict(obj):
         for item in obj:
             _clean_dict(item)
 
+import time
+
 _orig_completion = litellm.completion
 
 def _patched_completion(*args, **kwargs):
     _clean_dict(kwargs)
-    return _orig_completion(*args, **kwargs)
+    for attempt in range(8):
+        try:
+            return _orig_completion(*args, **kwargs)
+        except litellm.exceptions.RateLimitError as exc:
+            if attempt == 7:
+                raise exc
+            wait_sec = 15 * (attempt + 1)
+            print(f"\n[RateLimitHandler] Groq limit hit ({exc}). Sleeping {wait_sec}s before retry {attempt + 1}/7...")
+            time.sleep(wait_sec)
 
 litellm.completion = _patched_completion
 litellm.drop_params = True
@@ -64,5 +74,6 @@ class ResearchCrew:
             tasks=self.tasks,
             process=Process.sequential,
             cache=False,
+            max_rpm=2,
             verbose=True,
         )

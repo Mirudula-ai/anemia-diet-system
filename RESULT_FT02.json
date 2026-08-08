@@ -1,0 +1,44 @@
+{
+  "safety_tier": "NONE",
+  "content_mode": "full_plan",
+  "morning": [
+    {
+      "breakfast": "Greek yogurt with berries and walnuts",
+      "snack": "Apple slices with almond butter"
+    }
+  ],
+  "afternoon_evening": [
+    {
+      "late_afternoon_snack": "Carrot sticks with hummus",
+      "pre_dinner_snack": "Cucumber slices with dill dip"
+    }
+  ],
+  "night": [
+    {
+      "dinner": "Grilled salmon with roasted vegetables",
+      "pre_bedtime_snack": "Warm milk with honey"
+    }
+  ],
+  "safety_note": null,
+  "safety_message": null,
+  "symptom_trends": [
+    {
+      "symptom": "headache",
+      "status": "stable_chronic"
+    },
+    {
+      "symptom": "fatigue",
+      "status": "stable_chronic"
+    },
+    {
+      "symptom": "nausea",
+      "status": "stable_chronic"
+    },
+    {
+      "symptom": "cough",
+      "status": "new_acute"
+    }
+  ],
+  "adherence_note": "After analyzing your adherence summary and feedback log, no clear pattern of missed meals or repeated issues was found. Continue with your current routine.",
+  "closing_line": "This is food-based support, not a diagnosis."
+}

@@ -1,0 +1,177 @@
+Starting SafetyCrew kickoff...
++---------+---------[CrewAIEventsBus] Sync handler error in 
+on_crew_started: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
++---------[CrewAIEventsBus] Sync handler error in 
+on_task_started: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
++---------[CrewAIEventsBus] Sync handler error in 
+on_agent_logs_started: 'charmap' codec can't
+encode character '\u2728' in position 1: 
+character maps to <undefined>
+
+================================================================================
+LITELLM CALL - Model: groq/llama-3.3-70b-versatile
+================================================================================
+
+--- ROLE: system ---
+You are Clinical Symptom Tagger
+. You are a clinical NLP specialist trained on haematology and women's health literature. You receive raw symptom text submitted by a patient and convert it into a structured list of tagged symptoms. You never diagnose ù you only tag. You are aware that the same word (e.g., "dizzy") can map to different severities depending on context (e.g., "slightly dizzy" vs "fainted"). You output a JSON object containing a tagged_symptoms list and a life_stage_context object.
+
+Your personal goal is: Parse and tag each reported symptom with a structured name, severity level (mild / moderate / severe), and clinical relevance flags for iron-deficiency anaemia. Also flag special life-stage context such as pregnancy, menstrual cycle stage, menopause status, PCOS, or thyroid conditions that may alter risk thresholds.
+
+--- ROLE: user ---
+
+Current Task: You will receive a patient input object containing one or more of: - logged_symptoms: a list of free-text symptom descriptions - tagged_symptoms: a pre-tagged list (if tagging was done upstream) - life_stage: a string describing the patient's current life stage
+  (e.g., "menstruating", "pregnant", "menopausal", "PCOS", "thyroid-flagged")
+- is_pregnant: boolean flag (optional) - biomarkers: a dict of lab values with flag indicators (optional) - family_history_flags: a list of family history conditions (optional) - prior_monitor_flags_last_window: boolean indicating whether a
+  MONITOR-tier event fired in the prior 7-day window (optional)
+
+Parse all free-text symptoms into structured tags. Each tag must include: - name: normalised symptom name (e.g., "fatigue", "chest pain") - severity: one of "mild", "moderate", or "severe" - clinical_flag: one of "routine", "watch", "red_flag" (must be a STRING, not a boolean) - raw_text: the original text fragment that triggered this tag
+IMPORTANT: Ensure the clinical_flag field is returned as a string exactly matching one of the allowed values. Also extract life_stage_context from the input and pass it through. Preserve any pre-tagged symptoms (tagged_symptoms) as-is. Preserve all other fields from the input (biomarkers, family_history_flags, prior_monitor_flags_last_window, is_pregnant) so the next task has full context.
+Output ONLY a valid JSON object ù no markdown, no explanation, no preamble.
+
+
+This is the expected criteria for your final answer: A JSON object with the following structure: {
+  "tagged_symptoms": [
+    {
+      "name": "string",
+      "severity": "mild|moderate|severe",
+      "clinical_flag": "routine|watch|red_flag",
+      "raw_text": "string"
+    }
+  ],
+  "life_stage_context": {
+    "life_stage": "string",
+    "is_pregnant": false,
+    "trimester": null
+  },
+  "biomarkers": {},
+  "family_history_flags": [],
+  "prior_monitor_flags_last_window": false
+}
+
+you MUST return the actual complete content as the final answer, not a summary.
+
+Provide your complete response:
+================================================================================
+
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
++---------[CrewAIEventsBus] Sync handler error in 
+on_agent_logs_execution: 'charmap' codec 
+can't encode character '\u2728' in position 
+1: character maps to <undefined>
++---------[CrewAIEventsBus] Sync handler error in 
+on_task_completed: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
++---------[CrewAIEventsBus] Sync handler error in 
+on_task_started: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
++------------[CrewAIEventsBus] Sync handler error in 
+on_agent_logs_started: 'charmap' codec can't
+encode character '\U0001f916' in position 1:
+character maps to <undefined>
+
+================================================================================
+LITELLM CALL - Model: groq/llama-3.3-70b-versatile
+================================================================================
+
+--- ROLE: system ---
+You are Safety Escalation Evaluator
+. You are a patient-safety specialist with deep knowledge of iron-deficiency anaemia red flags and life-stage-specific risk amplifiers. You receive the structured tagged symptom output from the Symptom Tagger and apply a deterministic rule hierarchy. EMERGENCY overrides URGENT, URGENT overrides MONITOR. You never soften an escalation tier ù if any single rule fires at a higher tier, that tier wins. You are aware of the escalation-persistence rule: if a MONITOR-tier pattern fired within the prior 7-day window, a new MONITOR trigger must escalate to URGENT. You are conservative by design: when in doubt, escalate.
+
+Your personal goal is: Apply the approved safety rule-set to the tagged symptom output and assign exactly one of four escalation tiers: EMERGENCY, URGENT, MONITOR, or NONE. Return a structured JSON with tier, rules_fired, and a brief plain-language rationale for the user.
+
+--- ROLE: user ---
+
+Current Task: You will receive the structured JSON output from the symptom tagging task. Apply the following safety rule hierarchy to determine the escalation tier. Rules are evaluated from highest to lowest severity; the highest matching tier wins.
+EMERGENCY triggers (any ONE is sufficient): - Symptom name contains any of: "faint", "syncope", "lost consciousness",
+  "blacked out", "chest pain", "shortness of breath at rest",
+  "out of breath sitting", "black stool", "tarry stool", "melena",
+  "soaking through protection every hour", "soaking pad", "heavy bleeding hourly"
+
+URGENT triggers (any ONE is sufficient, only if EMERGENCY not already triggered): - life_stage is "menopausal" (or "postmenopausal") AND any tagged symptom
+  with clinical_flag == "red_flag" or severity in ["moderate", "severe"]
+- life_stage is "pregnant" (or is_pregnant == true) AND a tagged symptom
+  whose name is "fatigue" or "dizziness"/"dizzy" with severity "severe"
+- Any tagged symptom with name containing "palpitation", "racing heart",
+  "heart racing", "tachycardia" together with any symptom containing
+  "dizzy", "dizziness", "lightheaded"
+- Any tagged symptom with name/raw_text containing "weight loss" with
+  severity in ["moderate", "severe"] OR quantity >= 5% of body weight in a month (if body_weight_kg is provided in patient input). If body_weight_kg is NOT provided, use >= 3kg/month as the fallback flat threshold.
+- Three or more tagged symptoms with severity == "moderate" (regardless of life stage) - prior_monitor_flags_last_window == true AND the current tagged symptoms contain
+  the SAME symptom name/pattern that caused the prior MONITOR trigger (not just any new unrelated symptom)
+
+MONITOR triggers (any ONE is sufficient, only if EMERGENCY and URGENT not already triggered): - biomarkers contains MCV with flag == "low" AND family_history_flags
+  contains "thalassemia" or "haemoglobinopathy"
+- Any tagged symptom with clinical_flag == "watch" and no higher-tier rules fire
+NONE: - No rules from EMERGENCY, URGENT, or MONITOR fired - OR tagged_symptoms list is empty
+After determining the tier, produce a structured JSON output with: - tier: the determined tier (EMERGENCY | URGENT | MONITOR | NONE) - rules_fired: list of rule descriptions that were triggered - rationale: a brief, plain-language explanation for the patient - tagged_symptoms: pass through from input (for audit logging) - life_stage_context: pass through from input
+Output ONLY a valid JSON object ù no markdown, no explanation, no preamble.
+
+
+This is the expected criteria for your final answer: A JSON object with the following structure: {
+  "tier": "EMERGENCY|URGENT|MONITOR|NONE",
+  "rules_fired": ["string"],
+  "rationale": "string",
+  "tagged_symptoms": [],
+  "life_stage_context": {}
+}
+
+you MUST return the actual complete content as the final answer, not a summary.
+
+This is the context you're working with:
+```json
+{
+  "tagged_symptoms": [
+    {
+      "name": "fatigue",
+      "severity": "mild",
+      "clinical_flag": "routine",
+      "raw_text": "I've been feeling a bit tired lately"
+    },
+    {
+      "name": "dizziness",
+      "severity": "moderate",
+      "clinical_flag": "watch",
+      "raw_text": "I sometimes feel dizzy when I stand up too quickly"
+    },
+    {
+      "name": "chest pain",
+      "severity": "severe",
+      "clinical_flag": "red_flag",
+      "raw_text": "I've been experiencing severe chest pain"
+    }
+  ],
+  "life_stage_context": {
+    "life_stage": "menstruating",
+    "is_pregnant": false,
+    "trimester": null
+  },
+  "biomarkers": {},
+  "family_history_flags": [],
+  "prior_monitor_flags_last_window": false
+}
+```
+
+Provide your complete response:
+================================================================================
+
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
++---------[CrewAIEventsBus] Sync handler error in 
+on_agent_logs_execution: 'charmap' codec 
+can't encode character '\u2728' in position 
+1: character maps to <undefined>
++---------[CrewAIEventsBus] Sync handler error in 
+on_task_completed: 'charmap' codec can't 
+encode character '\u2728' in position 1: 
+character maps to <undefined>
++------------[CrewAIEventsBus] Sync handler error in 
+on_crew_completed: 'charmap' codec can't 
+encode character '\U0001f916' in position 1:
+character maps to <undefined>
+SafetyCrew kickoff completed.

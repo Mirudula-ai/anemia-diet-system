@@ -1,0 +1,50 @@
+﻿On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .env.example
+	modified:   src/anemia_diet_system/crews/biomarker_crew/biomarker_crew.py
+	modified:   src/anemia_diet_system/crews/diet_crew/diet_crew.py
+	modified:   src/anemia_diet_system/crews/feedback_crew/feedback_crew.py
+	modified:   src/anemia_diet_system/crews/research_crew/research_crew.py
+	modified:   src/anemia_diet_system/crews/safety_crew/safety_crew.py
+	modified:   src/anemia_diet_system/crews/synthesis_crew/config/tasks.yaml
+	modified:   src/anemia_diet_system/crews/synthesis_crew/synthesis_crew.py
+	modified:   src/anemia_diet_system/flow.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	EXEC_FT02.json
+	RESULT_FT02.json
+	VERIFY_FT02.json
+	VERIFY_FT03.json
+	VERIFY_FT04.json
+	VERIFY_FT05.json
+	VERIFY_FT06.json
+	VERIFY_FT07.json
+	data/patients/t/
+	data/patients/test_ft01/
+	data/patients/test_ft02/
+	data/patients/test_ft04/
+	data/patients/test_ft05/
+	flow_test_output.txt
+	flow_test_utf8.txt
+	ft01_output.txt
+	ft01_utf8.txt
+	ft02_out.json
+	ft03_out.json
+	ft04_out.json
+	ft04_out.txt
+	ft05_out.txt
+	ft06_out.txt
+	ft07_out.txt
+	git_status_tmp.txt
+	run_and_save.py
+	tests/run_single_ft.py
+	tests/test_flow.py
+	tmp_ft02_output.txt
+	tmp_safety_raw.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")

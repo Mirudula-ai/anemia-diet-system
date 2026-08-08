@@ -1,0 +1,21 @@
+{
+  "safety_tier": "MONITOR",
+  "content_mode": "full_plan",
+  "morning": [
+    "Fruit (e.g., banana, berries)",
+    "Oatmeal with nuts and seeds (rich in iron)",
+    "Green tea"
+  ],
+  "afternoon_evening": [
+    "Grilled chicken breast",
+    "Mixed greens salad with berries, walnuts, and a vinaigrette dressing (rich in omega-3 fatty acids)",
+    "Whole grain crackers with avocado spread"
+  ],
+  "night": [
+    "Clear broth soup (easy to digest)",
+    "Baked trout cooked with herbs (rich in omega-3 fatty acids)",
+    "Steamed vegetables with a small amount of olive oil"
+  ],
+  "safety_note": "Monitor for vomiting and adjust food portions as needed.",
+  "closing_line": "This is food-based support, not a diagnosis."
+}

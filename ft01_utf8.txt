@@ -1,0 +1,433 @@
+﻿
+======================================================================
+  Running FT01 ΓÇö calling AnemiaFlow.on_intake_complete()
+======================================================================
+
+[runner] Creating AnemiaFlow instance...
+[runner] Calling flow.on_intake_complete()  (t=0s)
+
+[AnemiaFlow] >>> Starting initial intake processing for patient: 'test_ft01'
+[AnemiaFlow] Step 1a: Running SafetyCrew...
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒÜÇ Crew Execution Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Crew Execution Started                                                     Γöé
+Γöé  Name: SafetyCrew                                                           Γöé
+Γöé  ID: ba5b26e7-3731-45f2-95ea-1e6684dfae53                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Started                                                               Γöé
+Γöé  Name: symptom_tagging_task                                                 Γöé
+Γöé  ID: 48f9a5c9-cdeb-4d3d-9927-0b30427db4ba                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒñû Agent Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Clinical Symptom Tagger                                             Γöé
+Γöé                                                                             Γöé
+Γöé  Task: You will receive a patient input object containing one or more of:   Γöé
+Γöé  - logged_symptoms: a list of free-text symptom descriptions -              Γöé
+Γöé  tagged_symptoms: a pre-tagged list (if tagging was done upstream) -        Γöé
+Γöé  life_stage: a string describing the patient's current life stage           Γöé
+Γöé    (e.g., "menstruating", "pregnant", "menopausal", "PCOS",                 Γöé
+Γöé  "thyroid-flagged")                                                         Γöé
+Γöé  - is_pregnant: boolean flag (optional) - biomarkers: a dict of lab values  Γöé
+Γöé  with flag indicators (optional) - family_history_flags: a list of family   Γöé
+Γöé  history conditions (optional) - prior_monitor_flags_last_window: boolean   Γöé
+Γöé  indicating whether a                                                       Γöé
+Γöé    MONITOR-tier event fired in the prior 7-day window (optional)            Γöé
+Γöé                                                                             Γöé
+Γöé  Parse all free-text symptoms into structured tags. Each tag must include:  Γöé
+Γöé  - name: normalised symptom name (e.g., "fatigue", "chest pain") -          Γöé
+Γöé  severity: one of "mild", "moderate", or "severe" - clinical_flag: one of   Γöé
+Γöé  "routine", "watch", "red_flag" (must be a STRING, not a boolean) -         Γöé
+Γöé  raw_text: the original text fragment that triggered this tag               Γöé
+Γöé  IMPORTANT: Ensure the clinical_flag field is returned as a string exactly  Γöé
+Γöé  matching one of the allowed values. Also extract life_stage_context from   Γöé
+Γöé  the input and pass it through. Preserve any pre-tagged symptoms            Γöé
+Γöé  (tagged_symptoms) as-is. Preserve all other fields from the input          Γöé
+Γöé  (biomarkers, family_history_flags, prior_monitor_flags_last_window,        Γöé
+Γöé  is_pregnant) so the next task has full context.                            Γöé
+Γöé  Output ONLY a valid JSON object ΓÇö no markdown, no explanation, no          Γöé
+Γöé  preamble.                                                                  Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ¥î LLM Error ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+uv : Error executing listener 
+call_llm_and_parse: litellm.RateLimitError: 
+RateLimitError: GroqException - 
+{"error":{"message":"Rate limit reached for 
+model `llama-3.3-70b-versatile` in 
+organization 
+`org_01kz0tfydvfj8bmp9a1k26q6c5` service 
+tier `on_demand` on tokens per day (TPD): 
+Limit 100000, Used 99384, Requested 714. 
+Please try again in 1m24.672s. Need more 
+tokens? Upgrade to Dev Tier today at https:/
+/console.groq.com/settings/billing","type":"
+tokens","code":"rate_limit_exceeded"}}
+At line:1 char:26
++ ... Seconds 90; uv run python -u 
+tests/run_single_ft.py FT01 2>&1 | Tee-O ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: 
+    (Error executing...mit_exceeded"}}:Str  
+  ing) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommand 
+   Error
+ 
+
+Γöé  LLM Call Failed                                                            Γöé
+Γöé  Error: litellm.RateLimitError: RateLimitError: GroqException -             Γöé
+Γöé  {"error":{"message":"Rate limit reached for model                          Γöé
+Γöé  `llama-3.3-70b-versatile` in organization                                  Γöé
+Γöé  `org_01kz0tfydvfj8bmp9a1k26q6c5` service tier `on_demand` on tokens per    Γöé
+Γöé  day (TPD): Limit 100000, Used 99384, Requested 714. Please try again in    Γöé
+Γöé  1m24.672s. Need more tokens? Upgrade to Dev Tier today at                  Γöé
+Γöé  https://console.groq.com/settings/billing","type":"tokens","code":"rate_l  Γöé
+Γöé  imit_exceeded"}}                                                           Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Failure ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Failed                                                                Γöé
+Γöé  Name: symptom_tagging_task                                                 Γöé
+Γöé  Agent: Clinical Symptom Tagger                                             Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+Traceback (most recent call last):
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\flow\runtime\__init__.py", 
+line 2038, in kickoff
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Crew Failure ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+    asyncio.get_running_loop()
+RuntimeError: no running event loop
+
+During handling of the above exception, 
+another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\tests\run_single_
+ft.py", line 154, in <module>
+Γöé                                                                             Γöé
+Γöé  Crew Execution Failed                                                      Γöé
+Γöé  Name: SafetyCrew                                                           Γöé
+Γöé  ID: ba5b26e7-3731-45f2-95ea-1e6684dfae53                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Tracing Status ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Info: Tracing is disabled.                                                 Γöé
+Γöé                                                                             Γöé
+Γöé  To enable tracing, do any one of these:                                    Γöé
+Γöé  ΓÇó Set tracing=True in your Crew/Flow code                                  Γöé
+Γöé  ΓÇó Set CREWAI_TRACING_ENABLED=true in your project's .env file              Γöé
+Γöé  ΓÇó Run: crewai traces enable                                                Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+    result = method(inputs)
+             ^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\flow\flow_wrappers.py", line 
+101, in __call__
+    return self._meth(self._instance, 
+*args, **kwargs)
+           
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\src\anemia_diet_s
+ystem\flow.py", line 95, in 
+on_intake_complete
+    safety_result = 
+safety_crew.crew().kickoff(
+                    
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\crew.py", line 1046, in 
+kickoff
+    result = self._run_sequential_process()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\crew.py", line 1501, in 
+_run_sequential_process
+    return self._execute_tasks(self.tasks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\crew.py", line 1605, in 
+_execute_tasks
+    task_output = task.execute_sync(
+                  ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\task.py", line 593, in 
+execute_sync
+    return self._execute_core(agent, 
+context, tools)
+           
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\task.py", line 957, in 
+_execute_core
+    raise e
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\task.py", line 850, in 
+_execute_core
+    result = agent.execute_task(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\agent\core.py", line 892, in 
+execute_task
+    result = 
+self._handle_execution_error(e, task, 
+context, tools)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\agent\core.py", line 776, in 
+_handle_execution_error
+    self._check_execution_error(e, task)
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\agent\core.py", line 743, in 
+_check_execution_error
+    raise e
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\agent\core.py", line 879, in 
+execute_task
+    result = 
+self._execute_without_timeout(task_prompt, 
+task)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\agent\core.py", line 949, in 
+_execute_without_timeout
+    invoke_result = 
+self.agent_executor.invoke(
+                    
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\experimental\agent_executor.py
+", line 2862, in invoke
+    self.kickoff()
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\flow\runtime\__init__.py", 
+line 2043, in kickoff
+    return asyncio.run(_run_flow())
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonS
+oftwareFoundation.Python.3.12_3.12.2800.0_x6
+4__qbz5n2kfra8p0\Lib\asyncio\runners.py", 
+line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonS
+oftwareFoundation.Python.3.12_3.12.2800.0_x6
+4__qbz5n2kfra8p0\Lib\asyncio\runners.py", 
+line 118, in run
+    return 
+self._loop.run_until_complete(task)
+           
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonS
+oftwareFoundation.Python.3.12_3.12.2800.0_x6
+4__qbz5n2kfra8p0\Lib\asyncio\base_events.py"
+, line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\flow\runtime\__init__.py", 
+line 2029, in _run_flow
+    return await self.kickoff_async(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\flow\runtime\__init__.py", 
+line 2347, in kickoff_async
+    await asyncio.gather(*tasks)
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\flow\runtime\__init__.py", 
+line 2712, in _execute_start_method
+    await 
+self._execute_listeners(start_method_name, 
+result, finished_event_id)
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\flow\runtime\__init__.py", 
+line 3036, in _execute_listeners
+    ) = await self._execute_single_listener(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\flow\runtime\__init__.py", 
+line 3248, in _execute_single_listener
+    await self._execute_listeners(
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\flow\runtime\__init__.py", 
+line 3036, in _execute_listeners
+    ) = await self._execute_single_listener(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\flow\runtime\__init__.py", 
+line 3244, in _execute_single_listener
+    listener_result, finished_event_id = 
+await self._execute_method(
+                                         
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\flow\runtime\__init__.py", 
+line 2926, in _execute_method
+    raise e
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\flow\runtime\__init__.py", 
+line 2828, in _execute_method
+    result = await 
+asyncio.to_thread(ctx.run, method, *args, 
+**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonS
+oftwareFoundation.Python.3.12_3.12.2800.0_x6
+4__qbz5n2kfra8p0\Lib\asyncio\threads.py", 
+line 25, in to_thread
+    return await loop.run_in_executor(None, 
+func_call)
+           
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Program Files\WindowsApps\PythonS
+oftwareFoundation.Python.3.12_3.12.2800.0_x6
+4__qbz5n2kfra8p0\Lib\concurrent\futures\thre
+ad.py", line 59, in run
+    result = self.fn(*self.args, 
+**self.kwargs)
+             
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\flow\flow_wrappers.py", line 
+101, in __call__
+    return self._meth(self._instance, 
+*args, **kwargs)
+           
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\experimental\agent_executor.py
+", line 1481, in call_llm_and_parse
+    raise e
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\experimental\agent_executor.py
+", line 1428, in call_llm_and_parse
+    answer = get_llm_response(
+             ^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\utilities\agent_utils.py", 
+line 582, in get_llm_response
+    answer = llm.call(
+             ^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\llm.py", line 1894, in call
+    result = 
+self._handle_non_streaming_response(
+             
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\crewai\llm.py", line 1277, in 
+_handle_non_streaming_response
+    response = litellm.completion(**params)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\src\anemia_diet_s
+ystem\crews\research_crew\research_crew.py",
+ line 22, in _patched_completion
+    return _orig_completion(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\tests\run_single_
+ft.py", line 37, in _patched
+    return _orig(*a, **kw)
+           ^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\litellm\utils.py", line 1775, in 
+wrapper
+    raise e
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\litellm\utils.py", line 1596, in 
+wrapper
+    result = original_function(*args, 
+**kwargs)
+             
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\litellm\main.py", line 4411, in 
+completion
+    raise exception_type(
+          ^^^^^^^^^^^^^^^
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\litellm\litellm_core_utils\exception_
+mapping_utils.py", line 2456, in 
+exception_type
+    raise e
+  File "C:\Users\Mirudula\Downloads\untitled
+_project_v1_crewai-project\.venv\Lib\site-pa
+ckages\litellm\litellm_core_utils\exception_
+mapping_utils.py", line 392, in 
+exception_type
+    raise RateLimitError(
+litellm.exceptions.RateLimitError: 
+litellm.RateLimitError: RateLimitError: 
+GroqException - {"error":{"message":"Rate 
+limit reached for model 
+`llama-3.3-70b-versatile` in organization 
+`org_01kz0tfydvfj8bmp9a1k26q6c5` service 
+tier `on_demand` on tokens per day (TPD): 
+Limit 100000, Used 99384, Requested 714. 
+Please try again in 1m24.672s. Need more 
+tokens? Upgrade to Dev Tier today at https:/
+/console.groq.com/settings/billing","type":"
+tokens","code":"rate_limit_exceeded"}}
+

@@ -1,0 +1,3236 @@
+﻿diff --git a/.env.example b/.env.example
+index f7898ef..78abf99 100644
+--- a/.env.example
++++ b/.env.example
+@@ -8,10 +8,3 @@
+ #   OPENAI_API_KEY=sk-...
+ #   ANTHROPIC_API_KEY=sk-ant-...
+ GROQ_API_KEY=your_groq_api_key_here
+-#   GOOGLE_API_KEY=...
+-
+-# ΓöÇΓöÇ Safety Crew Settings ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+-# SAFETY_AUDIT_LOG_RETENTION_DAYS=90
+-
+-# ΓöÇΓöÇ Debug / Logging ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+-# CREWAI_VERBOSE=true
+diff --git a/debug_output.txt b/debug_output.txt
+new file mode 100644
+index 0000000..46fb6d3
+Binary files /dev/null and b/debug_output.txt differ
+diff --git a/err2.txt b/err2.txt
+new file mode 100644
+index 0000000..e39ede6
+--- /dev/null
++++ b/err2.txt
+@@ -0,0 +1,5 @@
++EXC: <class 'litellm.exceptions.RateLimitError'> litellm.RateLimitError: RateLimitError: GroqException - {"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kz0tfydvfj8bmp9a1k26q6c5` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99309, Requested 1666. Please try again in 14m2.4s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
++
++RESP: 
++MSG: litellm.RateLimitError: RateLimitError: GroqException - {"error":{"message":"Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kz0tfydvfj8bmp9a1k26q6c5` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99309, Requested 1666. Please try again in 14m2.4s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
++
+diff --git a/run_tc_r02.py b/run_tc_r02.py
+new file mode 100644
+index 0000000..15ed35c
+--- /dev/null
++++ b/run_tc_r02.py
+@@ -0,0 +1,102 @@
++"""Run only TC-R02 (nonsense query) in isolation. Writes result to tc_r02_result.json."""
++import json, os, re, sys, time, traceback
++from pathlib import Path
++
++if sys.platform == "win32":
++    sys.stdout.reconfigure(encoding="utf-8")
++    sys.stderr.reconfigure(encoding="utf-8")
++
++os.environ["LLM_MODEL"] = "groq/llama-3.1-8b-instant"
++os.environ["DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DROP_PARAMS"] = "True"
++
++import litellm
++
++def _clean(obj):
++    if isinstance(obj, dict):
++        obj.pop("cache_control", None)
++        obj.pop("cache_breakpoint", None)
++        for v in list(obj.values()): _clean(v)
++    elif isinstance(obj, list):
++        for i in obj: _clean(i)
++
++_orig = litellm.completion
++def _patched(*a, **kw):
++    _clean(kw)
++    return _orig(*a, **kw)
++litellm.completion = _patched
++litellm.drop_params = True
++
++from dotenv import load_dotenv
++load_dotenv(override=False)
++os.environ["LLM_MODEL"] = "groq/llama-3.1-8b-instant"
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[0] / "src"))
++from anemia_diet_system.crews.research_crew.research_crew import ResearchCrew
++
++RESULT_FILE = Path(__file__).resolve().parent / "tc_r02_result.json"
++
++def parse_output(raw):
++    raw = raw.strip()
++    if raw.startswith("```"):
++        raw = "\n".join(l for l in raw.splitlines() if not l.strip().startswith("```"))
++    try: return json.loads(raw)
++    except json.JSONDecodeError: pass
++    m = re.search(r"\{.*\}", raw, re.DOTALL)
++    if m:
++        try: return json.loads(m.group(0))
++        except json.JSONDecodeError: pass
++    return {}
++
++QUERY = "asdkjfh qwerty nonsense medical term xyz123"
++MAX_ATTEMPTS = 5
++RETRY_SLEEP  = 65
++
++print(f"\nTC-R02: meaningless query -> no reliable information\n")
++
++raw = ""
++error_msg = None
++for attempt in range(1, MAX_ATTEMPTS + 1):
++    try:
++        print(f"  Attempt {attempt}/{MAX_ATTEMPTS}...")
++        crew = ResearchCrew()
++        result = crew.crew().kickoff(inputs={"research_query": QUERY})
++        raw = result.raw if hasattr(result, "raw") else str(result)
++        error_msg = None
++        break
++    except Exception as exc:
++        err = str(exc).lower()
++        if ("rate_limit" in err or "429" in err) and attempt < MAX_ATTEMPTS:
++            print(f"  Rate-limit hit. Sleeping {RETRY_SLEEP}s...")
++            time.sleep(RETRY_SLEEP)
++        else:
++            error_msg = f"{type(exc).__name__}: {exc}"
++            traceback.print_exc()
++            break
++
++if error_msg:
++    output = {"tc_id": "TC-R02", "status": "ERROR", "error": error_msg, "raw": "", "parsed": {}}
++else:
++    out = parse_output(raw)
++    passed = (
++        out.get("sources_found") is False
++        and isinstance(out.get("summary"), str)
++        and any(
++            p in out["summary"].lower()
++            for p in ["no reliable", "no information", "not found", "no evidence",
++                      "no authoritative", "nonsense", "unable to find",
++                      "could not find", "cannot find", "no relevant"]
++        )
++    )
++    output = {
++        "tc_id": "TC-R02",
++        "status": "PASS" if passed else "FAIL",
++        "raw": raw,
++        "parsed": out,
++    }
++
++# Always write result to JSON file
++RESULT_FILE.write_text(json.dumps(output, indent=2, ensure_ascii=False), encoding="utf-8")
++print(f"\n  Result: {output['status']}")
++print(f"  Written to: {RESULT_FILE}")
+diff --git a/src/anemia_diet_system/crews/biomarker_crew/biomarker_crew.py b/src/anemia_diet_system/crews/biomarker_crew/biomarker_crew.py
+index a30c3fd..405fde0 100644
+--- a/src/anemia_diet_system/crews/biomarker_crew/biomarker_crew.py
++++ b/src/anemia_diet_system/crews/biomarker_crew/biomarker_crew.py
+@@ -4,6 +4,30 @@ import os
+ from crewai import Agent, Crew, Process, Task, LLM
+ from crewai.project import CrewBase, agent, crew, task
+ 
++os.environ["DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DROP_PARAMS"] = "True"
++
++import litellm
++litellm.drop_params = True
++
++def _remove_cache_control_bio(kwargs):
++    def clean_obj(obj):
++        if isinstance(obj, dict):
++            obj.pop("cache_control", None)
++            obj.pop("cache_breakpoint", None)
++            for k, v in list(obj.items()):
++                clean_obj(v)
++        elif isinstance(obj, list):
++            for item in obj:
++                clean_obj(item)
++    clean_obj(kwargs)
++
++if not hasattr(litellm, "input_callback") or not litellm.input_callback:
++    litellm.input_callback = [_remove_cache_control_bio]
++elif _remove_cache_control_bio not in litellm.input_callback:
++    litellm.input_callback.append(_remove_cache_control_bio)
++
+ @CrewBase
+ class BiomarkerCrew:
+     """Crew that checks for inflammation confounders and interprets lab biomarkers."""
+@@ -60,5 +84,6 @@ class BiomarkerCrew:
+             tasks=self.tasks,
+             process=Process.sequential,
+             cache=False,
++            max_rpm=2,
+             verbose=True,
+         )
+diff --git a/src/anemia_diet_system/crews/diet_crew/diet_crew.py b/src/anemia_diet_system/crews/diet_crew/diet_crew.py
+index b0ef262..0bcddbb 100644
+--- a/src/anemia_diet_system/crews/diet_crew/diet_crew.py
++++ b/src/anemia_diet_system/crews/diet_crew/diet_crew.py
+@@ -4,6 +4,30 @@ import os
+ from crewai import Agent, Crew, Process, Task, LLM
+ from crewai.project import CrewBase, agent, crew, task
+ 
++os.environ["DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DROP_PARAMS"] = "True"
++
++import litellm
++litellm.drop_params = True
++
++def _remove_cache_control_diet(kwargs):
++    def clean_obj(obj):
++        if isinstance(obj, dict):
++            obj.pop("cache_control", None)
++            obj.pop("cache_breakpoint", None)
++            for k, v in list(obj.items()):
++                clean_obj(v)
++        elif isinstance(obj, list):
++            for item in obj:
++                clean_obj(item)
++    clean_obj(kwargs)
++
++if not hasattr(litellm, "input_callback") or not litellm.input_callback:
++    litellm.input_callback = [_remove_cache_control_diet]
++elif _remove_cache_control_diet not in litellm.input_callback:
++    litellm.input_callback.append(_remove_cache_control_diet)
++
+ 
+ @CrewBase
+ class DietPlanningCrew:
+@@ -132,5 +156,6 @@ class DietPlanningCrew:
+             tasks=self.tasks,
+             process=Process.sequential,
+             cache=False,
++            max_rpm=2,
+             verbose=True,
+         )
+diff --git a/src/anemia_diet_system/crews/feedback_crew/feedback_crew.py b/src/anemia_diet_system/crews/feedback_crew/feedback_crew.py
+index 904f4ff..c8d17f6 100644
+--- a/src/anemia_diet_system/crews/feedback_crew/feedback_crew.py
++++ b/src/anemia_diet_system/crews/feedback_crew/feedback_crew.py
+@@ -4,6 +4,30 @@ import os
+ from crewai import Agent, Crew, Process, Task, LLM
+ from crewai.project import CrewBase, agent, crew, task
+ 
++os.environ["DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DROP_PARAMS"] = "True"
++
++import litellm
++litellm.drop_params = True
++
++def _remove_cache_control_feedback(kwargs):
++    def clean_obj(obj):
++        if isinstance(obj, dict):
++            obj.pop("cache_control", None)
++            obj.pop("cache_breakpoint", None)
++            for k, v in list(obj.items()):
++                clean_obj(v)
++        elif isinstance(obj, list):
++            for item in obj:
++                clean_obj(item)
++    clean_obj(kwargs)
++
++if not hasattr(litellm, "input_callback") or not litellm.input_callback:
++    litellm.input_callback = [_remove_cache_control_feedback]
++elif _remove_cache_control_feedback not in litellm.input_callback:
++    litellm.input_callback.append(_remove_cache_control_feedback)
++
+ @CrewBase
+ class FeedbackCrew:
+     """Crew that parses patient feedback, tracks adherence, and revises the diet plan."""
+@@ -77,5 +101,6 @@ class FeedbackCrew:
+             tasks=self.tasks,
+             process=Process.sequential,
+             cache=False,
++            max_rpm=2,
+             verbose=True,
+         )
+diff --git a/src/anemia_diet_system/crews/research_crew/config/agents.yaml b/src/anemia_diet_system/crews/research_crew/config/agents.yaml
+new file mode 100644
+index 0000000..1bb79b6
+--- /dev/null
++++ b/src/anemia_diet_system/crews/research_crew/config/agents.yaml
+@@ -0,0 +1,8 @@
++medical_deep_search_agent:
++  role: >
++    Medical and Nutritional Research Specialist
++  goal: >
++    When other crews encounter a condition, allergy combination, or medication not well covered by their static knowledge, search for current, authoritative guidance (e.g. ICMR-NIN Dietary Guidelines, WHO anemia thresholds, peerΓÇæreviewed nutrition sources) and return a concise, sourced summary. Never fabricate a source -- if no reliable information is found, say so explicitly rather than guessing.
++  backstory: >
++    You are the fallback for cases the other crews' builtΓÇæin knowledge doesn't cover well. You are conservative about citing sources and never present speculation as established guidance.
++  # No explicit llm here ΓÇô will use default from crew configuration
+diff --git a/src/anemia_diet_system/crews/research_crew/config/tasks.yaml b/src/anemia_diet_system/crews/research_crew/config/tasks.yaml
+new file mode 100644
+index 0000000..8a6a3ff
+--- /dev/null
++++ b/src/anemia_diet_system/crews/research_crew/config/tasks.yaml
+@@ -0,0 +1,10 @@
++research_query_task:
++  description: >
++    Search for authoritative sources to answer the following research query: "{research_query}". Return a structured JSON response.
++    If no reliable source is found after searching, set sources_found to false and make the summary explicitly say that no reliable information was found -- never present an unsourced guess as if it were established guidance.
++    After searching, critically evaluate whether the search results actually answer the specific query asked -- not just whether the search returned any results at all. If the results are only tangentially related, off-topic, or clearly don't address what was asked (for example, a garbled or nonsensical query returning unrelated medical topics), set sources_found to false and state in summary that no relevant information was found for this specific query, rather than reporting unrelated search results as if they were the answer.
++  expected_output: >
++    A JSON object with keys "summary", "sources_found" (boolean), and "source_notes" (string or null).
++    summary MUST be a single string, never a nested object.
++  agent: medical_deep_search_agent
++  # No extra tools needed; the agent will have the web search tool attached.
+diff --git a/src/anemia_diet_system/crews/research_crew/research_crew.py b/src/anemia_diet_system/crews/research_crew/research_crew.py
+new file mode 100644
+index 0000000..9f58d75
+--- /dev/null
++++ b/src/anemia_diet_system/crews/research_crew/research_crew.py
+@@ -0,0 +1,79 @@
++import os
++import litellm
++
++os.environ["DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DROP_PARAMS"] = "True"
++
++def _clean_dict(obj):
++    if isinstance(obj, dict):
++        obj.pop("cache_control", None)
++        obj.pop("cache_breakpoint", None)
++        for k, v in list(obj.items()):
++            _clean_dict(v)
++    elif isinstance(obj, list):
++        for item in obj:
++            _clean_dict(item)
++
++import time
++
++_orig_completion = litellm.completion
++
++def _patched_completion(*args, **kwargs):
++    _clean_dict(kwargs)
++    for attempt in range(8):
++        try:
++            return _orig_completion(*args, **kwargs)
++        except litellm.exceptions.RateLimitError as exc:
++            if attempt == 7:
++                raise exc
++            wait_sec = 15 * (attempt + 1)
++            print(f"\n[RateLimitHandler] Groq limit hit ({exc}). Sleeping {wait_sec}s before retry {attempt + 1}/7...")
++            time.sleep(wait_sec)
++
++litellm.completion = _patched_completion
++litellm.drop_params = True
++
++from crewai import Agent, Crew, Process, Task, LLM
++from crewai.project import CrewBase, agent, crew, task
++from crewai_tools import SerperDevTool
++
++@CrewBase
++class ResearchCrew:
++    """Crew that performs a deep medical and nutritional search for a given query."""
++
++    agents_config = "config/agents.yaml"
++    tasks_config = "config/tasks.yaml"
++
++    # ΓöÇΓöÇ Agent ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++    @agent
++    def medical_deep_search_agent(self) -> Agent:
++        model_name = os.getenv("LLM_MODEL", "groq/llama-3.1-8b-instant")
++        llm = LLM(model=model_name, timeout=30, drop_params=True)
++        return Agent(
++            config=self.agents_config["medical_deep_search_agent"],  # type: ignore[index]
++            llm=llm,
++            tools=[SerperDevTool()],
++            cache=False,
++            max_rpm=1,
++            verbose=True,
++        )
++
++    # ΓöÇΓöÇ Task ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++    @task
++    def research_query_task(self) -> Task:
++        return Task(
++            config=self.tasks_config["research_query_task"],  # type: ignore[index]
++        )
++
++    # ΓöÇΓöÇ Crew ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++    @crew
++    def crew(self) -> Crew:
++        return Crew(
++            agents=self.agents,
++            tasks=self.tasks,
++            process=Process.sequential,
++            cache=False,
++            max_rpm=2,
++            verbose=True,
++        )
+diff --git a/src/anemia_diet_system/crews/safety_crew/safety_crew.py b/src/anemia_diet_system/crews/safety_crew/safety_crew.py
+index 960252d..fa3506f 100644
+--- a/src/anemia_diet_system/crews/safety_crew/safety_crew.py
++++ b/src/anemia_diet_system/crews/safety_crew/safety_crew.py
+@@ -62,7 +62,9 @@ class SafetyCrew:
+ 
+     @agent
+     def symptom_tagger_agent(self) -> Agent:
+-        model_name = os.getenv("LLM_MODEL", "groq/llama-3.3-70b-versatile")
++        # Safety classification MUST use a capable model.
++        # SAFETY_LLM_MODEL overrides LLM_MODEL for this crew.
++        model_name = os.getenv("SAFETY_LLM_MODEL", "groq/llama-3.3-70b-versatile")
+         my_llm = LLM(
+             model=model_name,
+             timeout=30,
+@@ -77,7 +79,9 @@ class SafetyCrew:
+ 
+     @agent
+     def symptom_escalation_agent(self) -> Agent:
+-        model_name = os.getenv("LLM_MODEL", "groq/llama-3.3-70b-versatile")
++        # Safety classification MUST use a capable model.
++        # SAFETY_LLM_MODEL overrides LLM_MODEL for this crew.
++        model_name = os.getenv("SAFETY_LLM_MODEL", "groq/llama-3.3-70b-versatile")
+         my_llm = LLM(
+             model=model_name,
+             timeout=30,
+@@ -175,5 +179,6 @@ class SafetyCrew:
+             tasks=self.tasks,
+             process=Process.sequential,
+             cache=False,
++            max_rpm=2,
+             verbose=True,
+         )
+diff --git a/src/anemia_diet_system/crews/synthesis_crew/config/tasks.yaml b/src/anemia_diet_system/crews/synthesis_crew/config/tasks.yaml
+index c138ff7..6a3648d 100644
+--- a/src/anemia_diet_system/crews/synthesis_crew/config/tasks.yaml
++++ b/src/anemia_diet_system/crews/synthesis_crew/config/tasks.yaml
+@@ -1,6 +1,8 @@
+ track_symptom_trends_task:
+   description: >
+     Compare this week's logged symptoms (symptom_log) to prior weeks (symptom_log_history) and produce a list of recurring symptoms with their classification: "new_acute" if it appears for the first time this week, or "stable_chronic" if it was present in prior weeks as well. If symptom_log_history is empty, return an empty list under `symptom_trends`.
++
++    Output ONLY a valid JSON object ΓÇö no markdown, no explanation, no preamble, no code blocks.
+   expected_output: >
+     A JSON object with a single key `symptom_trends` containing a list of objects, each with:
+       - `symptom` (string)
+@@ -11,6 +13,8 @@ track_symptom_trends_task:
+ generate_adherence_feedback_task:
+   description: >
+     Analyze the adherence_summary (from the Feedback & Adaptation Crew) and the feedback_log to detect a clear pattern of missed meals or repeated issues. If a genuine pattern is found, output a single encouraging note describing the pattern (e.g., "You've skipped the ironΓÇærich breakfast three days this week"). If no pattern is evident, output an empty string under `adherence_note`.
++
++    Output ONLY a valid JSON object ΓÇö no markdown, no explanation, no preamble, no code blocks.
+   expected_output: >
+     A JSON object with a single key `adherence_note` (string). Empty string when no pattern.
+   agent: feedback_adherence_agent
+@@ -19,6 +23,8 @@ generate_adherence_feedback_task:
+ synthesize_final_output_task:
+   description: >
+     Merge the diet plan, safety tier/message, biomarker observations, symptom trends, and adherence note into a single structured output. Follow the hard rule: if `safety_tier` is "URGENT" or "EMERGENCY", set `content_mode` to "safety_override" and include only the safety_note (full safety_message) with no plan or other content. Otherwise, include the plan slots (morning, afternoon_evening, night) and optional safety_note, and always end with the closing line.
++
++    Output ONLY a valid JSON object ΓÇö no markdown, no code blocks, no python/js code, no explanation, no preamble.
+   expected_output: >
+     {
+       "safety_tier": "NONE|MONITOR|URGENT|EMERGENCY",
+diff --git a/src/anemia_diet_system/crews/synthesis_crew/synthesis_crew.py b/src/anemia_diet_system/crews/synthesis_crew/synthesis_crew.py
+index b8b2dc3..f2c6ccb 100644
+--- a/src/anemia_diet_system/crews/synthesis_crew/synthesis_crew.py
++++ b/src/anemia_diet_system/crews/synthesis_crew/synthesis_crew.py
+@@ -6,6 +6,30 @@ import warnings
+ from crewai import Agent, Crew, Process, Task, LLM
+ from crewai.project import CrewBase, agent, crew, task, after_kickoff
+ 
++os.environ["DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DROP_PARAMS"] = "True"
++
++import litellm
++litellm.drop_params = True
++
++def _remove_cache_control_synthesis(kwargs):
++    def clean_obj(obj):
++        if isinstance(obj, dict):
++            obj.pop("cache_control", None)
++            obj.pop("cache_breakpoint", None)
++            for k, v in list(obj.items()):
++                clean_obj(v)
++        elif isinstance(obj, list):
++            for item in obj:
++                clean_obj(item)
++    clean_obj(kwargs)
++
++if not hasattr(litellm, "input_callback") or not litellm.input_callback:
++    litellm.input_callback = [_remove_cache_control_synthesis]
++elif _remove_cache_control_synthesis not in litellm.input_callback:
++    litellm.input_callback.append(_remove_cache_control_synthesis)
++
+ @CrewBase
+ class SynthesisCrew:
+     """Crew that synthesizes the final patient recommendation, enforcing hard safety rules."""
+@@ -117,5 +141,6 @@ class SynthesisCrew:
+             tasks=self.tasks,
+             process=Process.sequential,
+             cache=False,
++            max_rpm=2,
+             verbose=True,
+         )
+diff --git a/src/anemia_diet_system/flow.py b/src/anemia_diet_system/flow.py
+index 7231a13..f77796f 100644
+--- a/src/anemia_diet_system/flow.py
++++ b/src/anemia_diet_system/flow.py
+@@ -1,71 +1,490 @@
+-"""
+-Anemia Diet System ΓÇö Safety-Crew-only Flow.
+-
+-Entry point: AnemiaFlow.kickoff(inputs={...})
+-
+-This flow will be extended with @listen/@router branches for Diet Planning,
+-Biomarker, and other crews. For now it runs Safety Crew standalone.
+-"""
+ from __future__ import annotations
+ 
+ import json
+-from typing import Any
++import os
++import re
++from concurrent.futures import ThreadPoolExecutor
++from typing import Any, Dict, Optional, Union
+ 
+ from crewai.flow.flow import Flow, start
+ 
++os.environ["DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DROP_PARAMS"] = "True"
++
++
++# ΓöÇΓöÇ Python-based safety rule enforcer (no LLM needed) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++_EMERGENCY_KEYWORDS = [
++    "faint", "fainting", "fainted", "syncope", "lost consciousness", "blacked out",
++    "chest pain", "shortness of breath at rest", "out of breath sitting",
++    "black stool", "tarry stool", "melena",
++    "soaking through protection every hour", "soaking pad", "heavy bleeding hourly",
++]
++_URGENT_KEYWORDS = [
++    "palpitation", "racing heart", "heart racing", "tachycardia",
++]
++
++def _python_safety_tier(symptoms: list[str]) -> Optional[str]:
++    """Return EMERGENCY or URGENT if symptom text clearly matches known trigger keywords.
++    Returns None if no hard rule matches (LLM tier should be used)."""
++    combined = " ".join(str(s).lower() for s in symptoms)
++    for kw in _EMERGENCY_KEYWORDS:
++        if kw in combined:
++            return "EMERGENCY"
++    for kw in _URGENT_KEYWORDS:
++        if kw in combined:
++            return "URGENT"
++    return None
++
++os.environ["DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DROP_PARAMS"] = "True"
++
++import litellm
++litellm.drop_params = True
++
++def _remove_cache_control(kwargs):
++    def clean_obj(obj):
++        if isinstance(obj, dict):
++            obj.pop("cache_control", None)
++            obj.pop("cache_breakpoint", None)
++            for k, v in list(obj.items()):
++                clean_obj(v)
++        elif isinstance(obj, list):
++            for item in obj:
++                clean_obj(item)
++
++    clean_obj(kwargs)
++
++if not hasattr(litellm, "input_callback") or not litellm.input_callback:
++    litellm.input_callback = [_remove_cache_control]
++elif _remove_cache_control not in litellm.input_callback:
++    litellm.input_callback.append(_remove_cache_control)
++
+ from anemia_diet_system.crews.safety_crew.safety_crew import SafetyCrew
++from anemia_diet_system.crews.diet_crew.diet_crew import DietPlanningCrew
++from anemia_diet_system.crews.biomarker_crew.biomarker_crew import BiomarkerCrew
++from anemia_diet_system.crews.feedback_crew.feedback_crew import FeedbackCrew
++from anemia_diet_system.crews.synthesis_crew.synthesis_crew import SynthesisCrew
++from anemia_diet_system.crews.research_crew.research_crew import ResearchCrew
++
++
++def parse_json(raw: Any) -> Dict[str, Any]:
++    """Helper function to parse JSON string outputs safely, handling markdown code fences."""
++    if isinstance(raw, dict):
++        return raw
++    if not isinstance(raw, str):
++        raw = str(raw)
++    raw = raw.strip()
++    if raw.startswith("```"):
++        lines = raw.splitlines()
++        raw = "\n".join(
++            line for line in lines if not line.strip().startswith("```")
++        ).strip()
++    try:
++        return json.loads(raw)
++    except json.JSONDecodeError:
++        match = re.search(r"\{.*\}", raw, re.DOTALL)
++        if match:
++            try:
++                return json.loads(match.group(0))
++            except json.JSONDecodeError:
++                pass
++        return {}
+ 
+ 
+ class AnemiaFlow(Flow):
+     """
+-    Top-level flow for the Anemia Diet System.
+-
+-    Currently: single @start entry that runs Safety Crew and returns its output.
+-    Future: @listen/@router branches for Diet Planning, Biomarker tracking, etc.
++    Event-driven orchestration flow for the Anemia & Iron-Deficiency Diet Recommendation System.
++    
++    Wires together six modular crews:
++    1. SafetyCrew
++    2. DietPlanningCrew
++    3. BiomarkerCrew
++    4. FeedbackCrew
++    5. SynthesisCrew
++    6. ResearchCrew
+     """
+ 
+     @start()
+-    def run_safety_crew(self) -> dict[str, Any]:
++    def on_intake_complete(self, inputs: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
++        """
++        Entry point 1: Initial patient intake processing.
++        
++        Input: PatientProfile-shaped dict (patient_id, diet_type, pregnancy_status,
++               existing_conditions, allergies, current_medications, symptom_log, biomarkers)
++        """
++        if inputs is None:
++            inputs = getattr(self, "state", {}) or {}
++        if isinstance(inputs, str):
++            inputs = parse_json(inputs)
++
++        patient_id = inputs.get("patient_id", "unknown")
++        print(f"\n[AnemiaFlow] >>> Starting initial intake processing for patient: '{patient_id}'")
++
++        # ΓöÇΓöÇ Step a: Run SafetyCrew ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++        logged_symptoms = inputs.get("symptom_log") or inputs.get("logged_symptoms") or []
++        is_pregnant = bool(
++            inputs.get("is_pregnant")
++            or (inputs.get("pregnancy_status") in ("pregnant", "lactating"))
++        )
++        life_stage = inputs.get("life_stage") or (
++            "pregnant" if is_pregnant else "menstruating"
++        )
++
++        safety_payload = {
++            "patient_id": patient_id,
++            "logged_symptoms": logged_symptoms,
++            "life_stage": life_stage,
++            "is_pregnant": is_pregnant,
++            "biomarkers": inputs.get("biomarkers") or {},
++            "family_history_flags": inputs.get("family_history_flags") or [],
++            "prior_monitor_flags_last_window": inputs.get("prior_monitor_flags_last_window") or False,
++        }
++
++        print(f"[AnemiaFlow] Step 1a: Running SafetyCrew...")
++        safety_crew = SafetyCrew()
++        safety_crew._patient_id = patient_id
++        safety_result = safety_crew.crew().kickoff(
++            inputs={"patient_input": json.dumps(safety_payload, default=str)}
++        )
++        safety_raw = safety_result.raw if hasattr(safety_result, "raw") else str(safety_result)
++        safety_data = parse_json(safety_raw)
++        print(f"[AnemiaFlow][DEBUG] safety_raw[:300] = {repr(safety_raw[:300])}")
++        print(f"[AnemiaFlow][DEBUG] safety_data = {safety_data}")
++
++        tier = safety_data.get("tier", "NONE").upper()
++        safety_message = safety_data.get("rationale") or safety_data.get("safety_message", "")
++        print(f"[AnemiaFlow][DEBUG] tier = {tier}")
++
++
++        # ΓöÇΓöÇ Step b: Evaluate Safety Tier & Route ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++        if tier in ("URGENT", "EMERGENCY"):
++            print(f"[AnemiaFlow] Step 1b: Safety tier is {tier}! Skipping DietPlanningCrew and BiomarkerCrew, but executing SynthesisCrew.")
++            diet_plan = None
++            biomarker_obs = {"status": "no_lab_data", "message": "No laboratory data available for interpretation."}
++        else:
++            print(f"[AnemiaFlow] Step 1b: Safety tier is {tier}. Proceeding with diet and biomarker evaluation.")
++
++            # ΓöÇΓöÇ Step c & d: DietPlanningCrew & BiomarkerCrew ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++            diet_payload = {
++                "patient_id": patient_id,
++                "diet_type": inputs.get("diet_type", "vegetarian"),
++                "allergies": inputs.get("allergies", []),
++                "existing_conditions": inputs.get("existing_conditions", []),
++                "pregnancy_status": inputs.get("pregnancy_status", "not_pregnant"),
++                "trimester": inputs.get("trimester"),
++                "current_medications": inputs.get("current_medications", []),
++            }
++
++            has_biomarkers = bool(inputs.get("biomarkers"))
++
++            if has_biomarkers:
++                print(f"[AnemiaFlow] Step 1c & 1d: Biomarkers present. Running DietPlanningCrew and BiomarkerCrew sequentially...")
++                bio_payload = {
++                    "patient_id": patient_id,
++                    "biomarkers": inputs.get("biomarkers", {}),
++                    "existing_conditions": inputs.get("existing_conditions", []),
++                }
++
++                def run_diet():
++                    dc = DietPlanningCrew()
++                    dc._patient_id = patient_id
++                    res = dc.crew().kickoff(inputs={"patient_input": json.dumps(diet_payload, default=str)})
++                    return parse_json(res.raw if hasattr(res, "raw") else str(res))
++
++                def run_biomarker():
++                    bc = BiomarkerCrew()
++                    res = bc.crew().kickoff(inputs={"patient_input": json.dumps(bio_payload, default=str)})
++                    return parse_json(res.raw if hasattr(res, "raw") else str(res))
++
++                diet_data = run_diet()
++                biomarker_obs = run_biomarker()
++            else:
++                print(f"[AnemiaFlow] Step 1c & 1d: No biomarkers provided. Skipping BiomarkerCrew.")
++                biomarker_obs = {"status": "no_lab_data", "message": "No laboratory data available for interpretation."}
++
++                dc = DietPlanningCrew()
++                dc._patient_id = patient_id
++                res = dc.crew().kickoff(inputs={"patient_input": json.dumps(diet_payload, default=str)})
++                diet_data = parse_json(res.raw if hasattr(res, "raw") else str(res))
++
++            diet_plan = diet_data.get("timed_foods", diet_data)
++        print(f"[AnemiaFlow] Step 1e: Running SynthesisCrew...")
++
++        synthesis_payload = {
++            "patient_id": patient_id,
++            "safety_tier": tier,
++            "safety_message": safety_message,
++            "diet_plan": diet_plan,
++            "biomarker_observations": biomarker_obs,
++            "symptom_log": logged_symptoms,
++            "symptom_log_history": inputs.get("symptom_log_history") or [],
++            "adherence_summary": inputs.get("adherence_summary") or [],
++            "feedback_log": inputs.get("feedback_log") or [],
++        }
++
++        synthesis_crew = SynthesisCrew()
++        syn_result = synthesis_crew.crew().kickoff(
++            inputs={"patient_input": json.dumps(synthesis_payload, default=str)}
++        )
++        syn_raw = syn_result.raw if hasattr(syn_result, "raw") else str(syn_result)
++        final_output = parse_json(syn_raw)
++
++        print(f"[AnemiaFlow] Step 1f: Intake processing complete for patient '{patient_id}'.")
++        return final_output
++
++    def on_pdf_upload(self, inputs: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+         """
+-        Accepts a PatientProfile-shaped input dict and runs Safety Crew.
+-
+-        Expected keys (at minimum):
+-          - patient_id: str
+-          - logged_symptoms: list[str]   (free-text symptom strings)
+-          - life_stage: str               (e.g. "menstruating", "pregnant")
+-          - tagged_symptoms: list[dict]   (optional; pre-tagged)
+-          - biomarkers: dict              (optional)
+-          - family_history_flags: list    (optional)
+-          - prior_monitor_flags_last_window: bool (optional)
+-          - is_pregnant: bool             (optional)
++        Entry point 2: Lab report PDF / new biomarker upload.
++        
++        Input: patient_id, new biomarkers dict, optional existing plan & safety context.
+         """
+-        inputs: dict[str, Any] = dict(self.state) if self.state else {}  # populated by kickoff(inputs=...)
++        if inputs is None:
++            inputs = getattr(self, "state", {}) or {}
++        if isinstance(inputs, str):
++            inputs = parse_json(inputs)
+ 
+         patient_id = inputs.get("patient_id", "unknown")
++        new_biomarkers = inputs.get("biomarkers") or inputs.get("new_biomarkers") or {}
++        print(f"\n[AnemiaFlow] >>> PDF Lab Report Uploaded for patient '{patient_id}'")
++
++        # Run BiomarkerCrew with new lab data
++        bio_payload = {
++            "patient_id": patient_id,
++            "biomarkers": new_biomarkers,
++            "existing_conditions": inputs.get("existing_conditions", []),
++        }
+ 
+-        # Instantiate the crew and inject the patient_id for audit logging.
+-        crew_instance = SafetyCrew()
+-        crew_instance._patient_id = patient_id
++        print(f"[AnemiaFlow] Step 2a: Running BiomarkerCrew with new lab report...")
++        bc = BiomarkerCrew()
++        bio_result = bc.crew().kickoff(inputs={"patient_input": json.dumps(bio_payload, default=str)})
++        biomarker_obs = parse_json(bio_result.raw if hasattr(bio_result, "raw") else str(bio_result))
+ 
+-        # Build the crew input ΓÇö pass the full profile through as JSON so the
+-        # LLM agents can reference every field.
+-        crew_inputs = {
+-            "patient_input": json.dumps(inputs, default=str),
++        # Re-run SynthesisCrew with updated biomarker observations
++        print(f"[AnemiaFlow] Step 2b: Re-running SynthesisCrew with updated biomarker observations...")
++        synthesis_payload = {
++            "patient_id": patient_id,
++            "safety_tier": inputs.get("safety_tier", "NONE"),
++            "safety_message": inputs.get("safety_message", ""),
++            "diet_plan": inputs.get("current_plan") or inputs.get("diet_plan"),
++            "biomarker_observations": biomarker_obs,
++            "symptom_log": inputs.get("symptom_log") or inputs.get("logged_symptoms") or [],
++            "symptom_log_history": inputs.get("symptom_log_history") or [],
++            "adherence_summary": inputs.get("adherence_summary") or [],
++            "feedback_log": inputs.get("feedback_log") or [],
+         }
+ 
+-        result = crew_instance.crew().kickoff(inputs=crew_inputs)
++        sc = SynthesisCrew()
++        syn_result = sc.crew().kickoff(inputs={"patient_input": json.dumps(synthesis_payload, default=str)})
++        syn_raw = syn_result.raw if hasattr(syn_result, "raw") else str(syn_result)
++        return parse_json(syn_raw)
+ 
+-        # Return as dict for downstream @listen steps (future).
++    def on_symptom_logged(self, inputs: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
++        """
++        Entry point 3: Symptom log submission for monitoring / escalation.
++        
++        Input: patient_id, new symptom log entry, existing symptom_log history.
++        """
++        if inputs is None:
++            inputs = getattr(self, "state", {}) or {}
++        if isinstance(inputs, str):
++            inputs = parse_json(inputs)
++
++        patient_id = inputs.get("patient_id", "unknown")
++        last_known_tier = (inputs.get("last_known_tier") or inputs.get("previous_tier") or "NONE").upper()
++        print(f"\n[AnemiaFlow] >>> Symptom logged for patient '{patient_id}' (last known tier: {last_known_tier})")
++
++        logged_symptoms = inputs.get("symptom_log") or inputs.get("logged_symptoms") or []
++        is_pregnant = bool(
++            inputs.get("is_pregnant")
++            or (inputs.get("pregnancy_status") in ("pregnant", "lactating"))
++        )
++        life_stage = inputs.get("life_stage") or (
++            "pregnant" if is_pregnant else "menstruating"
++        )
++
++        safety_payload = {
++            "patient_id": patient_id,
++            "logged_symptoms": logged_symptoms,
++            "life_stage": life_stage,
++            "is_pregnant": is_pregnant,
++            "biomarkers": inputs.get("biomarkers", {}),
++            "family_history_flags": inputs.get("family_history_flags", []),
++            "prior_monitor_flags_last_window": inputs.get("prior_monitor_flags_last_window", False),
++        }
++
++        print(f"[AnemiaFlow] Step 3a: Re-running SafetyCrew...")
++        safety_crew = SafetyCrew()
++        safety_crew._patient_id = patient_id
++        safety_result = safety_crew.crew().kickoff(
++            inputs={"patient_input": json.dumps(safety_payload, default=str)}
++        )
++        safety_raw = safety_result.raw if hasattr(safety_result, "raw") else str(safety_result)
++        safety_data = parse_json(safety_raw)
++
++        new_tier = safety_data.get("tier", "NONE").upper()
++        safety_message = safety_data.get("rationale") or safety_data.get("safety_message", "")
++
++        tier_changed = new_tier != last_known_tier
++        is_escalated = new_tier in ("URGENT", "EMERGENCY")
++
++        if tier_changed or is_escalated:
++            print(
++                f"[AnemiaFlow] Step 3b: Safety tier changed ({last_known_tier} -> {new_tier})! "
++                f"Re-running SynthesisCrew to update patient output."
++            )
++            synthesis_payload = {
++                "patient_id": patient_id,
++                "safety_tier": new_tier,
++                "safety_message": safety_message,
++                "diet_plan": inputs.get("current_plan") or inputs.get("diet_plan"),
++                "biomarker_observations": inputs.get("biomarker_observations"),
++                "symptom_log": logged_symptoms,
++                "symptom_log_history": inputs.get("symptom_log_history") or [],
++                "adherence_summary": inputs.get("adherence_summary") or [],
++                "feedback_log": inputs.get("feedback_log") or [],
++            }
++
++            sc = SynthesisCrew()
++            syn_result = sc.crew().kickoff(inputs={"patient_input": json.dumps(synthesis_payload, default=str)})
++            syn_raw = syn_result.raw if hasattr(syn_result, "raw") else str(syn_result)
++            return parse_json(syn_raw)
++
++        print(
++            f"[AnemiaFlow] Step 3b: Safety tier unchanged ({new_tier}). "
++            f"Returning SafetyCrew evaluation result directly without re-running SynthesisCrew."
++        )
++        return safety_data
++
++    def on_feedback_submitted(self, inputs: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
++        """
++        Entry point 4: Patient feedback & meal adherence submission.
++        
++        Input: patient_id, raw_feedback_text, current_plan, logged_meals.
++        """
++        if inputs is None:
++            inputs = getattr(self, "state", {}) or {}
++        if isinstance(inputs, str):
++            inputs = parse_json(inputs)
++
++        patient_id = inputs.get("patient_id", "unknown")
++        raw_feedback_text = inputs.get("raw_feedback_text", "")
++        current_plan = inputs.get("current_plan", [])
++        logged_meals = inputs.get("logged_meals", [])
++        print(f"\n[AnemiaFlow] >>> Feedback submitted for patient '{patient_id}': '{raw_feedback_text}'")
++
++        feedback_payload = {
++            "patient_id": patient_id,
++            "raw_feedback_text": raw_feedback_text,
++            "current_plan": current_plan,
++            "logged_meals": logged_meals,
++        }
++
++        print(f"[AnemiaFlow] Step 4a: Running FeedbackCrew...")
++        fc = FeedbackCrew()
++        fc_result = fc.crew().kickoff(inputs={"patient_input": json.dumps(feedback_payload, default=str)})
++
++        adh_summary = inputs.get("adherence_summary") or []
+         try:
+-            raw = result.raw.strip()
+-            if raw.startswith("```"):
+-                lines = raw.splitlines()
+-                raw = "\n".join(l for l in lines if not l.strip().startswith("```")).strip()
+-            return json.loads(raw)
+-        except Exception:
+-            return {"raw": result.raw if hasattr(result, "raw") else str(result)}
+-
+-    # ΓöÇΓöÇ Future extension points (stubs) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+-    # @listen(run_safety_crew)
+-    # @router(run_safety_crew)
+-    # def route_by_tier(self, safety_output): ...
++            tasks = fc_result.tasks_output
++            raw_revise = tasks[-1].raw if tasks else str(fc_result)
++            if tasks and len(tasks) >= 2:
++                adh_data = parse_json(tasks[1].raw)
++                if "adherence_summary" in adh_data:
++                    adh_summary = adh_data["adherence_summary"]
++        except AttributeError:
++            raw_revise = str(fc_result)
++
++        feedback_data = parse_json(raw_revise)
++        requires_allergy = feedback_data.get("requires_allergy_recheck", False)
++
++        if requires_allergy:
++            print(
++                f"[AnemiaFlow] Step 4b: requires_allergy_recheck=True! "
++                f"Re-running DietPlanningCrew and SynthesisCrew due to potential allergy/safety issue."
++            )
++            diet_payload = {
++                "patient_id": patient_id,
++                "diet_type": inputs.get("diet_type", "vegetarian"),
++                "allergies": inputs.get("allergies", []),
++                "existing_conditions": inputs.get("existing_conditions", []),
++                "pregnancy_status": inputs.get("pregnancy_status", "not_pregnant"),
++                "trimester": inputs.get("trimester"),
++                "current_medications": inputs.get("current_medications", []),
++            }
++
++            dc = DietPlanningCrew()
++            dc._patient_id = patient_id
++            diet_res = dc.crew().kickoff(inputs={"patient_input": json.dumps(diet_payload, default=str)})
++            diet_data = parse_json(diet_res.raw if hasattr(diet_res, "raw") else str(diet_res))
++            new_plan = diet_data.get("timed_foods", diet_data)
++
++            feedback_log = inputs.get("feedback_log") or ([raw_feedback_text] if raw_feedback_text else [])
++
++            synthesis_payload = {
++                "patient_id": patient_id,
++                "safety_tier": inputs.get("safety_tier", "NONE"),
++                "safety_message": inputs.get("safety_message", ""),
++                "diet_plan": new_plan,
++                "biomarker_observations": inputs.get("biomarker_observations"),
++                "symptom_log": inputs.get("symptom_log") or inputs.get("logged_symptoms") or [],
++                "symptom_log_history": inputs.get("symptom_log_history") or [],
++                "adherence_summary": adh_summary,
++                "feedback_log": feedback_log,
++            }
++
++            sc = SynthesisCrew()
++            syn_res = sc.crew().kickoff(inputs={"patient_input": json.dumps(synthesis_payload, default=str)})
++            syn_raw = syn_res.raw if hasattr(syn_res, "raw") else str(syn_res)
++            return parse_json(syn_raw)
++
++        print(
++            f"[AnemiaFlow] Step 4b: requires_allergy_recheck=False. "
++            f"Merging targeted plan revisions into existing plan without full crew re-runs."
++        )
++        revised_items = feedback_data.get("revised_plan", [])
++        if not isinstance(revised_items, list):
++            revised_items = [revised_items]
++
++        merged_plan = list(current_plan)
++        revised_names = {
++            item.get("name"): item for item in revised_items if isinstance(item, dict) and "name" in item
++        }
++
++        updated_plan = []
++        for orig_item in merged_plan:
++            if isinstance(orig_item, dict) and orig_item.get("name") in revised_names:
++                updated_plan.append(revised_names[orig_item["name"]])
++            else:
++                updated_plan.append(orig_item)
++
++        existing_names = {item.get("name") for item in updated_plan if isinstance(item, dict)}
++        for item in revised_items:
++            if isinstance(item, dict) and item.get("name") not in existing_names:
++                updated_plan.append(item)
++
++        return {
++            "revised_plan": updated_plan if updated_plan else revised_items,
++            "requires_allergy_recheck": False,
++            "note": feedback_data.get("note", ""),
++        }
++
++    def on_research_needed(self, inputs: Union[Dict[str, Any], str] = None) -> Dict[str, Any]:
++        """
++        Entry point 5: Standalone deep research query execution.
++        
++        Input: research_query (string or dict with "research_query" key).
++        """
++        if isinstance(inputs, dict):
++            query = inputs.get("research_query", "")
++        elif inputs is not None:
++            query = str(inputs)
++        else:
++            query = ""
++
++        print(f"\n[AnemiaFlow] >>> Deep research query requested: '{query}'")
++        rc = ResearchCrew()
++        res = rc.crew().kickoff(inputs={"research_query": query})
++        raw = res.raw if hasattr(res, "raw") else str(res)
++        return parse_json(raw)
+diff --git a/tc_r02_output.txt b/tc_r02_output.txt
+new file mode 100644
+index 0000000..c8c386f
+Binary files /dev/null and b/tc_r02_output.txt differ
+diff --git a/tc_r02_result.txt b/tc_r02_result.txt
+new file mode 100644
+index 0000000..1e47c71
+--- /dev/null
++++ b/tc_r02_result.txt
+@@ -0,0 +1,795 @@
++∩╗┐
++==============================================================
++  TC-R02: meaningless query -> no reliable information
++==============================================================
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├£├ç Crew Execution Started ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Crew Execution Started                                                     ╬ô├╢├⌐
++╬ô├╢├⌐  Name: ResearchCrew                                                         ╬ô├╢├⌐
++╬ô├╢├⌐  ID: 13303f7e-df3d-4694-8001-46583ce493b7                                   ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├┤├» Task Started ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Task Started                                                               ╬ô├╢├⌐
++╬ô├╢├⌐  Name: research_query_task                                                  ╬ô├╢├⌐
++╬ô├╢├⌐  ID: 8651b26f-e5d4-44b8-b529-c01dfbacb999                                   ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├▒├╗ Agent Started ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Agent: Medical and Nutritional Research Specialist                         ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Task: Search for authoritative sources to answer the following research    ╬ô├╢├⌐
++╬ô├╢├⌐  query: "asdkjfh qwerty nonsense medical term xyz123". Return a structured  ╬ô├╢├⌐
++╬ô├╢├⌐  JSON response. If no reliable source is found after searching, set         ╬ô├╢├⌐
++╬ô├╢├⌐  sources_found to false and make the summary explicitly say that no         ╬ô├╢├⌐
++╬ô├╢├⌐  reliable information was found -- never present an unsourced guess as if   ╬ô├╢├⌐
++╬ô├╢├⌐  it were established guidance. After searching, critically evaluate         ╬ô├╢├⌐
++╬ô├╢├⌐  whether the search results actually answer the specific query asked --     ╬ô├╢├⌐
++╬ô├╢├⌐  not just whether the search returned any results at all. If the results    ╬ô├╢├⌐
++╬ô├╢├⌐  are only tangentially related, off-topic, or clearly don't address what    ╬ô├╢├⌐
++╬ô├╢├⌐  was asked (for example, a garbled or nonsensical query returning           ╬ô├╢├⌐
++╬ô├╢├⌐  unrelated medical topics), set sources_found to false and state in         ╬ô├╢├⌐
++╬ô├╢├⌐  summary that no relevant information was found for this specific query,    ╬ô├╢├⌐
++╬ô├╢├⌐  rather than reporting unrelated search results as if they were the         ╬ô├╢├⌐
++╬ô├╢├⌐  answer.                                                                    ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├╢┬║ Tool Execution Started (#1) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Args: {'search_query': 'authoritative sources for medical term xyz123'}    ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├╢┬║ Tool Execution Started (#2) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Args: {'search_query': 'meaning of xyz123 in medicine'}                    ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├╢┬║ Tool Execution Started (#3) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Args: {'search_query': 'definition of xyz123'}                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├╢┬║ Tool Execution Started (#4) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Args: {'search_query': 'xyz123 medical term'}                              ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├╢┬║ Tool Execution Started (#5) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Args: {'search_query': 'nonsense medical term xyz123'}                     ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├╢┬║ Tool Execution Started (#6) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Args: {'search_query': 'meaning of garbled term in medicine'}              ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç ╬ô┬ú├á Tool Execution Completed (#6) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool Completed                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Output: {'searchParameters': {'q': 'xyz123 medical term', 'type':          ╬ô├╢├⌐
++╬ô├╢├⌐  'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Exam 4    ╬ô├╢├⌐
++╬ô├╢├⌐  Review Questions for Medical Terminology (XYZ123)', 'link':                ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.studocu.com/en-us/document/piedmont-university/human-anatomy  ╬ô├╢├⌐
++╬ô├╢├⌐  -and-physiology/exam-4-review-questions-for-medical-terminology-xyz123/14  ╬ô├╢├⌐
++╬ô├╢├⌐  1783980', 'snippet': 'This review document covers key medical conditions   ╬ô├╢├⌐
++╬ô├╢├⌐  and terms, including kyphosis, paraplegia, gouty arthritis, and            ╬ô├╢├⌐
++╬ô├╢├⌐  cerebrovascular accidents.', 'position': 1}, {'title': 'What do you know   ╬ô├╢├⌐
++╬ô├╢├⌐  about medical abbreviations?', 'link':                                     ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.facebook.com/61568157196133/posts/what-do-you-know-about-med  ╬ô├╢├⌐
++╬ô├╢├⌐  ical-abbreviations/122141120666605239/', 'snippet': 'Medical important     ╬ô├╢├⌐
++╬ô├╢├⌐  abbreviations words term and thier Meaning full . ... medical              ╬ô├╢├⌐
++╬ô├╢├⌐  abbreviations: "Do you have XYZ? Ask your doctor..." I\'d ...',            ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 2}, {'title': 'Terminology Sheet - Medical Terms for Course    ╬ô├╢├⌐
++╬ô├╢├⌐  XYZ123', 'link':                                                           ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.studocu.com/en-us/document/rasmussen-university/mdc1/termino  ╬ô├╢├⌐
++╬ô├╢├⌐  logy-sheet-terminiology-for-the-course/106400763', 'snippet': 'A prefix    ╬ô├╢├⌐
++╬ô├╢├⌐  is an element of a word that is at the beginning of a word root. Some      ╬ô├╢├⌐
++╬ô├╢├⌐  medical words do not have. a prefix. Suffixes (usually referring to        ╬ô├╢├⌐
++╬ô├╢├⌐  pathology ...', 'position': 3}, {'title': 'Medical Dictionary of Health    ╬ô├╢├⌐
++╬ô├╢├⌐  Terms: Q-Z', 'link': 'https://www.health.harvard.edu/q-through-z',         ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'transient ischemic attack: A brain attack that resolves on     ╬ô├╢├⌐
++╬ô├╢├⌐  its own within 24 hours. Sometimes called a mini-stroke or TIA, a          ╬ô├╢├⌐
++╬ô├╢├⌐  transient ischemic attack is often ...', 'position': 4}, {'title': 'HLTH   ╬ô├╢├⌐
++╬ô├╢├⌐  123: Medical Terminology', 'link':                                         ╬ô├╢├⌐
++╬ô├╢├⌐  'https://catalog.wvc.edu/health/hlth-123', 'snippet': 'Includes study of   ╬ô├╢├⌐
++╬ô├╢├⌐  terms in anatomy, physiology and pathology through word analysis with      ╬ô├╢├⌐
++╬ô├╢├⌐  emphasis on word parts: prefix, root and suffix.', 'position': 5},         ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Understanding Medical Terms', 'link':                           ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.merckmanuals.com/home/resourcespages/medical-terms',          ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'The key to understanding medical terms is focusing on their    ╬ô├╢├⌐
++╬ô├╢├⌐  components (prefixes, roots, and suffixes).', 'position': 6}, {'title':    ╬ô├╢├⌐
++╬ô├╢├⌐  'Ever wonder why medical orders look like alphabet soup ...', 'link':      ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.instagram.com/reel/DS7nGH2kmfe/?hl=en', 'snippet': "From gtt  ╬ô├╢├⌐
++╬ô├╢├⌐  to NPO to BID, q4h, and qHS╬ô├ç├╢these aren't random shortcuts, they're Latin   ╬ô├╢├⌐
++╬ô├╢├⌐  roots that shaped how medicine communicates for centuries.", 'position':   ╬ô├╢├⌐
++╬ô├╢├⌐  7}, {'title': 'HIM 1101 Medical Terminology - Course', 'link':             ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.sinclair.edu/course/params/subject/HIM/courseNo/1101/',       ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'Basic prefixes, roots and suffixes; terminology including      ╬ô├╢├⌐
++╬ô├╢├⌐  anatomic, diagnostic, symptomatic, procedural, eponymic terms and          ╬ô├╢├⌐
++╬ô├╢├⌐  standard abbreviations', 'position': 8}, {'title': 'Medical Dictionary',   ╬ô├╢├⌐
++╬ô├╢├⌐  'link': 'https://www.merriam-webster.com/medical', 'snippet': 'Search      ╬ô├╢├⌐
++╬ô├╢├⌐  medical terms and abbreviations with the most up-to-date and               ╬ô├╢├⌐
++╬ô├╢├⌐  comprehensive medical dictionary from the reference experts at             ╬ô├╢├⌐
++╬ô├╢├⌐  Merriam-Webster.', 'position': 9}], 'peopleAlsoAsk': [{'question': 'What   ╬ô├╢├⌐
++╬ô├╢├⌐  does z mean in medical terms?', 'snippet': '', 'title': '', 'link': ''},   ╬ô├╢├⌐
++╬ô├╢├⌐  {'question': 'What medical term starts with y?', 'snippet': 'Y\n___Y       ╬ô├╢├⌐
++╬ô├╢├⌐  chromosome deletions.\n___Yaws.\n___Yeast infection.\n___Yellow            ╬ô├╢├⌐
++╬ô├╢├⌐  fever.\n___Yellow nail syndrome.\n___Yemenite deaf-blind hypopigmentation  ╬ô├╢├⌐
++╬ô├╢├⌐  syndrome.\n___Yersinia pestis infection.\n___Yersiniosis. Yersinia         ╬ô├╢├⌐
++╬ô├╢├⌐  entercolitica infection. Yersinia pseudotuberculosis infection.',          ╬ô├╢├⌐
++╬ô├╢├⌐  'title': 'List of diseases (Y) - Wikipedia', 'link':                       ╬ô├╢├⌐
++╬ô├╢├⌐  'https://en.wikipedia.org/wiki/List_of_diseases_(Y)'}, {'question': 'What  ╬ô├╢├⌐
++╬ô├╢├⌐  is in medical terminology?', 'snippet': '', 'title': '', 'link': ''},      ╬ô├╢├⌐
++╬ô├╢├⌐  {'question': 'What does the suffix Y mean in medical terms?', 'snippet':   ╬ô├╢├⌐
++╬ô├╢├⌐  '', 'title': '', 'link': ''}], 'credits': 1}                               ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç ╬ô┬ú├á Tool Execution Completed (#6) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool Completed                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Output: {'searchParameters': {'q': 'authoritative sources for medical      ╬ô├╢├⌐
++╬ô├╢├⌐  term xyz123', 'type': 'search', 'num': 10, 'engine': 'google'},            ╬ô├╢├⌐
++╬ô├╢├⌐  'organic': [{'title': 'Identifying Credible Sources of Health Information  ╬ô├╢├⌐
++╬ô├╢├⌐  in Social ...', 'link':                                                    ╬ô├╢├⌐
++╬ô├╢├⌐  'https://pmc.ncbi.nlm.nih.gov/articles/PMC8486420/', 'snippet': 'by RS     ╬ô├╢├⌐
++╬ô├╢├⌐  Kington Γö¼Γòû 2021 Γö¼Γòû Cited by 293 ╬ô├ç├╢ ╬ô├ç┬úAuthoritative: Any medical or health      ╬ô├╢├⌐
++╬ô├╢├⌐  advice provided and hosted on this site will only be given by medically    ╬ô├╢├⌐
++╬ô├╢├⌐  trained and qualified professionals unless a ...', 'position': 1},         ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Medical Dictionary of Health Terms: A-C', 'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.health.harvard.edu/a-through-c', 'snippet': 'A mineral that   ╬ô├╢├⌐
++╬ô├╢├⌐  the body needs for many vital functions, including bone formation,         ╬ô├╢├⌐
++╬ô├╢├⌐  regulation of heart rate and blood pressure, and muscle contraction.',     ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 2}, {'title': 'Identifying Credible Sources of Health          ╬ô├╢├⌐
++╬ô├╢├⌐  Information in Social ...', 'link':                                        ╬ô├╢├⌐
++╬ô├╢├⌐  'https://nam.edu/perspectives/identifying-credible-sources-of-health-info  ╬ô├╢├⌐
++╬ô├╢├⌐  rmation-in-social-media-principles-and-attributes/', 'snippet': 'by RS     ╬ô├╢├⌐
++╬ô├╢├⌐  Kington Γö¼Γòû Cited by 294 ╬ô├ç├╢ Academic Health and Medical Journals. Academic    ╬ô├╢├⌐
++╬ô├╢├⌐  journals are scholarly periodicals that publish research or reports        ╬ô├╢├⌐
++╬ô├╢├⌐  specific to a profession or field of study.', 'position': 3}, {'title':    ╬ô├╢├⌐
++╬ô├╢├⌐  'Authoritative Health Websites - Free Resources (for Health ...', 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  'https://libguides.usc.edu/c.php?g=293762&p=1956526', 'snippet':           ╬ô├╢├⌐
++╬ô├╢├⌐  'Government resource including broad coverage of: health topics,           ╬ô├╢├⌐
++╬ô├╢├⌐  Evidence-based Practice Center reports, US government programs, research   ╬ô├╢├⌐
++╬ô├╢├⌐  tools, ...', 'position': 4}, {'title': 'Medical Encyclopedia', 'link':     ╬ô├╢├⌐
++╬ô├╢├⌐  'https://medlineplus.gov/encyclopedia.html', 'snippet': 'The A.D.A.M.      ╬ô├╢├⌐
++╬ô├╢├⌐  Medical Encyclopedia includes articles about diseases, tests, symptoms,    ╬ô├╢├⌐
++╬ô├╢├⌐  injuries, and surgeries. Search encyclopedia articles from A to Z.',       ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 5}, {'title': 'Medical Reference Sources - Health & Medical    ╬ô├╢├⌐
++╬ô├╢├⌐  Information', 'link':                                                      ╬ô├╢├⌐
++╬ô├╢├⌐  'https://libguides.law.villanova.edu/healthandmedicalinfo', 'snippet':     ╬ô├╢├⌐
++╬ô├╢├⌐  'This link takes the user to a list of electronic medical reference        ╬ô├╢├⌐
++╬ô├╢├⌐  sources available to Villanova students, faculty and staff.', 'position':  ╬ô├╢├⌐
++╬ô├╢├⌐  6}, {'title': 'Health Care Legal Research: Secondary Sources', 'link':     ╬ô├╢├⌐
++╬ô├╢├⌐  'https://law-richmond.libguides.com/healthlaw/healthsecondary',            ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': "If you come across a medical term you do not understand, try   ╬ô├╢├⌐
++╬ô├╢├⌐  a health care-specific reference resource to get a definition. Often,      ╬ô├╢├⌐
++╬ô├╢├⌐  you'll ...", 'position': 7}, {'title': 'Medical Dictionary', 'link':       ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.merriam-webster.com/medical', 'snippet': 'Search medical      ╬ô├╢├⌐
++╬ô├╢├⌐  terms and abbreviations with the most up-to-date and comprehensive         ╬ô├╢├⌐
++╬ô├╢├⌐  medical dictionary from the reference experts at Merriam-Webster.',        ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 8}, {'title': 'A-Z of medical terms', 'link':                  ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.rcog.org.uk/for-the-public/a-z-of-medical-terms/',            ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'A to Z of medical terms. This alphabetical list contains       ╬ô├╢├⌐
++╬ô├╢├⌐  explanations of medical words you may come across on the RCOG website or   ╬ô├╢├⌐
++╬ô├╢├⌐  when you see your doctor.', 'position': 9}], 'peopleAlsoAsk':              ╬ô├╢├⌐
++╬ô├╢├⌐  [{'question': 'What are the sources of medical terms?', 'snippet':         ╬ô├╢├⌐
++╬ô├╢├⌐  'Origins of Medical Language\n\nGreek and Latin are the primary sources    ╬ô├╢├⌐
++╬ô├╢├⌐  of medical terminology. Examples: pelvis (Latin), thorax (Greek), artery   ╬ô├╢├⌐
++╬ô├╢├⌐  (Latin: arteria).', 'title': 'Medical Terminology Study Guide: Key         ╬ô├╢├⌐
++╬ô├╢├⌐  Concepts & Word Parts | Notes', 'link':                                    ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.pearson.com/channels/medical-terminology/study-guides/introd  ╬ô├╢├⌐
++╬ô├╢├⌐  uction-to-medical-terminology-foundations-structure-and#:~:text=Origins%2  ╬ô├╢├⌐
++╬ô├╢├⌐  0of%20Medical%20Language&text=Greek%20and%20Latin%20are%20the,artery%20(L  ╬ô├╢├⌐
++╬ô├╢├⌐  atin%3A%20arteria).'}, {'question': 'What are 5 reliable sources of        ╬ô├╢├⌐
++╬ô├╢├⌐  health information?', 'snippet': "Medical and health care organizations,   ╬ô├╢├⌐
++╬ô├╢├⌐  hospitals, and academic medical institutions may also be reliable sources  ╬ô├╢├⌐
++╬ô├╢├⌐  of health information. Your health care provider can also suggest ideal    ╬ô├╢├⌐
++╬ô├╢├⌐  sources of online information. If your doctor's office has a website, it   ╬ô├╢├⌐
++╬ô├╢├⌐  may include a list of recommended links.Jan 12, 2023", 'title': 'How To    ╬ô├╢├⌐
++╬ô├╢├⌐  Find Reliable Health Information Online', 'link':                          ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.nia.nih.gov/health/healthy-aging/how-find-reliable-health-in  ╬ô├╢├⌐
++╬ô├╢├⌐  formation-online#:~:text=Medical%20and%20health%20care%20organizations,a%  ╬ô├╢├⌐
++╬ô├╢├⌐  20list%20of%20recommended%20links.'}, {'question': 'Is Medline a           ╬ô├╢├⌐
++╬ô├╢├⌐  secondary source?', 'snippet': "Many studies and reviews rely on MEDLINE   ╬ô├╢├⌐
++╬ô├╢├⌐  as a primary source when surveying existing knowledge in a field. From a   ╬ô├╢├⌐
++╬ô├╢├⌐  research-literacy perspective, MEDLINE matters because it: Provides        ╬ô├╢├⌐
++╬ô├╢├⌐  systematic access to peer-reviewed biomedical literature, as described in  ╬ô├╢├⌐
++╬ô├╢├⌐  PubMed's database overview.Feb 2, 2026", 'title': 'What Is MEDLINE? A      ╬ô├╢├⌐
++╬ô├╢├⌐  Simple Guide to the Biomedical Literature Database', 'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  "https://www.pubmed.ai/blog/what-is-medline#:~:text=Many%20studies%20and%  ╬ô├╢├⌐
++╬ô├╢├⌐  20reviews%20rely,described%20in%20PubMed's%20database%20overview"},        ╬ô├╢├⌐
++╬ô├╢├⌐  {'question': 'What is a reliable source to confirm the spelling of a       ╬ô├╢├⌐
++╬ô├╢├⌐  medical term?', 'snippet': 'Answer. The most reliable source to confirm    ╬ô├╢├⌐
++╬ô├╢├⌐  the spelling of a medical term is a Medical dictionary.', 'title':         ╬ô├╢├⌐
++╬ô├╢├⌐  '[Solved] Which of the following terms is a reliable source to confirm     ╬ô├╢├⌐
++╬ô├╢├⌐  the', 'link':                                                              ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.studocu.com/en-au/messages/question/9440501/which-of-the-fol  ╬ô├╢├⌐
++╬ô├╢├⌐  lowing-terms-is-a-reliable-source-to-confirm-the-spelling-of-a-medical-te  ╬ô├╢├⌐
++╬ô├╢├⌐  rmselect#:~:text=1%20year%20ago-,Answer,term%20is%20a%20Medical%20diction  ╬ô├╢├⌐
++╬ô├╢├⌐  ary.'}], 'relatedSearches': [{'query': '50 medical terms'}, {'query':      ╬ô├╢├⌐
++╬ô├╢├⌐  '100 most common medical words'}, {'query': 'Medical terms a to z'},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Beautiful medical terms'}, {'query': '50 medical terms with     ╬ô├╢├⌐
++╬ô├╢├⌐  meaning'}, {'query': 'Medical terminology dictionary'}, {'query':          ╬ô├╢├⌐
++╬ô├╢├⌐  'Harvard medical dictionary'}, {'query': 'Best medical dictionary'}],      ╬ô├╢├⌐
++╬ô├╢├⌐  'credits': 1}                                                              ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç ╬ô┬ú├á Tool Execution Completed (#6) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool Completed                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Output: {'searchParameters': {'q': 'nonsense medical term xyz123',         ╬ô├╢├⌐
++╬ô├╢├⌐  'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title':    ╬ô├╢├⌐
++╬ô├╢├⌐  'Aphasia - Symptoms & causes', 'link':                                     ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.mayoclinic.org/diseases-conditions/aphasia/symptoms-causes/s  ╬ô├╢├⌐
++╬ô├╢├⌐  yc-20369518', 'snippet': 'Aphasia is a disorder that affects how you       ╬ô├╢├⌐
++╬ô├╢├⌐  communicate. It can impact your speech, as well as the way you write and   ╬ô├╢├⌐
++╬ô├╢├⌐  understand both spoken and written language.', 'position': 1}, {'title':   ╬ô├╢├⌐
++╬ô├╢├⌐  'Aphasia: Symptoms, Causes & Treatment', 'link':                           ╬ô├╢├⌐
++╬ô├╢├⌐  'https://my.clevelandclinic.org/health/diseases/5502-aphasia', 'snippet':  ╬ô├╢├⌐
++╬ô├╢├⌐  'Aphasia is a language disorder that affects your ability to speak and     ╬ô├╢├⌐
++╬ô├╢├⌐  understand what others say. You might have trouble reading or writing.',   ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 2}, {'title': 'Types of aphasia', 'link':                      ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.stroke.org.uk/stroke/effects/aphasia/types-of-aphasia',       ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': "Expressive aphasia, also called non-fluent aphasia or Broca's  ╬ô├╢├⌐
++╬ô├╢├⌐  aphasia, is due to damage in the 'Broca's area' of the brain.",            ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 3}, {'title': 'Aphasia', 'link':                               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://en.wikipedia.org/wiki/Aphasia', 'snippet': "Aphasia, also known   ╬ô├╢├⌐
++╬ô├╢├⌐  as dysphasia, is an impairment in a person's ability to comprehend or      ╬ô├╢├⌐
++╬ô├╢├⌐  formulate language because of dysfunction in specific brain regions.",     ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 4}, {'title': '6 Types of Aphasia', 'link':                    ╬ô├╢├⌐
++╬ô├╢├⌐  'https://regionalneurological.com/types-of-aphasia/', 'snippet': 'Aphasia  ╬ô├╢├⌐
++╬ô├╢├⌐  is an impairment language caused by an injury to the brain, usually due    ╬ô├╢├⌐
++╬ô├╢├⌐  to stroke. There are several types of aphasia that affect language skills  ╬ô├╢├⌐
++╬ô├╢├⌐  in ...', 'position': 5}, {'title': 'Aphasia is a word we have heard quite  ╬ô├╢├⌐
++╬ô├╢├⌐  often in the news lately ...', 'link':                                     ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.facebook.com/CoopermanBarnabasMedicalCenter/videos/aphasia-i  ╬ô├╢├⌐
++╬ô├╢├⌐  s-a-word-we-have-heard-quite-often-in-the-news-lately-but-didyouknow-84/1  ╬ô├╢├⌐
++╬ô├╢├⌐  019746902246018/?locale=ms_MY', 'snippet': "Over 2 million people have     ╬ô├╢├⌐
++╬ô├╢├⌐  #aphasia, which is a disorder that affects someone's ability to            ╬ô├╢├⌐
++╬ô├╢├⌐  understand or express speech.", 'position': 6}, {'title': "aphasia |       ╬ô├╢├⌐
++╬ô├╢├⌐  Taber's Medical Dictionary", 'link':                                       ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.tabers.com/tabersonline/view/Tabers-Dictionary/750368/25/aph  ╬ô├╢├⌐
++╬ô├╢├⌐  asia', 'snippet': 'aphasia, speechlessness] Absent or impaired ability to  ╬ô├╢├⌐
++╬ô├╢├⌐  communicate by speech, writing, or signs because of brain dysfunction.',   ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 7}, {'title': 'What is Aphasia? A Neurologist Explains',       ╬ô├╢├⌐
++╬ô├╢├⌐  'link': 'https://www.youtube.com/watch?v=fYkXPG0iVk8', 'snippet':          ╬ô├╢├⌐
++╬ô├╢├⌐  'Aphasia is a symptom of something happening within the body. it impact    ╬ô├╢├⌐
++╬ô├╢├⌐  language comprehension and expression?', 'position': 8}, {'title': 'What   ╬ô├╢├⌐
++╬ô├╢├⌐  is Aphasia? Symptoms, Types and Treatment', 'link':                        ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.brownhealth.org/be-well/what-aphasia-symptoms-types-and-trea  ╬ô├╢├⌐
++╬ô├╢├⌐  tment', 'snippet': 'Aphasia is an acquired communication disorder that     ╬ô├╢├⌐
++╬ô├╢├⌐  results in loss of the ability to produce or understand language. Aphasia  ╬ô├╢├⌐
++╬ô├╢├⌐  is not a loss of intelligence.', 'position': 9}], 'peopleAlsoAsk':         ╬ô├╢├⌐
++╬ô├╢├⌐  [{'question': 'How do you say gibberish in medical terms?', 'snippet':     ╬ô├╢├⌐
++╬ô├╢├⌐  '', 'title': '', 'link': ''}, {'question': 'What are the three types of    ╬ô├╢├⌐
++╬ô├╢├⌐  dysphasia?', 'snippet': '', 'title': '', 'link': ''}, {'question': 'What   ╬ô├╢├⌐
++╬ô├╢├⌐  are the three most common causes of aphasia?', 'snippet': '', 'title':     ╬ô├╢├⌐
++╬ô├╢├⌐  '', 'link': ''}, {'question': 'What can be mistaken for aphasia?',         ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': '', 'title': '', 'link': ''}], 'relatedSearches': [{'query':    ╬ô├╢├⌐
++╬ô├╢├⌐  'Aphasia medical term'}, {'query': 'What are the 3 types of aphasia'},     ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Inability to speak medical term'}, {'query': 'Dysphasia'},      ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Aphasia vs dysphasia'}, {'query': 'Anomic aphasia'}, {'query':  ╬ô├╢├⌐
++╬ô├╢├⌐  'Expressive aphasia'}, {'query': 'Aphasia treatment'}], 'credits': 1}      ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç ╬ô┬ú├á Tool Execution Completed (#6) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool Completed                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Output: {'searchParameters': {'q': 'meaning of garbled term in medicine',  ╬ô├╢├⌐
++╬ô├╢├⌐  'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title':    ╬ô├╢├⌐
++╬ô├╢├⌐  'What does garbled mean in English language?', 'link':                     ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.facebook.com/PWCSAdultEd/posts/the-word-of-the-week-is-garbl  ╬ô├╢├⌐
++╬ô├╢├⌐  ed-garbled-is-an-adjective-that-means-made-unclear-/1552941253202638/',    ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'Garbled is an adjective that means "made unclear or            ╬ô├╢├⌐
++╬ô├╢├⌐  confusing." Garble means "to so alter or distort as to create a wrong      ╬ô├╢├⌐
++╬ô├╢├⌐  impression or change ...', 'position': 1}, {'title': 'GARBLED Definition   ╬ô├╢├⌐
++╬ô├╢├⌐  & Meaning', 'link': 'https://www.merriam-webster.com/dictionary/garbled',  ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'The meaning of GARBLED is made unclear or confusing :          ╬ô├╢├⌐
++╬ô├╢├⌐  distorted or mixed up. How to use garbled in a sentence.', 'position':     ╬ô├╢├⌐
++╬ô├╢├⌐  2}, {'title': 'GARBLED Definition & Meaning', 'link':                      ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.dictionary.com/browse/garbled', 'snippet': 'GARBLED           ╬ô├╢├⌐
++╬ô├╢├⌐  definition: jumbled or unclear because of distortion or omissions See      ╬ô├╢├⌐
++╬ô├╢├⌐  examples of garbled used in a sentence.', 'position': 3}, {'title':        ╬ô├╢├⌐
++╬ô├╢├⌐  'Garbled - Etymology, Origin & Meaning', 'link':                           ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.etymonline.com/word/garbled', 'snippet': 'in a general sense  ╬ô├╢├⌐
++╬ô├╢├⌐  of "sort out the finer parts" of anything, "removal of what is             ╬ô├╢├⌐
++╬ô├╢├⌐  objectionable," then "distort for some devious purpose or to give false    ╬ô├╢├⌐
++╬ô├╢├⌐  ...', 'position': 4}, {'title': 'What Does Garbled Mean? Expert Answers    ╬ô├╢├⌐
++╬ô├╢├⌐  on JustAnswer', 'link':                                                    ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.justanswer.com/health/07xz8-does-garbled-mean.html',          ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': "'Garbled' refers to information that is distorted, unclear,    ╬ô├╢├⌐
++╬ô├╢├⌐  or jumbled, making it difficult to understand. In medical communication,   ╬ô├╢├⌐
++╬ô├╢├⌐  this can ...", 'position': 5}, {'title': 'GARBLED definition in American   ╬ô├╢├⌐
++╬ô├╢├⌐  English', 'link':                                                          ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.collinsdictionary.com/us/dictionary/english/garbled',         ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'A garbled message or report contains confused or wrong         ╬ô├╢├⌐
++╬ô├╢├⌐  details, often because it is spoken by someone who is nervous or in a      ╬ô├╢├⌐
++╬ô├╢├⌐  hurry. Synonyms: jumbled, confused ...', 'position': 6}, {'title':         ╬ô├╢├⌐
++╬ô├╢├⌐  'Garbled Meaning in English, Definition, and ...', 'link':                 ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.youtube.com/watch?v=2JJEBwbAo0A', 'snippet': "In today's      ╬ô├╢├⌐
++╬ô├╢├⌐  episode, we unravel the word 'garbled.' Discover its meaning, definition,  ╬ô├╢├⌐
++╬ô├╢├⌐  and an array of synonyms to enhance your vocabulary ...", 'position': 7},  ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Meaning of garbled in English - Cambridge Dictionary', 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  'https://dictionary.cambridge.org/us/dictionary/english/garbled',          ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': '(of something said) confused and unclear, or giving a false    ╬ô├╢├⌐
++╬ô├╢├⌐  idea: He left a garbled message on my answering machine.', 'position':     ╬ô├╢├⌐
++╬ô├╢├⌐  8}, {'title': 'Garbled', 'link':                                           ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.thefreedictionary.com/garbled', 'snippet': 'garbled.          ╬ô├╢├⌐
++╬ô├╢├⌐  adjective jumbled, confused, distorted, mixed up, muddled,                 ╬ô├╢├⌐
++╬ô├╢├⌐  incomprehensible, unintelligible He gave a garbled version of the          ╬ô├╢├⌐
++╬ô├╢├⌐  story.', 'position': 9}], 'peopleAlsoAsk': [{'question': 'What does        ╬ô├╢├⌐
++╬ô├╢├⌐  garbled mean?', 'snippet': '', 'title': '', 'link': ''}, {'question':      ╬ô├╢├⌐
++╬ô├╢├⌐  'What is an example of garbled?', 'snippet': '', 'title': '', 'link':      ╬ô├╢├⌐
++╬ô├╢├⌐  ''}, {'question': 'What is another word for garbled?', 'snippet': '',      ╬ô├╢├⌐
++╬ô├╢├⌐  'title': '', 'link': ''}, {'question': 'What does "garbled" mean in        ╬ô├╢├⌐
++╬ô├╢├⌐  communication?', 'snippet': '', 'title': 'Garbled communication produces   ╬ô├╢├⌐
++╬ô├╢├⌐  confusion. That happens when a ...', 'link':                               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.facebook.com/michaelhyatt/videos/garbled-communication-produ  ╬ô├╢├⌐
++╬ô├╢├⌐  ces-confusion-that-happens-when-a-speaker-lacks-clari/709204946495545/'}]  ╬ô├╢├⌐
++╬ô├╢├⌐  , 'relatedSearches': [{'query': 'What does garbled mean'}, {'query':       ╬ô├╢├⌐
++╬ô├╢├⌐  'Garbled synonym'}, {'query': 'Garbled up meaning'}, {'query': 'Garbled    ╬ô├╢├⌐
++╬ô├╢├⌐  message meaning'}, {'query': 'Speech Garbled meaning'}, {'query':          ╬ô├╢├⌐
++╬ô├╢├⌐  'Garbled pronunciation'}, {'query': 'Garbled in a sentence'}, {'query':    ╬ô├╢├⌐
++╬ô├╢├⌐  'Garbled display'}], 'credits': 1}                                         ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç ╬ô┬ú├á Tool Execution Completed (#6) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool Completed                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Output: {'searchParameters': {'q': 'meaning of xyz123 in medicine',        ╬ô├╢├⌐
++╬ô├╢├⌐  'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title':    ╬ô├╢├⌐
++╬ô├╢├⌐  'Tocilizumab (intravenous route, subcutaneous route)', 'link':             ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.mayoclinic.org/drugs-supplements/tocilizumab-intravenous-rou  ╬ô├╢├⌐
++╬ô├╢├⌐  te-subcutaneous-route/description/drg-20073821', 'snippet': 'Tocilizumab   ╬ô├╢├⌐
++╬ô├╢├⌐  injection is used alone or together with other medicines to reduce the     ╬ô├╢├⌐
++╬ô├╢├⌐  signs and symptoms of moderate to severe active rheumatoid arthritis.',    ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 1}, {'title': 'Tocilizumab Injection: MedlinePlus Drug         ╬ô├╢├⌐
++╬ô├╢├⌐  Information', 'link':                                                      ╬ô├╢├⌐
++╬ô├╢├⌐  'https://medlineplus.gov/druginfo/meds/a611004.html', 'snippet':           ╬ô├╢├⌐
++╬ô├╢├⌐  'Tocilizumab injection is in a class of medications called interleukin-6   ╬ô├╢├⌐
++╬ô├╢├⌐  (IL-6) receptor inhibitors. It work by blocking the activity of ...',      ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 2}, {'title': 'Tocilizumab (Actemra) - PMC - NIH', 'link':     ╬ô├╢├⌐
++╬ô├╢├⌐  'https://pmc.ncbi.nlm.nih.gov/articles/PMC5612212/', 'snippet': 'by M      ╬ô├╢├⌐
++╬ô├╢├⌐  Sheppard Γö¼Γòû 2017 Γö¼Γòû Cited by 360 ╬ô├ç├╢ Tocilizumab (TCZ), is a recombinant       ╬ô├╢├⌐
++╬ô├╢├⌐  humanized anti-interleukin-6 receptor (IL-6R) monoclonal antibody which    ╬ô├╢├⌐
++╬ô├╢├⌐  has a main use in the treatment of rheumatoid ...', 'position': 3},        ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Tocilizumab | Biologic | Uses, side effects, how it is taken',  ╬ô├╢├⌐
++╬ô├╢├⌐  'link':                                                                    ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.arthritis-uk.org/information-and-support/understanding-arthr  ╬ô├╢├⌐
++╬ô├╢├⌐  itis/arthritis-treatments/drugs/tocilizumab/', 'snippet': 'Tocilizumab is  ╬ô├╢├⌐
++╬ô├╢├⌐  a biological therapy given as injection or infusion for rheumatoid         ╬ô├╢├⌐
++╬ô├╢├⌐  arthritis and juvenile idiopathic arthritis (JIA).', 'position': 4},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Tocilizumab Injection for Intravenous Infusion', 'link':        ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.uhcprovider.com/content/dam/provider/docs/public/policies/co  ╬ô├╢├⌐
++╬ô├╢├⌐  mm-medical-drug/tocilizumab.pdf', 'snippet': 'Tofidence for intraveneous   ╬ô├╢├⌐
++╬ô├╢├⌐  use is indicated for the treatment of adult patients with moderately to    ╬ô├╢├⌐
++╬ô├╢├⌐  severely active rheumatoid arthritis', 'position': 5}, {'title':           ╬ô├╢├⌐
++╬ô├╢├⌐  'NCT01007435 | A Study of Tocilizumab as Monotherapy ...', 'link':         ╬ô├╢├⌐
++╬ô├╢├⌐  'https://clinicaltrials.gov/study/NCT01007435', 'snippet': 'This           ╬ô├╢├⌐
++╬ô├╢├⌐  randomized, double-blind, parallel group study will assess the safety,     ╬ô├╢├⌐
++╬ô├╢├⌐  disease remission, and prevention of structural joint damage in            ╬ô├╢├⌐
++╬ô├╢├⌐  patients', 'position': 6}, {'title': 'Tocilizumab as a first line          ╬ô├╢├⌐
++╬ô├╢├⌐  biologic agent in rheumatoid ...', 'link':                                 ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.clinexprheumatol.org/article.asp?a=19697', 'snippet': 'by O   ╬ô├╢├⌐
++╬ô├╢├⌐  Karadag Γö¼Γòû 2024 Γö¼Γòû Cited by 3 ╬ô├ç├╢ tocilizumab (TCZ) as first-line biologic     ╬ô├╢├⌐
++╬ô├╢├⌐  treatment in rheumatoid arthritis (RA) patients with inadequate response   ╬ô├╢├⌐
++╬ô├╢├⌐  to disease-modifying anti-rheumatic drugs ( ...', 'position': 7},          ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'CIMZIAΓö¼┬½ for Moderate-to-Severe Rheumatoid Arthritis', 'link':   ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.cimzia.com/rheumatoid-arthritis', 'snippet': 'CIMZIA is a     ╬ô├╢├⌐
++╬ô├╢├⌐  prescription medicine called a Tumor Necrosis Factor (TNF) blocker that    ╬ô├╢├⌐
++╬ô├╢├⌐  can lower the ability of your immune system to fight infections.',         ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 8}, {'title': 'Tocilizumab Intravenous Products UM Medical     ╬ô├╢├⌐
++╬ô├╢├⌐  Policy (1). ...', 'link':                                                  ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.caresource.com/documents/medicare-multi-policy-pharmacy-tyen  ╬ô├╢├⌐
++╬ô├╢├⌐  ne-20250423.pdf', 'snippet': 'OVERVIEW. Tocilizumab intravenous infusion,  ╬ô├╢├⌐
++╬ô├╢├⌐  an interleukin-6 (IL-6) receptor inhibitor, is indicated for the           ╬ô├╢├⌐
++╬ô├╢├⌐  following conditions:1.', 'position': 9}], 'peopleAlsoAsk': [{'question':  ╬ô├╢├⌐
++╬ô├╢├⌐  'What is the new treatment for rheumatoid arthritis in 2026?', 'snippet':  ╬ô├╢├⌐
++╬ô├╢├⌐  '', 'title': '', 'link': ''}, {'question': 'What is another name for       ╬ô├╢├⌐
++╬ô├╢├⌐  tocilizumab?', 'snippet': '', 'title': '', 'link': ''}, {'question':       ╬ô├╢├⌐
++╬ô├╢├⌐  'What is the best injection for rheumatoid arthritis?', 'snippet': '',     ╬ô├╢├⌐
++╬ô├╢├⌐  'title': '', 'link': ''}, {'question': 'Does Tyenne cause weight gain?',   ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': '', 'title': '', 'link': ''}], 'relatedSearches': [{'query':    ╬ô├╢├⌐
++╬ô├╢├⌐  'Tyenne side effects'}, {'query': 'Is tocilizumab A chemotherapy drug'},   ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Actemra side effects fatigue'}, {'query': 'Actemra side         ╬ô├╢├⌐
++╬ô├╢├⌐  effects weight gain'}, {'query': 'Tocilizumab immunosuppression'},         ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Tyenne vs Actemra'}, {'query': 'Actemra side effects on         ╬ô├╢├⌐
++╬ô├╢├⌐  kidney'}, {'query': 'Tocilizumab infusion protocol'}], 'credits': 1}       ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç ╬ô┬ú├á Tool Execution Completed (#6) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool Completed                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'authoritative sources for medical term xyz123', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Identifying Credible Sources of Health Information ...[0m
++[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'meaning of xyz123 in medicine', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Tocilizumab (intravenous route, subcutaneous route)', 'link': 'http...[0m
++[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'definition of xyz123', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Comprehensive Study Notes for Course Code: XYZ123 - Final ...', 'link': 'htt...[0m
++[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'xyz123 medical term', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Exam 4 Review Questions for Medical Terminology (XYZ123)', 'link': 'https://w...[0m
++[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'nonsense medical term xyz123', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Aphasia - Symptoms & causes', 'link': 'https://www.mayoclinic.org/di...[0m
++[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'meaning of garbled term in medicine', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'What does garbled mean in English language?', 'link': 'https:...[0m
++
++╬ô├╢├⌐  Output: {'searchParameters': {'q': 'definition of xyz123', 'type':         ╬ô├╢├⌐
++╬ô├╢├⌐  'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title':            ╬ô├╢├⌐
++╬ô├╢├⌐  'Comprehensive Study Notes for Course Code: XYZ123 - Final ...', 'link':   ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.studocu.com/en-us/document/marshall-university/cognitive-and  ╬ô├╢├⌐
++╬ô├╢├⌐  -emotional-bases-of-behavior/comprehensive-study-notes-for-course-code-xy  ╬ô├╢├⌐
++╬ô├╢├⌐  z123-final-exam-review/120004111', 'snippet': 'The content explores the    ╬ô├╢├⌐
++╬ô├╢├⌐  nuances of intercultural communication, emphasizing the importance of      ╬ô├╢├⌐
++╬ô├╢├⌐  understanding and navigating cultural differences in various.',            ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 1}, {'title': 'Community name defined in the security product  ╬ô├╢├⌐
++╬ô├╢├⌐  for each ...', 'link':                                                     ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.ibm.com/docs/en/zos/3.1.0?topic=suaub-community-name-defined  ╬ô├╢├⌐
++╬ô├╢├⌐  -in-security-product-each-cpc', 'snippet': "This RACF example assigns a    ╬ô├╢├⌐
++╬ô├╢├⌐  BCPii community name of XYZ123 to an existing CPC definition ╬ô├ç┬¬ 001         ╬ô├╢├⌐
++╬ô├╢├⌐  APPLDATA('XYZ123') A community name definition must be defined ...",       ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 2}, {'title': 'Custom Field URL definition', 'link':           ╬ô├╢├⌐
++╬ô├╢├⌐  'https://community.atlassian.com/forums/Jira-questions/Custom-Field-URL-d  ╬ô├╢├⌐
++╬ô├╢├⌐  efinition/qaq-p/580562', 'snippet': 'define custom field to get order      ╬ô├╢├⌐
++╬ô├╢├⌐  number from customer and define url. For example: order ID: XYZ123         ╬ô├╢├⌐
++╬ô├╢├⌐  Backoffice', 'position': 3}, {'title': "TLS negotiation failed, the        ╬ô├╢├⌐
++╬ô├╢├⌐  certificate doesn't match the host", 'link':                               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://support.google.com/mail/thread/40534527', 'snippet': 'Just        ╬ô├╢├⌐
++╬ô├╢├⌐  define mail.xyz123.com as a subdomain to your origial site which already   ╬ô├╢├⌐
++╬ô├╢├⌐  has the SSL certificate and Save. Then come back to the SSL ...',          ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 4}, {'title': 'Defining refractory rheumatoid arthritis',      ╬ô├╢├⌐
++╬ô├╢├⌐  'link': 'https://pubmed.ncbi.nlm.nih.gov/29588276/', 'snippet': 'by MH     ╬ô├╢├⌐
++╬ô├╢├⌐  Buch Γö¼Γòû 2018 Γö¼Γòû Cited by 234 ╬ô├ç├╢ Definitions of refractory RA. This viewpoint  ╬ô├╢├⌐
++╬ô├╢├⌐  discusses an opinion of refractory RA disease and proposes key principles  ╬ô├╢├⌐
++╬ô├╢├⌐  to accurately identify refractory ...', 'position': 5}, {'title': 'Is      ╬ô├╢├⌐
++╬ô├╢├⌐  there any ACF2 information on setting up BCPii?', 'link':                  ╬ô├╢├⌐
++╬ô├╢├⌐  'https://knowledge.broadcom.com/external/article/11012/is-there-any-acf2-  ╬ô├╢├⌐
++╬ô├╢├⌐  information-on-setting.html', 'snippet': 'This is an RACF example to       ╬ô├╢├⌐
++╬ô├╢├⌐  assign a BCPii community name of "XYZ123" to an existing CPC definition.   ╬ô├╢├⌐
++╬ô├╢├⌐  APPLDATA(\'XYZ123\')', 'position': 6}, {'title': 'allogeneic               ╬ô├╢├⌐
++╬ô├╢├⌐  CD123-specific universal CAR123-expressing T ...', 'link':                 ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.cancer.gov/publications/dictionaries/cancer-drug/def/allogen  ╬ô├╢├⌐
++╬ô├╢├⌐  eic-cd123-specific-universal-car123-expressing-t-lymphocytes', 'snippet':  ╬ô├╢├⌐
++╬ô├╢├⌐  'Allogeneic, off-the-shelf, universal transcription activator-like         ╬ô├╢├⌐
++╬ô├╢├⌐  effector. CD123 is normally expressed on committed blood progenitor cells  ╬ô├╢├⌐
++╬ô├╢├⌐  in the bone marrow;', 'position': 7}, {'title': 'Defining Refractory RA    ╬ô├╢├⌐
++╬ô├╢├⌐  by Biologic Use', 'link':                                                  ╬ô├╢├⌐
++╬ô├╢├⌐  'https://rheumnow.com/content/defining-refractory-ra-biologic-use',        ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'Biologic refractory disease is seen in at least 6% of          ╬ô├╢├⌐
++╬ô├╢├⌐  patients who have ever received a biologic DMARD (bDMARDs).', 'position':  ╬ô├╢├⌐
++╬ô├╢├⌐  8}, {'title': 'Terminologies-binding-examples - FHIR v6.0.0-ballot4',      ╬ô├╢├⌐
++╬ô├╢├⌐  'link': 'https://build.fhir.org/terminologies-binding-examples.html',      ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': '", "code": "XYZ123", This Condition instance contains a local  ╬ô├╢├⌐
++╬ô├╢├⌐  code. meaning which "covers" ╬ô├ç┬úIdentification of the condition, problem or  ╬ô├╢├⌐
++╬ô├╢├⌐  diagnosis.╬ô├ç┬Ñ?', 'position': 9}], 'credits': 1}                              ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++[96m
++[2026-08-03 00:04:06][0m[93m[INFO]: [0m[1m[93mMax RPM reached, waiting for next minute to start.[0m
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç ╬ô┬Ñ├« LLM Error ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++uv : Error executing 
++listener 
++call_llm_native_tools: 
++litellm.RateLimitError: 
++RateLimitError: 
++GroqException - {"error":{
++"message":"Request too 
++large for model 
++`llama-3.1-8b-instant` in 
++organization `org_01kz0tfy
++dvfj8bmp9a1k26q6c5` 
++service tier `on_demand` 
++on tokens per minute 
++(TPM): Limit 6000, 
++Requested 7032, please 
++reduce your message size 
++and try again. Need more 
++tokens? Upgrade to Dev 
++Tier today at https://cons
++ole.groq.com/settings/bill
++ing","type":"tokens","code
++":"rate_limit_exceeded"}}
++At line:1 char:32
+++ ... nv:PYTHONIOENCODING=
++'utf-8'; uv run python 
++run_tc_r02.py 2>&1 | 
++Out-F ...
+++                         
++         ~~~~~~~~~~~~~~~~~
++~~~~~~~~~~~~~~~
++    + CategoryInfo        
++      : NotSpecified: (E  
++  rror executing...mit_   
++ exceeded"}}:String) [    
++], RemoteException
++    + FullyQualifiedError 
++   Id : NativeCommandErr  
++  or
++ 
++
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  LLM Call Failed                                                            ╬ô├╢├⌐
++╬ô├╢├⌐  Error: litellm.RateLimitError: RateLimitError: GroqException -             ╬ô├╢├⌐
++╬ô├╢├⌐  {"error":{"message":"Request too large for model `llama-3.1-8b-instant`    ╬ô├╢├⌐
++╬ô├╢├⌐  in organization `org_01kz0tfydvfj8bmp9a1k26q6c5` service tier `on_demand`  ╬ô├╢├⌐
++╬ô├╢├⌐  on tokens per minute (TPM): Limit 6000, Requested 7032, please reduce      ╬ô├╢├⌐
++╬ô├╢├⌐  your message size and try again. Need more tokens? Upgrade to Dev Tier     ╬ô├╢├⌐
++╬ô├╢├⌐  today at                                                                   ╬ô├╢├⌐
++╬ô├╢├⌐  https://console.groq.com/settings/billing","type":"tokens","code":"rate_l  ╬ô├╢├⌐
++╬ô├╢├⌐  imit_exceeded"}}                                                           ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├┤├» Task Failure ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Task Failed                                                                ╬ô├╢├⌐
++╬ô├╢├⌐  Name: research_query_task                                                  ╬ô├╢├⌐
++╬ô├╢├⌐  Agent: Medical and Nutritional Research Specialist                         ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Crew Failure ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Crew Execution Failed                                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Name: ResearchCrew                                                         ╬ô├╢├⌐
++╬ô├╢├⌐  ID: 13303f7e-df3d-4694-8001-46583ce493b7                                   ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++  ╬ô├£├íΓê⌐Γòò├à  Rate-limit (attempt 1/5). Sleeping 65s╬ô├ç┬¬
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Tracing Status ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Info: Tracing is disabled.                                                 ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  To enable tracing, do any one of these:                                    ╬ô├╢├⌐
++╬ô├╢├⌐  ╬ô├ç├│ Set tracing=True in your Crew/Flow code                                  ╬ô├╢├⌐
++╬ô├╢├⌐  ╬ô├ç├│ Set CREWAI_TRACING_ENABLED=true in your project's .env file              ╬ô├╢├⌐
++╬ô├╢├⌐  ╬ô├ç├│ Run: crewai traces enable                                                ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├£├ç Crew Execution Started ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Crew Execution Started                                                     ╬ô├╢├⌐
++╬ô├╢├⌐  Name: ResearchCrew                                                         ╬ô├╢├⌐
++╬ô├╢├⌐  ID: a35de09f-d5cb-4827-bd3c-4b347bc3d90e                                   ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├┤├» Task Started ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Task Started                                                               ╬ô├╢├⌐
++╬ô├╢├⌐  Name: research_query_task                                                  ╬ô├╢├⌐
++╬ô├╢├⌐  ID: 23a917c9-bc7c-49cb-bf2b-1b09c671a97f                                   ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├▒├╗ Agent Started ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Agent: Medical and Nutritional Research Specialist                         ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Task: Search for authoritative sources to answer the following research    ╬ô├╢├⌐
++╬ô├╢├⌐  query: "asdkjfh qwerty nonsense medical term xyz123". Return a structured  ╬ô├╢├⌐
++╬ô├╢├⌐  JSON response. If no reliable source is found after searching, set         ╬ô├╢├⌐
++╬ô├╢├⌐  sources_found to false and make the summary explicitly say that no         ╬ô├╢├⌐
++╬ô├╢├⌐  reliable information was found -- never present an unsourced guess as if   ╬ô├╢├⌐
++╬ô├╢├⌐  it were established guidance. After searching, critically evaluate         ╬ô├╢├⌐
++╬ô├╢├⌐  whether the search results actually answer the specific query asked --     ╬ô├╢├⌐
++╬ô├╢├⌐  not just whether the search returned any results at all. If the results    ╬ô├╢├⌐
++╬ô├╢├⌐  are only tangentially related, off-topic, or clearly don't address what    ╬ô├╢├⌐
++╬ô├╢├⌐  was asked (for example, a garbled or nonsensical query returning           ╬ô├╢├⌐
++╬ô├╢├⌐  unrelated medical topics), set sources_found to false and state in         ╬ô├╢├⌐
++╬ô├╢├⌐  summary that no relevant information was found for this specific query,    ╬ô├╢├⌐
++╬ô├╢├⌐  rather than reporting unrelated search results as if they were the         ╬ô├╢├⌐
++╬ô├╢├⌐  answer.                                                                    ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├╢┬║ Tool Execution Started (#7) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Args: {'search_query': 'asdkjfh qwerty nonsense medical term xyz123'}      ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'asdkjfh qwerty nonsense medical term xyz123', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Aphasia - Symptoms & causes', 'link': 'https://www.ma...[0m
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç ╬ô┬ú├á Tool Execution Completed (#7) ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool Completed                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Tool: search_the_internet_with_serper                                      ╬ô├╢├⌐
++╬ô├╢├⌐  Output: {'searchParameters': {'q': 'asdkjfh qwerty nonsense medical term   ╬ô├╢├⌐
++╬ô├╢├⌐  xyz123', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic':      ╬ô├╢├⌐
++╬ô├╢├⌐  [{'title': 'Aphasia - Symptoms & causes', 'link':                          ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.mayoclinic.org/diseases-conditions/aphasia/symptoms-causes/s  ╬ô├╢├⌐
++╬ô├╢├⌐  yc-20369518', 'snippet': 'Aphasia is a disorder that affects how you       ╬ô├╢├⌐
++╬ô├╢├⌐  communicate. Aphasia usually happens suddenly after a stroke or a head     ╬ô├╢├⌐
++╬ô├╢├⌐  injury.', 'position': 1}, {'title': 'Aphasia: Symptoms, Causes &           ╬ô├╢├⌐
++╬ô├╢├⌐  Treatment', 'link':                                                        ╬ô├╢├⌐
++╬ô├╢├⌐  'https://my.clevelandclinic.org/health/diseases/5502-aphasia', 'snippet':  ╬ô├╢├⌐
++╬ô├╢├⌐  'Aphasia is a language disorder that affects your ability to speak and     ╬ô├╢├⌐
++╬ô├╢├⌐  understand what others say. You might have trouble reading or writing.', [96m
++[2026-08-03 00:06:15][0m[93m[INFO]: [0m[1m[93mMax RPM reached, waiting for next minute to start.[0m
++  ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 2}, {'title': 'Types of aphasia', 'link':                      ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.stroke.org.uk/stroke/effects/aphasia/types-of-aphasia',       ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': "Expressive aphasia, also called non-fluent aphasia or Broca's  ╬ô├╢├⌐
++╬ô├╢├⌐  aphasia, is due to damage in the 'Broca's area' of the brain.",            ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 3}, {'title': 'Aphasia is a word we have heard quite often in  ╬ô├╢├⌐
++╬ô├╢├⌐  the news lately ...', 'link':                                              ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.facebook.com/CoopermanBarnabasMedicalCenter/videos/aphasia-i  ╬ô├╢├⌐
++╬ô├╢├⌐  s-a-word-we-have-heard-quite-often-in-the-news-lately-but-didyouknow-84/1  ╬ô├╢├⌐
++╬ô├╢├⌐  019746902246018/?locale=ms_MY', 'snippet': "Over 2 million people have     ╬ô├╢├⌐
++╬ô├╢├⌐  #aphasia, which is a disorder that affects someone's ability to            ╬ô├╢├⌐
++╬ô├╢├⌐  understand or express speech.", 'position': 4}, {'title': 'Doctor          ╬ô├╢├⌐
++╬ô├╢├⌐  explains APHASIA - definition, symptoms, causes ...', 'link':              ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.youtube.com/watch?v=nvaZXSsvF4I', 'snippet': "In this video   ╬ô├╢├⌐
++╬ô├╢├⌐  Doctor O'Donovan explains Aphasia including, What is aphasia? What causes  ╬ô├╢├⌐
++╬ô├╢├⌐  it? Plus different types of aphasia and how it is ...", 'position': 5},    ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Aphasia', 'link': 'https://en.wikipedia.org/wiki/Aphasia',      ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': "Aphasia, also known as dysphasia, is an impairment in a        ╬ô├╢├⌐
++╬ô├╢├⌐  person's ability to comprehend or formulate language because of            ╬ô├╢├⌐
++╬ô├╢├⌐  dysfunction in specific brain regions.", 'position': 6}, {'title':         ╬ô├╢├⌐
++╬ô├╢├⌐  "aphasia | Taber's Medical Dictionary", 'link':                            ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.tabers.com/tabersonline/view/Tabers-Dictionary/750368/25/aph  ╬ô├╢├⌐
++╬ô├╢├⌐  asia', 'snippet': '(ΓöÇ├ó-fΓöÇ├╝╬ô├çΓûôzh(ΓöÇ├┤-)ΓöÇ├ó ) [Gr. aphasia, speechlessness] Absent    ╬ô├╢├⌐
++╬ô├╢├⌐  or impaired ability to communicate by speech, writing, or signs because    ╬ô├╢├⌐
++╬ô├╢├⌐  of brain dysfunction.', 'position': 7}, {'title': 'Aphasia', 'link':       ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.hopkinsmedicine.org/health/conditions-and-diseases/aphasia',  ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'Aphasia is a language disorder caused by damage in a specific  ╬ô├╢├⌐
++╬ô├╢├⌐  area of the brain that controls language expression and comprehension.',   ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 8}, {'title': '6 Types of Aphasia', 'link':                    ╬ô├╢├⌐
++╬ô├╢├⌐  'https://regionalneurological.com/types-of-aphasia/', 'snippet': 'Aphasia  ╬ô├╢├⌐
++╬ô├╢├⌐  is an impairment language caused by an injury to the brain, usually due    ╬ô├╢├⌐
++╬ô├╢├⌐  to stroke. There are several types of aphasia that affect language skills  ╬ô├╢├⌐
++╬ô├╢├⌐  in ...', 'position': 9}], 'peopleAlsoAsk': [{'question': 'How do you say   ╬ô├╢├⌐
++╬ô├╢├⌐  gibberish in medical terms?', 'snippet': '', 'title': '', 'link': ''},     ╬ô├╢├⌐
++╬ô├╢├⌐  {'question': 'What is the medical term for speaking nonsense?',            ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': "Aphasia is a symptom of some other condition, such as a        ╬ô├╢├⌐
++╬ô├╢├⌐  stroke or a brain tumor. A person with aphasia may: Speak in short or      ╬ô├╢├⌐
++╬ô├╢├⌐  incomplete sentences. Speak in sentences that don't make sense.",          ╬ô├╢├⌐
++╬ô├╢├⌐  'title': 'Aphasia - Symptoms & causes - Mayo Clinic', 'link':              ╬ô├╢├⌐
++╬ô├╢├⌐  "https://www.mayoclinic.org/diseases-conditions/aphasia/symptoms-causes/s  ╬ô├╢├⌐
++╬ô├╢├⌐  yc-20369518#:~:text=Aphasia%20is%20a%20symptom%20of,that%20don't%20make%2  ╬ô├╢├⌐
++╬ô├╢├⌐  0sense"}, {'question': 'What are the 4 types of aphasia?', 'snippet': '',  ╬ô├╢├⌐
++╬ô├╢├⌐  'title': '', 'link': ''}, {'question': 'What are the 7 types of            ╬ô├╢├⌐
++╬ô├╢├⌐  aphasia?', 'snippet': '', 'title': '', 'link': ''}], 'relatedSearches':    ╬ô├╢├⌐
++╬ô├╢├⌐  [{'query': 'What are the 3 types of aphasia'}, {'query': 'Dysphasia'},     ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Expressive aphasia'}, {'query': 'Inability to speak medical     ╬ô├╢├⌐
++╬ô├╢├⌐  term'}, {'query': 'Sudden difficulty finding words when speaking'},        ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Aphasia medical term'}, {'query': 'Anomic aphasia'}, {'query':  ╬ô├╢├⌐
++╬ô├╢├⌐  'Receptive aphasia'}], 'credits': 1}                                       ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++[35m[Finalize] todos_count=0, todos_with_results=0[0m
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç ╬ô┬ú├á Agent Final Answer ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Agent: Medical and Nutritional Research Specialist                         ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Final Answer:                                                              ╬ô├╢├⌐
++╬ô├╢├⌐  Upon reviewing the search results, it appears that the query "asdkjfh      ╬ô├╢├⌐
++╬ô├╢├⌐  qwerty nonsense medical term xyz123" is likely a garbled or nonsense       ╬ô├╢├⌐
++╬ô├╢├⌐  medical term and the search results are only tangentially related to the   ╬ô├╢├⌐
++╬ô├╢├⌐  actual query asked. The search results all appear to discuss a condition   ╬ô├╢├⌐
++╬ô├╢├⌐  called "aphasia," which is a disorder that affects a person's ability to   ╬ô├╢├⌐
++╬ô├╢├⌐  understand or express speech, but it is not clearly related to the query   ╬ô├╢├⌐
++╬ô├╢├⌐  asked.                                                                     ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Since no relevant information was found for this specific query, and the   ╬ô├╢├⌐
++╬ô├╢├⌐  search results only return information about a different medical           ╬ô├╢├⌐
++╬ô├╢├⌐  condition, we cannot rely on these results.                                ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Here is the result:                                                        ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  {'summary': 'No relevant information was found for this specific query.',  ╬ô├╢├⌐
++╬ô├╢├⌐  'sources_found': False, 'source_notes': None}                              ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├┤├» Task Completion ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Task Completed                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Name: research_query_task                                                  ╬ô├╢├⌐
++╬ô├╢├⌐  Agent: Medical and Nutritional Research Specialist                         ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Crew Completion ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Crew Execution Completed                                                   ╬ô├╢├⌐
++╬ô├╢├⌐  Name: ResearchCrew                                                         ╬ô├╢├⌐
++╬ô├╢├⌐  ID: a35de09f-d5cb-4827-bd3c-4b347bc3d90e                                   ╬ô├╢├⌐
++╬ô├╢├⌐  Final Output: Upon reviewing the search results, it appears that the       ╬ô├╢├⌐
++╬ô├╢├⌐  query "asdkjfh qwerty nonsense medical term xyz123" is likely a garbled    ╬ô├╢├⌐
++╬ô├╢├⌐  or nonsense medical term and the search results are only tangentially      ╬ô├╢├⌐
++╬ô├╢├⌐  
++RAW OUTPUT:
++Upon reviewing the search results, it appears that the query "asdkjfh qwerty nonsense medical term xyz123" is likely a garbled or nonsense medical term and the search results are only tangentially related to the actual query asked. The search results all appear to discuss a condition called "aphasia," which is a disorder that affects a person's ability to understand or express speech, but it is not clearly related to the query asked.
++
++Since no relevant information was found for this specific query, and the search results only return information about a different medical condition, we cannot rely on these results.
++
++Here is the result:
++
++{'summary': 'No relevant information was found for this specific query.', 'sources_found': False, 'source_notes': None}
++
++PARSED OUTPUT:
++{}
++
++==============================================================
++  TC-R02 Result: ╬ô┬Ñ├« FAIL
++==============================================================
++related to the actual query asked. The search results all appear to        ╬ô├╢├⌐
++╬ô├╢├⌐  discuss a condition called "aphasia," which is a disorder that affects a   ╬ô├╢├⌐
++╬ô├╢├⌐  person's ability to understand or express speech, but it is not clearly    ╬ô├╢├⌐
++╬ô├╢├⌐  related to the query asked.                                                ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Since no relevant information was found for this specific query, and the   ╬ô├╢├⌐
++╬ô├╢├⌐  search results only return information about a different medical           ╬ô├╢├⌐
++╬ô├╢├⌐  condition, we cannot rely on these results.                                ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Here is the result:                                                        ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  {'summary': 'No relevant information was found for this specific query.',  ╬ô├╢├⌐
++╬ô├╢├⌐  'sources_found': False, 'source_notes': None}                              ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Tracing Status ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  Info: Tracing is disabled.                                                 ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├⌐  To enable tracing, do any one of these:                                    ╬ô├╢├⌐
++╬ô├╢├⌐  ╬ô├ç├│ Set tracing=True in your Crew/Flow code                                  ╬ô├╢├⌐
++╬ô├╢├⌐  ╬ô├ç├│ Set CREWAI_TRACING_ENABLED=true in your project's .env file              ╬ô├╢├⌐
++╬ô├╢├⌐  ╬ô├ç├│ Run: crewai traces enable                                                ╬ô├╢├⌐
++╬ô├╢├⌐                                                                             ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
+diff --git a/test_debug.py b/test_debug.py
+new file mode 100644
+index 0000000..c963e76
+--- /dev/null
++++ b/test_debug.py
+@@ -0,0 +1,53 @@
++import os
++import sys
++
++os.environ["DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DISABLE_PROMPT_CACHING"] = "True"
++os.environ["LITELLM_DROP_PARAMS"] = "True"
++
++import litellm
++
++def clean_dict(obj):
++    if isinstance(obj, dict):
++        obj.pop("cache_control", None)
++        obj.pop("cache_breakpoint", None)
++        for k, v in list(obj.items()):
++            clean_dict(v)
++    elif isinstance(obj, list):
++        for item in obj:
++            clean_dict(item)
++
++_orig_completion = litellm.completion
++
++def _patched_completion(*args, **kwargs):
++    clean_dict(kwargs)
++    try:
++        return _orig_completion(*args, **kwargs)
++    except Exception as e:
++        with open("err2.txt", "w", encoding="utf-8") as f:
++            f.write(f"EXC: {type(e)} {e}\n")
++            if hasattr(e, "response") and hasattr(e.response, "text"):
++                f.write(f"RESP: {e.response.text}\n")
++            if hasattr(e, "message"):
++                f.write(f"MSG: {e.message}\n")
++        raise e
++
++litellm.completion = _patched_completion
++litellm.drop_params = True
++
++from dotenv import load_dotenv
++load_dotenv(override=True)
++
++from pathlib import Path
++project_root = Path(__file__).resolve().parents[0]
++sys.path.append(str(project_root / "src"))
++
++from anemia_diet_system.crews.research_crew.research_crew import ResearchCrew
++
++print("Testing TC-R02...")
++try:
++    c = ResearchCrew()
++    res = c.crew().kickoff(inputs={'research_query': 'asdkjfh qwerty nonsense medical term xyz123'})
++    print("SUCCESS RESULT RAW:", res.raw if hasattr(res, 'raw') else str(res))
++except Exception as e:
++    print("EXC:", type(e), e)
+diff --git a/test_output.txt b/test_output.txt
+new file mode 100644
+index 0000000..85e38d6
+Binary files /dev/null and b/test_output.txt differ
+diff --git a/test_output_utf8.txt b/test_output_utf8.txt
+new file mode 100644
+index 0000000..199bcb8
+--- /dev/null
++++ b/test_output_utf8.txt
+@@ -0,0 +1,1103 @@
++∩╗┐
++==============================================================
++  TC-R02: meaningless query ╬ô├Ñ├å no reliable information
++==============================================================
++╬ô├╢├«╬ô├╢├ç Γëí╞Æ├£├ç Crew Execution Sta╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Crew Execution        ╬ô├╢├⌐
++╬ô├╢├⌐  Started               ╬ô├╢├⌐
++╬ô├╢├⌐  Name: ResearchCrew    ╬ô├╢├⌐
++╬ô├╢├⌐  ID:                   ╬ô├╢├⌐
++╬ô├╢├⌐  8dc6d981-362f-411f-9  ╬ô├╢├⌐
++╬ô├╢├⌐  008-07ae46a1fde2      ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├┤├» Task Started ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Task Started          ╬ô├╢├⌐
++╬ô├╢├⌐  Name:                 ╬ô├╢├⌐
++╬ô├╢├⌐  research_query_task   ╬ô├╢├⌐
++╬ô├╢├⌐  ID:                   ╬ô├╢├⌐
++╬ô├╢├⌐  db695dd6-91fd-4019-8  ╬ô├╢├⌐
++╬ô├╢├⌐  52d-c9f3970e52d0      ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├▒├╗ Agent Started ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Agent: Medical and    ╬ô├╢├⌐
++╬ô├╢├⌐  Nutritional Research  ╬ô├╢├⌐
++╬ô├╢├⌐  Specialist            ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Task: Search for      ╬ô├╢├⌐
++╬ô├╢├⌐  authoritative         ╬ô├╢├⌐
++╬ô├╢├⌐  sources to answer     ╬ô├╢├⌐
++╬ô├╢├⌐  the following         ╬ô├╢├⌐
++╬ô├╢├⌐  research query:       ╬ô├╢├⌐
++╬ô├╢├⌐  "asdkjfh qwerty       ╬ô├╢├⌐
++╬ô├╢├⌐  nonsense medical      ╬ô├╢├⌐
++╬ô├╢├⌐  term xyz123". Return  ╬ô├╢├⌐
++╬ô├╢├⌐  a structured JSON     ╬ô├╢├⌐
++╬ô├╢├⌐  response. If no       ╬ô├╢├⌐
++╬ô├╢├⌐  reliable source is    ╬ô├╢├⌐
++╬ô├╢├⌐  found after           ╬ô├╢├⌐
++╬ô├╢├⌐  searching, set        ╬ô├╢├⌐
++╬ô├╢├⌐  sources_found to      ╬ô├╢├⌐
++╬ô├╢├⌐  false and make the    ╬ô├╢├⌐
++╬ô├╢├⌐  summary explicitly    ╬ô├╢├⌐
++╬ô├╢├⌐  say that no reliable  ╬ô├╢├⌐
++╬ô├╢├⌐  information was       ╬ô├╢├⌐
++╬ô├╢├⌐  found -- never        ╬ô├╢├⌐
++╬ô├╢├⌐  present an unsourced  ╬ô├╢├⌐
++╬ô├╢├⌐  guess as if it were   ╬ô├╢├⌐
++╬ô├╢├⌐  established           ╬ô├╢├⌐
++╬ô├╢├⌐  guidance. After       ╬ô├╢├⌐
++╬ô├╢├⌐  searching,            ╬ô├╢├⌐
++╬ô├╢├⌐  critically evaluate   ╬ô├╢├⌐
++╬ô├╢├⌐  whether the search    ╬ô├╢├⌐
++╬ô├╢├⌐  results actually      ╬ô├╢├⌐
++╬ô├╢├⌐  answer the specific   ╬ô├╢├⌐
++╬ô├╢├⌐  query asked -- not    ╬ô├╢├⌐
++╬ô├╢├⌐  just whether the      ╬ô├╢├⌐
++╬ô├╢├⌐  search returned any   ╬ô├╢├⌐
++╬ô├╢├⌐  results at all. If    ╬ô├╢├⌐
++╬ô├╢├⌐  the results are only  ╬ô├╢├⌐
++╬ô├╢├⌐  tangentially          ╬ô├╢├⌐
++╬ô├╢├⌐  related, off-topic,   ╬ô├╢├⌐
++╬ô├╢├⌐  or clearly don't      ╬ô├╢├⌐
++╬ô├╢├⌐  address what was      ╬ô├╢├⌐
++╬ô├╢├⌐  asked (for example,   ╬ô├╢├⌐
++╬ô├╢├⌐  a garbled or          ╬ô├╢├⌐
++╬ô├╢├⌐  nonsensical query     ╬ô├╢├⌐
++╬ô├╢├⌐  returning unrelated   ╬ô├╢├⌐
++╬ô├╢├⌐  medical topics), set  ╬ô├╢├⌐
++╬ô├╢├⌐  sources_found to      ╬ô├╢├⌐
++╬ô├╢├⌐  false and state in    ╬ô├╢├⌐
++╬ô├╢├⌐  summary that no       ╬ô├╢├⌐
++╬ô├╢├⌐  relevant information  ╬ô├╢├⌐
++╬ô├╢├⌐  was found for this    ╬ô├╢├⌐
++╬ô├╢├⌐  specific query,       ╬ô├╢├⌐
++╬ô├╢├⌐  rather than           ╬ô├╢├⌐
++╬ô├╢├⌐  reporting unrelated   ╬ô├╢├⌐
++╬ô├╢├⌐  search results as if  ╬ô├╢├⌐
++╬ô├╢├⌐  they were the         ╬ô├╢├⌐
++╬ô├╢├⌐  answer.               ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç Γëí╞Æ├╢┬║ Tool Execution Sta╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Tool:                 ╬ô├╢├⌐
++╬ô├╢├⌐  search_the_internet_  ╬ô├╢├⌐
++╬ô├╢├⌐  with_serper           ╬ô├╢├⌐
++╬ô├╢├⌐  Args:                 ╬ô├╢├⌐
++╬ô├╢├⌐  {'search_query':      ╬ô├╢├⌐
++╬ô├╢├⌐  'authoritative        ╬ô├╢├⌐
++╬ô├╢├⌐  sources for xyz123    ╬ô├╢├⌐
++╬ô├╢├⌐  medical term'}        ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç Γëí╞Æ├╢┬║ Tool Execution Sta╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Tool:                 ╬ô├╢├⌐
++╬ô├╢├⌐  search_the_internet_  ╬ô├╢├⌐
++╬ô├╢├⌐  with_serper           ╬ô├╢├⌐
++╬ô├╢├⌐  Args:                 ╬ô├╢├⌐
++╬ô├╢├⌐  {'search_query':      ╬ô├╢├⌐
++╬ô├╢├⌐  'xyz123 medical term  ╬ô├╢├⌐
++╬ô├╢├⌐  definition'}          ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç Γëí╞Æ├╢┬║ Tool Execution Sta╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Tool:                 ╬ô├╢├⌐
++╬ô├╢├⌐  search_the_internet_  ╬ô├╢├⌐
++╬ô├╢├⌐  with_serper           ╬ô├╢├⌐
++╬ô├╢├⌐  Args:                 ╬ô├╢├⌐
++╬ô├╢├⌐  {'search_query':      ╬ô├╢├⌐
++╬ô├╢├⌐  'xyz123 medical term  ╬ô├╢├⌐
++╬ô├╢├⌐  medical literature'}  ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç ╬ô┬ú├á Tool Execution Com╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Tool Completed        ╬ô├╢├⌐
++╬ô├╢├⌐  Tool:                 ╬ô├╢├⌐
++╬ô├╢├⌐  search_the_internet_  ╬ô├╢├⌐
++╬ô├╢├⌐  with_serper           ╬ô├╢├⌐
++╬ô├╢├⌐  Output:               ╬ô├╢├⌐
++╬ô├╢├⌐  {'searchParameters':  ╬ô├╢├⌐
++╬ô├╢├⌐  {'q': 'authoritative  ╬ô├╢├⌐
++╬ô├╢├⌐  sources for xyz123    ╬ô├╢├⌐
++╬ô├╢├⌐  medical term',        ╬ô├╢├⌐
++╬ô├╢├⌐  'type': 'search',     ╬ô├╢├⌐
++╬ô├╢├⌐  'num': 10, 'engine':  ╬ô├╢├⌐
++╬ô├╢├⌐  'google'},            ╬ô├╢├⌐
++╬ô├╢├⌐  'organic':            ╬ô├╢├⌐
++╬ô├╢├⌐  [{'title': 'Medical   ╬ô├╢├⌐
++╬ô├╢├⌐  Terminology: Library  ╬ô├╢├⌐
++╬ô├╢├⌐  Resources - Research  ╬ô├╢├⌐
++╬ô├╢├⌐  Guides', 'link':      ╬ô├╢├⌐
++╬ô├╢├⌐  'https://southcentra  ╬ô├╢├⌐
++╬ô├╢├⌐  l.libguides.com/medi  ╬ô├╢├⌐
++╬ô├╢├⌐  calterminology',      ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'Medical   ╬ô├╢├⌐
++╬ô├╢├⌐  Dictionary, Second    ╬ô├╢├⌐
++╬ô├╢├⌐  Edition, which        ╬ô├╢├⌐
++╬ô├╢├⌐  provides              ╬ô├╢├⌐
++╬ô├╢├⌐  authoritative         ╬ô├╢├⌐
++╬ô├╢├⌐  descriptions of       ╬ô├╢├⌐
++╬ô├╢├⌐  medical conditions,   ╬ô├╢├⌐
++╬ô├╢├⌐  medications,          ╬ô├╢├⌐
++╬ô├╢├⌐  anatomical terms,     ╬ô├╢├⌐
++╬ô├╢├⌐  noted ...',           ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 1},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'VTCSOM     ╬ô├╢├⌐
++╬ô├╢├⌐  Library & Learning    ╬ô├╢├⌐
++╬ô├╢├⌐  Commons: Medical      ╬ô├╢├⌐
++╬ô├╢├⌐  Terminology',         ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://guides.lib.  ╬ô├╢├⌐
++╬ô├╢├⌐  vt.edu/vtcsom_librar  ╬ô├╢├⌐
++╬ô├╢├⌐  y/terminology',       ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'It        ╬ô├╢├⌐
++╬ô├╢├⌐  contains over 5000    ╬ô├╢├⌐
++╬ô├╢├⌐  definitions and       ╬ô├╢├⌐
++╬ô├╢├⌐  descriptions of       ╬ô├╢├⌐
++╬ô├╢├⌐  medical terms and     ╬ô├╢├⌐
++╬ô├╢├⌐  concepts with over    ╬ô├╢├⌐
++╬ô├╢├⌐  1000 diagrams,        ╬ô├╢├⌐
++╬ô├╢├⌐  drawings and colour   ╬ô├╢├⌐
++╬ô├╢├⌐  illustrations.',      ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 2},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title':             ╬ô├╢├⌐
++╬ô├╢├⌐  'Representation of    ╬ô├╢├⌐
++╬ô├╢├⌐  Social Determinants   ╬ô├╢├⌐
++╬ô├╢├⌐  of Health             ╬ô├╢├⌐
++╬ô├╢├⌐  terminology ...',     ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://pubmed.ncbi  ╬ô├╢├⌐
++╬ô├╢├⌐  .nlm.nih.gov/3904729  ╬ô├╢├⌐
++╬ô├╢├⌐  6/', 'snippet': 'by   ╬ô├╢├⌐
++╬ô├╢├⌐  C Suda-King Γö¼Γòû 2024 Γö¼Γòû  ╬ô├╢├⌐
++╬ô├╢├⌐  Cited by 2 ╬ô├ç├╢ High     ╬ô├╢├⌐
++╬ô├╢├⌐  priority SDoH terms   ╬ô├╢├⌐
++╬ô├╢├⌐  and definitions were  ╬ô├╢├⌐
++╬ô├╢├⌐  collated from         ╬ô├╢├⌐
++╬ô├╢├⌐  authoritative         ╬ô├╢├⌐
++╬ô├╢├⌐  sources, curated      ╬ô├╢├⌐
++╬ô├╢├⌐  based on publication  ╬ô├╢├⌐
++╬ô├╢├⌐  frequencies, and      ╬ô├╢├⌐
++╬ô├╢├⌐  refined by ...',      ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 3},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Directory  ╬ô├╢├⌐
++╬ô├╢├⌐  of Medical            ╬ô├╢├⌐
++╬ô├╢├⌐  Dictionaries',        ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://openmd.com/  ╬ô├╢├⌐
++╬ô├╢├⌐  dictionary/medical-d  ╬ô├╢├⌐
++╬ô├╢├⌐  ictionaries',         ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet':            ╬ô├╢├⌐
++╬ô├╢├⌐  'Authoritative        ╬ô├╢├⌐
++╬ô├╢├⌐  descriptions of       ╬ô├╢├⌐
++╬ô├╢├⌐  medical conditions,   ╬ô├╢├⌐
++╬ô├╢├⌐  medications,          ╬ô├╢├⌐
++╬ô├╢├⌐  anatomical terms,     ╬ô├╢├⌐
++╬ô├╢├⌐  and abbreviations.    ╬ô├╢├⌐
++╬ô├╢├⌐  thefreedictionary.co  ╬ô├╢├⌐
++╬ô├╢├⌐  m.', 'position': 4},  ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Medical    ╬ô├╢├⌐
++╬ô├╢├⌐  Terminology: Finding  ╬ô├╢├⌐
++╬ô├╢├⌐  Articles - Research   ╬ô├╢├⌐
++╬ô├╢├⌐  Guides', 'link':      ╬ô├╢├⌐
++╬ô├╢├⌐  'https://libguides.l  ╬ô├╢├⌐
++╬ô├╢├⌐  cc.edu/c.php?g=16787  ╬ô├╢├⌐
++╬ô├╢├⌐  9&p=1102774',         ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'Start by  ╬ô├╢├⌐
++╬ô├╢├⌐  using the library     ╬ô├╢├⌐
++╬ô├╢├⌐  OneSearch to search   ╬ô├╢├⌐
++╬ô├╢├⌐  for a specific        ╬ô├╢├⌐
++╬ô├╢├⌐  health and medicine   ╬ô├╢├⌐
++╬ô├╢├⌐  related topic.        ╬ô├╢├⌐
++╬ô├╢├⌐  medical, and allied   ╬ô├╢├⌐
++╬ô├╢├⌐  health journals.',    ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 5},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Medical    ╬ô├╢├⌐
++╬ô├╢├⌐  Reference Sources -   ╬ô├╢├⌐
++╬ô├╢├⌐  Health & Medical      ╬ô├╢├⌐
++╬ô├╢├⌐  Information',         ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://libguides.l  ╬ô├╢├⌐
++╬ô├╢├⌐  aw.villanova.edu/hea  ╬ô├╢├⌐
++╬ô├╢├⌐  lthandmedicalinfo',   ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'This      ╬ô├╢├⌐
++╬ô├╢├⌐  link takes the user   ╬ô├╢├⌐
++╬ô├╢├⌐  to a list of          ╬ô├╢├⌐
++╬ô├╢├⌐  electronic medical    ╬ô├╢├⌐
++╬ô├╢├⌐  reference sources     ╬ô├╢├⌐
++╬ô├╢├⌐  available to          ╬ô├╢├⌐
++╬ô├╢├⌐  Villanova students,   ╬ô├╢├⌐
++╬ô├╢├⌐  faculty and staff.',  ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 6},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Medical    ╬ô├╢├⌐
++╬ô├╢├⌐  Dictionary', 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  'https://medical-dic  ╬ô├╢├⌐
++╬ô├╢├⌐  tionary.thefreedicti  ╬ô├╢├⌐
++╬ô├╢├⌐  onary.com/',          ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'Provides  ╬ô├╢├⌐
++╬ô├╢├⌐  authoritative         ╬ô├╢├⌐
++╬ô├╢├⌐  descriptions of       ╬ô├╢├⌐
++╬ô├╢├⌐  medical conditions,   ╬ô├╢├⌐
++╬ô├╢├⌐  medications,          ╬ô├╢├⌐
++╬ô├╢├⌐  anatomical terms,     ╬ô├╢├⌐
++╬ô├╢├⌐  noted medical         ╬ô├╢├⌐
++╬ô├╢├⌐  personalities and     ╬ô├╢├⌐
++╬ô├╢├⌐  much more.',          ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 7},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title':             ╬ô├╢├⌐
++╬ô├╢├⌐  'Systematized         ╬ô├╢├⌐
++╬ô├╢├⌐  Nomenclature of       ╬ô├╢├⌐
++╬ô├╢├⌐  Medicine╬ô├ç├┤Clinical     ╬ô├╢├⌐
++╬ô├╢├⌐  Terminology ...',     ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://medinform.j  ╬ô├╢├⌐
++╬ô├╢├⌐  mir.org/2023/1/e4375  ╬ô├╢├⌐
++╬ô├╢├⌐  0/', 'snippet': 'by   ╬ô├╢├⌐
++╬ô├╢├⌐  R Vuokko Γö¼Γòû 2023 Γö¼Γòû     ╬ô├╢├⌐
++╬ô├╢├⌐  Cited by 73 ╬ô├ç├╢ The     ╬ô├╢├⌐
++╬ô├╢├⌐  Systematized Medical  ╬ô├╢├⌐
++╬ô├╢├⌐  Nomenclature for      ╬ô├╢├⌐
++╬ô├╢├⌐  Medicine╬ô├ç├┤Clinical     ╬ô├╢├⌐
++╬ô├╢├⌐  Terminology (SNOMED   ╬ô├╢├⌐
++╬ô├╢├⌐  CT) is an extensive,  ╬ô├╢├⌐
++╬ô├╢├⌐  multi-hierarchical    ╬ô├╢├⌐
++╬ô├╢├⌐  clinical terminology  ╬ô├╢├⌐
++╬ô├╢├⌐  ...', 'position':     ╬ô├╢├⌐
++╬ô├╢├⌐  8}, {'title':         ╬ô├╢├⌐
++╬ô├╢├⌐  'Deciphering Medical  ╬ô├╢├⌐
++╬ô├╢├⌐  Research -            ╬ô├╢├⌐
++╬ô├╢├⌐  Evaluating Health     ╬ô├╢├⌐
++╬ô├╢├⌐  ...', 'link':         ╬ô├╢├⌐
++╬ô├╢├⌐  'https://library.pla  ╬ô├╢├⌐
++╬ô├╢├⌐  netree-sv.org/evalua  ╬ô├╢├⌐
++╬ô├╢├⌐  ting-health-info/dec  ╬ô├╢├⌐
++╬ô├╢├⌐  iphering',            ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet':            ╬ô├╢├⌐
++╬ô├╢├⌐  'MedlinePlus          ╬ô├╢├⌐
++╬ô├╢├⌐  includes a wealth of  ╬ô├╢├⌐
++╬ô├╢├⌐  information from      ╬ô├╢├⌐
++╬ô├╢├⌐  medical dictionaries  ╬ô├╢├⌐
++╬ô├╢├⌐  and encyclopedias to  ╬ô├╢├⌐
++╬ô├╢├⌐  help interpret        ╬ô├╢├⌐
++╬ô├╢├⌐  health-related        ╬ô├╢├⌐
++╬ô├╢├⌐  jargon and            ╬ô├╢├⌐
++╬ô├╢├⌐  terminology.          ╬ô├╢├⌐
++╬ô├╢├⌐  MedlinePlus ( ...',   ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 9}],      ╬ô├╢├⌐
++╬ô├╢├⌐  'peopleAlsoAsk':      ╬ô├╢├⌐
++╬ô├╢├⌐  [{'question': 'What   ╬ô├╢├⌐
++╬ô├╢├⌐  are the sources of    ╬ô├╢├⌐
++╬ô├╢├⌐  medical               ╬ô├╢├⌐
++╬ô├╢├⌐  terminology?',        ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': '',        ╬ô├╢├⌐
++╬ô├╢├⌐  'title': '', 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  ''}, {'question':     ╬ô├╢├⌐
++╬ô├╢├⌐  'Is Medline a         ╬ô├╢├⌐
++╬ô├╢├⌐  secondary source?',   ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': "Many      ╬ô├╢├⌐
++╬ô├╢├⌐  studies and reviews   ╬ô├╢├⌐
++╬ô├╢├⌐  rely on MEDLINE as a  ╬ô├╢├⌐
++╬ô├╢├⌐  primary source when   ╬ô├╢├⌐
++╬ô├╢├⌐  surveying existing    ╬ô├╢├⌐
++╬ô├╢├⌐  knowledge in a        ╬ô├╢├⌐
++╬ô├╢├⌐  field. From a         ╬ô├╢├⌐
++╬ô├╢├⌐  research-literacy     ╬ô├╢├⌐
++╬ô├╢├⌐  perspective, MEDLINE  ╬ô├╢├⌐
++╬ô├╢├⌐  matters because it:   ╬ô├╢├⌐
++╬ô├╢├⌐  Provides systematic   ╬ô├╢├⌐
++╬ô├╢├⌐  access to             ╬ô├╢├⌐
++╬ô├╢├⌐  peer-reviewed         ╬ô├╢├⌐
++╬ô├╢├⌐  biomedical            ╬ô├╢├⌐
++╬ô├╢├⌐  literature, as        ╬ô├╢├⌐
++╬ô├╢├⌐  described in          ╬ô├╢├⌐
++╬ô├╢├⌐  PubMed's database     ╬ô├╢├⌐
++╬ô├╢├⌐  overview.Feb 2,       ╬ô├╢├⌐
++╬ô├╢├⌐  2026", 'title':       ╬ô├╢├⌐
++╬ô├╢├⌐  'What Is MEDLINE? A   ╬ô├╢├⌐
++╬ô├╢├⌐  Simple Guide to the   ╬ô├╢├⌐
++╬ô├╢├⌐  Biomedical            ╬ô├╢├⌐
++╬ô├╢├⌐  Literature            ╬ô├╢├⌐
++╬ô├╢├⌐  Database', 'link':    ╬ô├╢├⌐
++╬ô├╢├⌐  "https://www.pubmed.  ╬ô├╢├⌐
++╬ô├╢├⌐  ai/blog/what-is-medl  ╬ô├╢├⌐
++╬ô├╢├⌐  ine#:~:text=Many%20s  ╬ô├╢├⌐
++╬ô├╢├⌐  tudies%20and%20revie  ╬ô├╢├⌐
++╬ô├╢├⌐  ws%20rely,described%  ╬ô├╢├⌐
++╬ô├╢├⌐  20in%20PubMed's%20da  ╬ô├╢├⌐
++╬ô├╢├⌐  tabase%20overview"},  ╬ô├╢├⌐
++╬ô├╢├⌐   {'question': 'What   ╬ô├╢├⌐
++╬ô├╢├⌐  is a primary data     ╬ô├╢├⌐
++╬ô├╢├⌐  source in             ╬ô├╢├⌐
++╬ô├╢├⌐  healthcare?',         ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'Primary   ╬ô├╢├⌐
++╬ô├╢├⌐  data sources.         ╬ô├╢├⌐
++╬ô├╢├⌐  Primary data is       ╬ô├╢├⌐
++╬ô├╢├⌐  collected to          ╬ô├╢├⌐
++╬ô├╢├⌐  populate your         ╬ô├╢├⌐
++╬ô├╢├⌐  registry database.    ╬ô├╢├⌐
++╬ô├╢├⌐  Primary data sources  ╬ô├╢├⌐
++╬ô├╢├⌐  are typically used    ╬ô├╢├⌐
++╬ô├╢├⌐  when the data of      ╬ô├╢├⌐
++╬ô├╢├⌐  interest are          ╬ô├╢├⌐
++╬ô├╢├⌐  unavailable           ╬ô├╢├⌐
++╬ô├╢├⌐  elsewhere or, if      ╬ô├╢├⌐
++╬ô├╢├⌐  available, are        ╬ô├╢├⌐
++╬ô├╢├⌐  unlikely to be of     ╬ô├╢├⌐
++╬ô├╢├⌐  good enough quality   ╬ô├╢├⌐
++╬ô├╢├⌐  for use in your       ╬ô├╢├⌐
++╬ô├╢├⌐  registry. Primary     ╬ô├╢├⌐
++╬ô├╢├⌐  data includes         ╬ô├╢├⌐
++╬ô├╢├⌐  clinician- and        ╬ô├╢├⌐
++╬ô├╢├⌐  patient-reported      ╬ô├╢├⌐
++╬ô├╢├⌐  data ...', 'title':   ╬ô├╢├⌐
++╬ô├╢├⌐  'Data sources and     ╬ô├╢├⌐
++╬ô├╢├⌐  management -          ╬ô├╢├⌐
++╬ô├╢├⌐  International         ╬ô├╢├⌐
++╬ô├╢├⌐  Society of            ╬ô├╢├⌐
++╬ô├╢├⌐  Nephrology', 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.theisn.  ╬ô├╢├⌐
++╬ô├╢├⌐  org/in-action/resear  ╬ô├╢├⌐
++╬ô├╢├⌐  ch/share-rr/data-sou  ╬ô├╢├⌐
++╬ô├╢├⌐  rces-and-management/  ╬ô├╢├⌐
++╬ô├╢├⌐  #:~:text=Primary%20d  ╬ô├╢├⌐
++╬ô├╢├⌐  ata%20sources,clinic  ╬ô├╢├⌐
++╬ô├╢├⌐  ian%2D%20and%20patie  ╬ô├╢├⌐
++╬ô├╢├⌐  nt%2Dreported%20data  ╬ô├╢├⌐
++╬ô├╢├⌐  '}, {'question':      ╬ô├╢├⌐
++╬ô├╢├⌐  'What are the 4       ╬ô├╢├⌐
++╬ô├╢├⌐  components of a       ╬ô├╢├⌐
++╬ô├╢├⌐  medical term?',       ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': '',        ╬ô├╢├⌐
++╬ô├╢├⌐  'title': '', 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  ''}],                 ╬ô├╢├⌐
++╬ô├╢├⌐  'relatedSearches':    ╬ô├╢├⌐
++╬ô├╢├⌐  [{'query': 'Medical   ╬ô├╢├⌐
++╬ô├╢├⌐  Terminology for       ╬ô├╢├⌐
++╬ô├╢├⌐  Health Professions    ╬ô├╢├⌐
++╬ô├╢├⌐  PDF'}, {'query':      ╬ô├╢├⌐
++╬ô├╢├⌐  'Medical Terminology  ╬ô├╢├⌐
++╬ô├╢├⌐  for Health            ╬ô├╢├⌐
++╬ô├╢├⌐  Professions 9th       ╬ô├╢├⌐
++╬ô├╢├⌐  Edition'}, {'query':  ╬ô├╢├⌐
++╬ô├╢├⌐  'Medical Terminology  ╬ô├╢├⌐
++╬ô├╢├⌐  for Health            ╬ô├╢├⌐
++╬ô├╢├⌐  Professions 9th       ╬ô├╢├⌐
++╬ô├╢├⌐  Edition PDF'},        ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Clinical   ╬ô├╢├⌐
++╬ô├╢├⌐  information           ╬ô├╢├⌐
++╬ô├╢├⌐  standards are         ╬ô├╢├⌐
++╬ô├╢├⌐  necessary except      ╬ô├╢├⌐
++╬ô├╢├⌐  for'}, {'query':      ╬ô├╢├⌐
++╬ô├╢├⌐  'What is the use of   ╬ô├╢├⌐
++╬ô├╢├⌐  technology to manage  ╬ô├╢├⌐
++╬ô├╢├⌐  patient care          ╬ô├╢├⌐
++╬ô├╢├⌐  information'}],       ╬ô├╢├⌐
++╬ô├╢├⌐  'credits': 1}         ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç ╬ô┬ú├á Tool Execution Com╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Tool Completed        ╬ô├╢├⌐
++╬ô├╢├⌐  Tool:                 ╬ô├╢├⌐
++╬ô├╢├⌐  search_the_internet_  ╬ô├╢├⌐
++╬ô├╢├⌐  with_serper           ╬ô├╢├⌐
++╬ô├╢├⌐  Output:               ╬ô├╢├⌐
++╬ô├╢├⌐  {'searchParameters':  ╬ô├╢├⌐
++╬ô├╢├⌐  {'q': 'xyz123         ╬ô├╢├⌐
++╬ô├╢├⌐  medical term          ╬ô├╢├⌐
++╬ô├╢├⌐  definition', 'type':  ╬ô├╢├⌐
++╬ô├╢├⌐  'search', 'num': 10,  ╬ô├╢├⌐
++╬ô├╢├⌐  'engine': 'google'},  ╬ô├╢├⌐
++╬ô├╢├⌐  'organic':            ╬ô├╢├⌐
++╬ô├╢├⌐  [{'title': 'Medical   ╬ô├╢├⌐
++╬ô├╢├⌐  Dictionary', 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.merriam  ╬ô├╢├⌐
++╬ô├╢├⌐  -webster.com/medical  ╬ô├╢├⌐
++╬ô├╢├⌐  ', 'snippet':         ╬ô├╢├⌐
++╬ô├╢├⌐  'Search medical       ╬ô├╢├⌐
++╬ô├╢├⌐  terms and             ╬ô├╢├⌐
++╬ô├╢├⌐  abbreviations with    ╬ô├╢├⌐
++╬ô├╢├⌐  the most up-to-date   ╬ô├╢├⌐
++╬ô├╢├⌐  and comprehensive     ╬ô├╢├⌐
++╬ô├╢├⌐  medical dictionary    ╬ô├╢├⌐
++╬ô├╢├⌐  from the reference    ╬ô├╢├⌐
++╬ô├╢├⌐  experts at            ╬ô├╢├⌐
++╬ô├╢├⌐  Merriam-Webster.',    ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 1},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Medical    ╬ô├╢├⌐
++╬ô├╢├⌐  Dictionary of Health  ╬ô├╢├⌐
++╬ô├╢├⌐  Terms: Q-Z', 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.health.  ╬ô├╢├⌐
++╬ô├╢├⌐  harvard.edu/q-throug  ╬ô├╢├⌐
++╬ô├╢├⌐  h-z', 'snippet':      ╬ô├╢├⌐
++╬ô├╢├⌐  'REM behavior         ╬ô├╢├⌐
++╬ô├╢├⌐  disorder: A sleep     ╬ô├╢├⌐
++╬ô├╢├⌐  disorder marked by    ╬ô├╢├⌐
++╬ô├╢├⌐  movement during REM   ╬ô├╢├⌐
++╬ô├╢├⌐  sleep, when muscles   ╬ô├╢├⌐
++╬ô├╢├⌐  are normally          ╬ô├╢├⌐
++╬ô├╢├⌐  paralyzed. REM        ╬ô├╢├⌐
++╬ô├╢├⌐  rebound: An increase  ╬ô├╢├⌐
++╬ô├╢├⌐  in REM sleep, often   ╬ô├╢├⌐
++╬ô├╢├⌐  ...', 'position':     ╬ô├╢├⌐
++╬ô├╢├⌐  2}, {'title': '75     ╬ô├╢├⌐
++╬ô├╢├⌐  Must-Know Medical     ╬ô├╢├⌐
++╬ô├╢├⌐  Terms,                ╬ô├╢├⌐
++╬ô├╢├⌐  Abbreviations, and    ╬ô├╢├⌐
++╬ô├╢├⌐  Acronyms', 'link':    ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.sgu.edu  ╬ô├╢├⌐
++╬ô├╢├⌐  /school-of-medicine/  ╬ô├╢├⌐
++╬ô├╢├⌐  blog/medical-terms-a  ╬ô├╢├⌐
++╬ô├╢├⌐  bbreviations-and-acr  ╬ô├╢├⌐
++╬ô├╢├⌐  onyms/', 'snippet':   ╬ô├╢├⌐
++╬ô├╢├⌐  "1. Abrasion: A cut   ╬ô├╢├⌐
++╬ô├╢├⌐  or scrape that        ╬ô├╢├⌐
++╬ô├╢├⌐  typically isn't       ╬ô├╢├⌐
++╬ô├╢├⌐  serious. 2. Abscess:  ╬ô├╢├⌐
++╬ô├╢├⌐  A tender,             ╬ô├╢├⌐
++╬ô├╢├⌐  fluid-filled pocket   ╬ô├╢├⌐
++╬ô├╢├⌐  that forms in         ╬ô├╢├⌐
++╬ô├╢├⌐  tissue, usually due   ╬ô├╢├⌐
++╬ô├╢├⌐  to infection.",       ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 3},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'A-Z of     ╬ô├╢├⌐
++╬ô├╢├⌐  medical terms',       ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.rcog.or  ╬ô├╢├⌐
++╬ô├╢├⌐  g.uk/for-the-public/  ╬ô├╢├⌐
++╬ô├╢├⌐  a-z-of-medical-terms  ╬ô├╢├⌐
++╬ô├╢├⌐  /', 'snippet': 'This  ╬ô├╢├⌐
++╬ô├╢├⌐  alphabetical list     ╬ô├╢├⌐
++╬ô├╢├⌐  contains              ╬ô├╢├⌐
++╬ô├╢├⌐  explanations of       ╬ô├╢├⌐
++╬ô├╢├⌐  medical words you     ╬ô├╢├⌐
++╬ô├╢├⌐  may come across on    ╬ô├╢├⌐
++╬ô├╢├⌐  the RCOG website or   ╬ô├╢├⌐
++╬ô├╢├⌐  when you see your     ╬ô├╢├⌐
++╬ô├╢├⌐  doctor.',             ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 4},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'What do    ╬ô├╢├⌐
++╬ô├╢├⌐  you know about        ╬ô├╢├⌐
++╬ô├╢├⌐  medical               ╬ô├╢├⌐
++╬ô├╢├⌐  abbreviations?',      ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.faceboo  ╬ô├╢├⌐
++╬ô├╢├⌐  k.com/61568157196133  ╬ô├╢├⌐
++╬ô├╢├⌐  /posts/what-do-you-k  ╬ô├╢├⌐
++╬ô├╢├⌐  now-about-medical-ab  ╬ô├╢├⌐
++╬ô├╢├⌐  breviations/12214112  ╬ô├╢├⌐
++╬ô├╢├⌐  0666605239/',         ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'A         ╬ô├╢├⌐
++╬ô├╢├⌐  medical abbreviation  ╬ô├╢├⌐
++╬ô├╢├⌐  is a shortened form   ╬ô├╢├⌐
++╬ô├╢├⌐  of a medical term,    ╬ô├╢├⌐
++╬ô├╢├⌐  phrase or             ╬ô├╢├⌐
++╬ô├╢├⌐  instruction used by   ╬ô├╢├⌐
++╬ô├╢├⌐  healthcare            ╬ô├╢├⌐
++╬ô├╢├⌐  professionals to      ╬ô├╢├⌐
++╬ô├╢├⌐  simplify ...',        ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 5},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': "Medical    ╬ô├╢├⌐
++╬ô├╢├⌐  Abbreviations |       ╬ô├╢├⌐
++╬ô├╢├⌐  Taber's Medical       ╬ô├╢├⌐
++╬ô├╢├⌐  Dictionary", 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.tabers.  ╬ô├╢├⌐
++╬ô├╢├⌐  com/tabersonline/vie  ╬ô├╢├⌐
++╬ô├╢├⌐  w/Tabers-Dictionary/  ╬ô├╢├⌐
++╬ô├╢├⌐  767492/all/Medical_A  ╬ô├╢├⌐
++╬ô├╢├⌐  bbreviations',        ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': "Medical   ╬ô├╢├⌐
++╬ô├╢├⌐  Abbreviations         ╬ô├╢├⌐
++╬ô├╢├⌐  answers are found in  ╬ô├╢├⌐
++╬ô├╢├⌐  the Taber's Medical   ╬ô├╢├⌐
++╬ô├╢├⌐  Dictionary powered    ╬ô├╢├⌐
++╬ô├╢├⌐  by Unbound Medicine.  ╬ô├╢├⌐
++╬ô├╢├⌐  Available for         ╬ô├╢├⌐
++╬ô├╢├⌐  iPhone, iPad,         ╬ô├╢├⌐
++╬ô├╢├⌐  Android, and Web.",   ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 6},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Medical    ╬ô├╢├⌐
++╬ô├╢├⌐  Dictionary', 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  'https://medical-dic  ╬ô├╢├⌐
++╬ô├╢├⌐  tionary.thefreedicti  ╬ô├╢├⌐
++╬ô├╢├⌐  onary.com/',          ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'provides  ╬ô├╢├⌐
++╬ô├╢├⌐  authoritative         ╬ô├╢├⌐
++╬ô├╢├⌐  descriptions of       ╬ô├╢├⌐
++╬ô├╢├⌐  medical conditions,   ╬ô├╢├⌐
++╬ô├╢├⌐  medications,          ╬ô├╢├⌐
++╬ô├╢├⌐  anatomical terms,     ╬ô├╢├⌐
++╬ô├╢├⌐  noted medical         ╬ô├╢├⌐
++╬ô├╢├⌐  personalities and     ╬ô├╢├⌐
++╬ô├╢├⌐  much more.',          ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 7},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Medical    ╬ô├╢├⌐
++╬ô├╢├⌐  Abbreviations',       ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.actx.ed  ╬ô├╢├⌐
++╬ô├╢├⌐  u/respiratory/files/  ╬ô├╢├⌐
++╬ô├╢├⌐  filecabinet/folder5/  ╬ô├╢├⌐
++╬ô├╢├⌐  1101_abbreviations.p  ╬ô├╢├⌐
++╬ô├╢├⌐  df', 'snippet': 'x    ╬ô├╢├⌐
++╬ô├╢├⌐  dash above any        ╬ô├╢├⌐
++╬ô├╢├⌐  symbol indicates a    ╬ô├╢├⌐
++╬ô├╢├⌐  mean value. Γòª├û x dot   ╬ô├╢├⌐
++╬ô├╢├⌐  above any symbol      ╬ô├╢├⌐
++╬ô├╢├⌐  indicates a timed     ╬ô├╢├⌐
++╬ô├╢├⌐  event a before abd    ╬ô├╢├⌐
++╬ô├╢├⌐  abdomen. ABG          ╬ô├╢├⌐
++╬ô├╢├⌐  arterial blood        ╬ô├╢├⌐
++╬ô├╢├⌐  gas.', 'position':    ╬ô├╢├⌐
++╬ô├╢├⌐  8}],                  ╬ô├╢├⌐
++╬ô├╢├⌐  'peopleAlsoAsk':      ╬ô├╢├⌐
++╬ô├╢├⌐  [{'question': 'What   ╬ô├╢├⌐
++╬ô├╢├⌐  does y mean in        ╬ô├╢├⌐
++╬ô├╢├⌐  medical               ╬ô├╢├⌐
++╬ô├╢├⌐  terminology?',        ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': '',        ╬ô├╢├⌐
++╬ô├╢├⌐  'title': '', 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  ''}, {'question':     ╬ô├╢├⌐
++╬ô├╢├⌐  'What is dL in        ╬ô├╢├⌐
++╬ô├╢├⌐  medical terms?',      ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': '',        ╬ô├╢├⌐
++╬ô├╢├⌐  'title': '', 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  ''}, {'question':     ╬ô├╢├⌐
++╬ô├╢├⌐  'What does the        ╬ô├╢├⌐
++╬ô├╢├⌐  medical term mean?',  ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': '',        ╬ô├╢├⌐
++╬ô├╢├⌐  'title': '', 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  ''}, {'question':     ╬ô├╢├⌐
++╬ô├╢├⌐  'What is the prefix   ╬ô├╢├⌐
++╬ô├╢├⌐  and suffix for        ╬ô├╢├⌐
++╬ô├╢├⌐  endoscopy?',          ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': '',        ╬ô├╢├⌐
++╬ô├╢├⌐  'title': 'Break It    ╬ô├╢├⌐
++╬ô├╢├⌐  Down: Endoscopy -     ╬ô├╢├⌐
++╬ô├╢├⌐  YouTube', 'link':     ╬ô├╢├⌐
++╬ô├╢├⌐  '/goto?url=CAESYgHuR  ╬ô├╢├⌐
++╬ô├╢├⌐  6pNtojZEkkuaWS_TN2kb  ╬ô├╢├⌐
++╬ô├╢├⌐  t1R8bTIqLCfjfbOGCaQR  ╬ô├╢├⌐
++╬ô├╢├⌐  _AGxmkHSz2ASLg--kGVu  ╬ô├╢├⌐
++╬ô├╢├⌐  q9lie7mUpu7jy3pwsR7b  ╬ô├╢├⌐
++╬ô├╢├⌐  lhZyh4fmBNPRwPU76Ex1  ╬ô├╢├⌐
++╬ô├╢├⌐  _VEASNEC3DKf3glr8Cqs  ╬ô├╢├⌐
++╬ô├╢├⌐  ID81gwY'}],           ╬ô├╢├⌐
++╬ô├╢├⌐  'relatedSearches':    ╬ô├╢├⌐
++╬ô├╢├⌐  [{'query': 'Xyz123    ╬ô├╢├⌐
++╬ô├╢├⌐  medical term          ╬ô├╢├⌐
++╬ô├╢├⌐  definition pdf'},     ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': '50         ╬ô├╢├⌐
++╬ô├╢├⌐  medical terms'},      ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Xyz123     ╬ô├╢├⌐
++╬ô├╢├⌐  medical term          ╬ô├╢├⌐
++╬ô├╢├⌐  definition            ╬ô├╢├⌐
++╬ô├╢├⌐  example'}, {'query':  ╬ô├╢├⌐
++╬ô├╢├⌐  'Xyz123 medical term  ╬ô├╢├⌐
++╬ô├╢├⌐  definition cancer'},  ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': '100 most   ╬ô├╢├⌐
++╬ô├╢├⌐  common medical        ╬ô├╢├⌐
++╬ô├╢├⌐  words'}, {'query':    ╬ô├╢├⌐
++╬ô├╢├⌐  '50 medical terms     ╬ô├╢├⌐
++╬ô├╢├⌐  with meaning'},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Medical    ╬ô├╢├⌐
++╬ô├╢├⌐  terms a to z'},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Medical    ╬ô├╢├⌐
++╬ô├╢├⌐  terms a to Z pdf'}],  ╬ô├╢├⌐
++╬ô├╢├⌐  'credits': 1}         ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'authoritative sources for xyz123 medical term', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Medical Terminology: Library Resources - Research G...[0m
++[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'xyz123 medical term definition', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Medical Dictionary', 'link': 'https://www.merriam-webster.com/medi...[0m
++[32mTool search_the_internet_with_serper executed with result: {'searchParameters': {'q': 'xyz123 medical term medical literature', 'type': 'search', 'num': 10, 'engine': 'google'}, 'organic': [{'title': 'Medical Subject Headings Used to Search the Biomedical ......[0m
++ ╬ô┬ú├á Tool Execution Com╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Tool Completed        ╬ô├╢├⌐
++╬ô├╢├⌐  Tool:                 ╬ô├╢├⌐
++╬ô├╢├⌐  search_the_internet_  ╬ô├╢├⌐
++╬ô├╢├⌐  with_serper           ╬ô├╢├⌐
++╬ô├╢├⌐  Output:               ╬ô├╢├⌐
++╬ô├╢├⌐  {'searchParameters':  ╬ô├╢├⌐
++╬ô├╢├⌐  {'q': 'xyz123         ╬ô├╢├⌐
++╬ô├╢├⌐  medical term medical  ╬ô├╢├⌐
++╬ô├╢├⌐  literature', 'type':  ╬ô├╢├⌐
++╬ô├╢├⌐  'search', 'num': 10,  ╬ô├╢├⌐
++╬ô├╢├⌐  'engine': 'google'},  ╬ô├╢├⌐
++╬ô├╢├⌐  'organic':            ╬ô├╢├⌐
++╬ô├╢├⌐  [{'title': 'Medical   ╬ô├╢├⌐
++╬ô├╢├⌐  Subject Headings      ╬ô├╢├⌐
++╬ô├╢├⌐  Used to Search the    ╬ô├╢├⌐
++╬ô├╢├⌐  Biomedical ...',      ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://pmc.ncbi.nl  ╬ô├╢├⌐
++╬ô├╢├⌐  m.nih.gov/articles/P  ╬ô├╢├⌐
++╬ô├╢├⌐  MC130076/',           ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'by MH     ╬ô├╢├⌐
++╬ô├╢├⌐  Coletti Γö¼Γòû 2001 Γö¼Γòû      ╬ô├╢├⌐
++╬ô├╢├⌐  Cited by 335 ╬ô├ç├╢ The    ╬ô├╢├⌐
++╬ô├╢├⌐  list╬ô├ç├╢called Medical   ╬ô├╢├⌐
++╬ô├╢├⌐  Subject Headings, or  ╬ô├╢├⌐
++╬ô├╢├⌐  MeSH╬ô├ç├╢consists of      ╬ô├╢├⌐
++╬ô├╢├⌐  single- and           ╬ô├╢├⌐
++╬ô├╢├⌐  multi-word terms      ╬ô├╢├⌐
++╬ô├╢├⌐  that are used to      ╬ô├╢├⌐
++╬ô├╢├⌐  index and catalog     ╬ô├╢├⌐
++╬ô├╢├⌐  the medical           ╬ô├╢├⌐
++╬ô├╢├⌐  literature.',         ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 1},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Added      ╬ô├╢├⌐
++╬ô├╢├⌐  Value of Medical      ╬ô├╢├⌐
++╬ô├╢├⌐  Subject Headings      ╬ô├╢├⌐
++╬ô├╢├⌐  Terms in ...',        ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.jmir.or  ╬ô├╢├⌐
++╬ô├╢├⌐  g/2024/1/e53781/',    ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'by V      ╬ô├╢├⌐
++╬ô├╢├⌐  Leblanc Γö¼Γòû 2024 Γö¼Γòû      ╬ô├╢├⌐
++╬ô├╢├⌐  Cited by 26 ╬ô├ç├╢ The     ╬ô├╢├⌐
++╬ô├╢├⌐  objective of this     ╬ô├╢├⌐
++╬ô├╢├⌐  study was to          ╬ô├╢├⌐
++╬ô├╢├⌐  estimate the added    ╬ô├╢├⌐
++╬ô├╢├⌐  value of using MeSH   ╬ô├╢├⌐
++╬ô├╢├⌐  terms in PubMed       ╬ô├╢├⌐
++╬ô├╢├⌐  queries for           ╬ô├╢├⌐
++╬ô├╢├⌐  systematic reviews    ╬ô├╢├⌐
++╬ô├╢├⌐  (SRs).', 'position':  ╬ô├╢├⌐
++╬ô├╢├⌐  2}, {'title':         ╬ô├╢├⌐
++╬ô├╢├⌐  'Deciphering Medical  ╬ô├╢├⌐
++╬ô├╢├⌐  Research -            ╬ô├╢├⌐
++╬ô├╢├⌐  Evaluating Health     ╬ô├╢├⌐
++╬ô├╢├⌐  ...', 'link':         ╬ô├╢├⌐
++╬ô├╢├⌐  'https://library.pla  ╬ô├╢├⌐
++╬ô├╢├⌐  netree-sv.org/evalua  ╬ô├╢├⌐
++╬ô├╢├⌐  ting-health-info/dec  ╬ô├╢├⌐
++╬ô├╢├⌐  iphering',            ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'Medical   ╬ô├╢├⌐
++╬ô├╢├⌐  literature is         ╬ô├╢├⌐
++╬ô├╢├⌐  notorious for using   ╬ô├╢├⌐
++╬ô├╢├⌐  jargon words and      ╬ô├╢├⌐
++╬ô├╢├⌐  abbreviations. Here   ╬ô├╢├⌐
++╬ô├╢├⌐  are some              ╬ô├╢├⌐
++╬ô├╢├⌐  dictionaries to help  ╬ô├╢├⌐
++╬ô├╢├⌐  translate: What Did   ╬ô├╢├⌐
++╬ô├╢├⌐  My Doctor Say? from   ╬ô├╢├⌐
++╬ô├╢├⌐  medical ...',         ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 3},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'What is    ╬ô├╢├⌐
++╬ô├╢├⌐  MeSH (Medical         ╬ô├╢├⌐
++╬ô├╢├⌐  Subject Headings)     ╬ô├╢├⌐
++╬ô├╢├⌐  for biomedical ...',  ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.faceboo  ╬ô├╢├⌐
++╬ô├╢├⌐  k.com/groups/1462094  ╬ô├╢├⌐
++╬ô├╢├⌐  437292524/posts/3538  ╬ô├╢├⌐
++╬ô├╢├⌐  111966357417/',       ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'MeSH      ╬ô├╢├⌐
++╬ô├╢├⌐  stands for Medical    ╬ô├╢├⌐
++╬ô├╢├⌐  Subject Headings.     ╬ô├╢├⌐
++╬ô├╢├⌐  used primarily to     ╬ô├╢├⌐
++╬ô├╢├⌐  index, catalog, and   ╬ô├╢├⌐
++╬ô├╢├⌐  search biomedical     ╬ô├╢├⌐
++╬ô├╢├⌐  and health-related    ╬ô├╢├⌐
++╬ô├╢├⌐  literature',          ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 4},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title':             ╬ô├╢├⌐
++╬ô├╢├⌐  'Literature           ╬ô├╢├⌐
++╬ô├╢├⌐  Searching: Step 3 -   ╬ô├╢├⌐
++╬ô├╢├⌐  Locate subject        ╬ô├╢├⌐
++╬ô├╢├⌐  headings ...',        ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://laneguides.  ╬ô├╢├⌐
++╬ô├╢├⌐  stanford.edu/LitSear  ╬ô├╢├⌐
++╬ô├╢├⌐  ch/step3',            ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'You can   ╬ô├╢├⌐
++╬ô├╢├⌐  search the MeSH       ╬ô├╢├⌐
++╬ô├╢├⌐  database that can be  ╬ô├╢├⌐
++╬ô├╢├⌐  accessed through the  ╬ô├╢├⌐
++╬ô├╢├⌐  PubMed homepage.      ╬ô├╢├⌐
++╬ô├╢├⌐  Type a concept in     ╬ô├╢├⌐
++╬ô├╢├⌐  the search bar to     ╬ô├╢├⌐
++╬ô├╢├⌐  see the suggested     ╬ô├╢├⌐
++╬ô├╢├⌐  MeSH terms.',         ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 5},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Search     ╬ô├╢├⌐
++╬ô├╢├⌐  terms - Conducting a  ╬ô├╢├⌐
++╬ô├╢├⌐  literature search',   ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://hslguides.m  ╬ô├╢├⌐
++╬ô├╢├⌐  ed.nyu.edu/literatur  ╬ô├╢├⌐
++╬ô├╢├⌐  esearch/searchterms'  ╬ô├╢├⌐
++╬ô├╢├⌐  , 'snippet': "MeSH,   ╬ô├╢├⌐
++╬ô├╢├⌐  or ╬ô├ç┬úMedical Subject   ╬ô├╢├⌐
++╬ô├╢├⌐  Headings╬ô├ç┬Ñ, is the     ╬ô├╢├⌐
++╬ô├╢├⌐  National Library of   ╬ô├╢├⌐
++╬ô├╢├⌐  Medicine's            ╬ô├╢├⌐
++╬ô├╢├⌐  controlled            ╬ô├╢├⌐
++╬ô├╢├⌐  vocabulary thesaurus  ╬ô├╢├⌐
++╬ô├╢├⌐  used for indexing     ╬ô├╢├⌐
++╬ô├╢├⌐  PubMed citations.",   ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 6},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'Scoping    ╬ô├╢├⌐
++╬ô├╢├⌐  Reviews: Medical      ╬ô├╢├⌐
++╬ô├╢├⌐  Subject Headings      ╬ô├╢├⌐
++╬ô├╢├⌐  (MeSH)', 'link':      ╬ô├╢├⌐
++╬ô├╢├⌐  'https://libguides.w  ╬ô├╢├⌐
++╬ô├╢├⌐  ustl.edu/c.php?g=131  ╬ô├╢├⌐
++╬ô├╢├⌐  6625&p=9681271',      ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'Medical   ╬ô├╢├⌐
++╬ô├╢├⌐  Subject Headings      ╬ô├╢├⌐
++╬ô├╢├⌐  (MeSH) is a           ╬ô├╢├⌐
++╬ô├╢├⌐  controlled            ╬ô├╢├⌐
++╬ô├╢├⌐  vocabulary thesaurus  ╬ô├╢├⌐
++╬ô├╢├⌐  of terms created by   ╬ô├╢├⌐
++╬ô├╢├⌐  the National Library  ╬ô├╢├⌐
++╬ô├╢├⌐  of Medicine and used  ╬ô├╢├⌐
++╬ô├╢├⌐  for MEDLINE ...',     ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 7},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'title': 'BE 1251:   ╬ô├╢├⌐
++╬ô├╢├⌐  Understanding         ╬ô├╢├⌐
++╬ô├╢├⌐  Medical               ╬ô├╢├⌐
++╬ô├╢├⌐  Terminology',         ╬ô├╢├⌐
++╬ô├╢├⌐  'link':               ╬ô├╢├⌐
++╬ô├╢├⌐  'https://guides.lib.  ╬ô├╢├⌐
++╬ô├╢├⌐  lsu.edu/c.php?g=8805  ╬ô├╢├⌐
++╬ô├╢├⌐  55&p=6327726',        ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'BE 1251:  ╬ô├╢├⌐
++╬ô├╢├⌐  Understanding         ╬ô├╢├⌐
++╬ô├╢├⌐  Medical Terminology.  ╬ô├╢├⌐
++╬ô├╢├⌐  A starting guide for  ╬ô├╢├⌐
++╬ô├╢├⌐  BE 1251. Background   ╬ô├╢├⌐
++╬ô├╢├⌐  Γö¼Γòû Understanding       ╬ô├╢├⌐
++╬ô├╢├⌐  Medical Terminology   ╬ô├╢├⌐
++╬ô├╢├⌐  Γö¼Γòû Research Resources  ╬ô├╢├⌐
++╬ô├╢├⌐  ...', 'position':     ╬ô├╢├⌐
++╬ô├╢├⌐  8}, {'title': 'MeSH   ╬ô├╢├⌐
++╬ô├╢├⌐  - PubMed - LibGuides  ╬ô├╢├⌐
++╬ô├╢├⌐  at Ohio State         ╬ô├╢├⌐
++╬ô├╢├⌐  University-Health     ╬ô├╢├⌐
++╬ô├╢├⌐  ...', 'link':         ╬ô├╢├⌐
++╬ô├╢├⌐  'https://hslguides.o  ╬ô├╢├⌐
++╬ô├╢├⌐  su.edu/pubmed/mesh',  ╬ô├╢├⌐
++╬ô├╢├⌐   'snippet': 'MeSH     ╬ô├╢├⌐
++╬ô├╢├⌐  stands for the        ╬ô├╢├⌐
++╬ô├╢├⌐  Medical Subject       ╬ô├╢├⌐
++╬ô├╢├⌐  Headings. These are   ╬ô├╢├⌐
++╬ô├╢├⌐  the "official" terms  ╬ô├╢├⌐
++╬ô├╢├⌐  used by the National  ╬ô├╢├⌐
++╬ô├╢├⌐  Library of Medicine   ╬ô├╢├⌐
++╬ô├╢├⌐  to index items that   ╬ô├╢├⌐
++╬ô├╢├⌐  are added to          ╬ô├╢├⌐
++╬ô├╢├⌐  MEDLINE/ ...',        ╬ô├╢├⌐
++╬ô├╢├⌐  'position': 9}],      ╬ô├╢├⌐
++╬ô├╢├⌐  'peopleAlsoAsk':      ╬ô├╢├⌐
++╬ô├╢├⌐  [{'question': "What   ╬ô├╢├⌐
++╬ô├╢├⌐  is MEDLINE's          ╬ô├╢├⌐
++╬ô├╢├⌐  controlled            ╬ô├╢├⌐
++╬ô├╢├⌐  vocabulary called?",  ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'The       ╬ô├╢├⌐
++╬ô├╢├⌐  Medical Subject       ╬ô├╢├⌐
++╬ô├╢├⌐  Headings (MeSH)       ╬ô├╢├⌐
++╬ô├╢├⌐  thesaurus is a        ╬ô├╢├⌐
++╬ô├╢├⌐  controlled and        ╬ô├╢├⌐
++╬ô├╢├⌐  hierarchically-organ  ╬ô├╢├⌐
++╬ô├╢├⌐  ized vocabulary       ╬ô├╢├⌐
++╬ô├╢├⌐  produced by the       ╬ô├╢├⌐
++╬ô├╢├⌐  National Library of   ╬ô├╢├⌐
++╬ô├╢├⌐  Medicine. It is used  ╬ô├╢├⌐
++╬ô├╢├⌐  for indexing,         ╬ô├╢├⌐
++╬ô├╢├⌐  cataloging, and       ╬ô├╢├⌐
++╬ô├╢├⌐  searching of          ╬ô├╢├⌐
++╬ô├╢├⌐  biomedical and        ╬ô├╢├⌐
++╬ô├╢├⌐  health-related        ╬ô├╢├⌐
++╬ô├╢├⌐  information.',        ╬ô├╢├⌐
++╬ô├╢├⌐  'title': 'Medical     ╬ô├╢├⌐
++╬ô├╢├⌐  Subject Headings -    ╬ô├╢├⌐
++╬ô├╢├⌐  Home Page - National  ╬ô├╢├⌐
++╬ô├╢├⌐  Library of            ╬ô├╢├⌐
++╬ô├╢├⌐  Medicine', 'link':    ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.nlm.nih  ╬ô├╢├⌐
++╬ô├╢├⌐  .gov/mesh/meshhome.h  ╬ô├╢├⌐
++╬ô├╢├⌐  tml#:~:text=The%20Me  ╬ô├╢├⌐
++╬ô├╢├⌐  dical%20Subject%20He  [96m
++[2026-08-03 00:14:51][0m[93m[INFO]: [0m[1m[93mMax RPM reached, waiting for next minute to start.[0m
++╬ô├╢├⌐
++╬ô├╢├⌐  adings%20(MeSH,biome  ╬ô├╢├⌐
++╬ô├╢├⌐  dical%20and%20health  ╬ô├╢├⌐
++╬ô├╢├⌐  %2Drelated%20informa  ╬ô├╢├⌐
++╬ô├╢├⌐  tion.'},              ╬ô├╢├⌐
++╬ô├╢├⌐  {'question': 'What    ╬ô├╢├⌐
++╬ô├╢├⌐  does medical          ╬ô├╢├⌐
++╬ô├╢├⌐  literature mean?',    ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'Medical   ╬ô├╢├⌐
++╬ô├╢├⌐  literature is the     ╬ô├╢├⌐
++╬ô├╢├⌐  scientific            ╬ô├╢├⌐
++╬ô├╢├⌐  literature of         ╬ô├╢├⌐
++╬ô├╢├⌐  medicine: articles    ╬ô├╢├⌐
++╬ô├╢├⌐  in journals and       ╬ô├╢├⌐
++╬ô├╢├⌐  texts in books        ╬ô├╢├⌐
++╬ô├╢├⌐  devoted to the field  ╬ô├╢├⌐
++╬ô├╢├⌐  of medicine.',        ╬ô├╢├⌐
++╬ô├╢├⌐  'title': 'Medical     ╬ô├╢├⌐
++╬ô├╢├⌐  literature -          ╬ô├╢├⌐
++╬ô├╢├⌐  Wikipedia', 'link':   ╬ô├╢├⌐
++╬ô├╢├⌐  'https://en.wikipedi  ╬ô├╢├⌐
++╬ô├╢├⌐  a.org/wiki/Medical_l  ╬ô├╢├⌐
++╬ô├╢├⌐  iterature#:~:text=Me  ╬ô├╢├⌐
++╬ô├╢├⌐  dical%20literature%2  ╬ô├╢├⌐
++╬ô├╢├⌐  0is%20the%20scientif  ╬ô├╢├⌐
++╬ô├╢├⌐  ic,to%20the%20field%  ╬ô├╢├⌐
++╬ô├╢├⌐  20of%20medicine.'},   ╬ô├╢├⌐
++╬ô├╢├⌐  {'question': 'What    ╬ô├╢├⌐
++╬ô├╢├⌐  are medical           ╬ô├╢├⌐
++╬ô├╢├⌐  terminologies?',      ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': 'Medical   ╬ô├╢├⌐
++╬ô├╢├⌐  terminology refers    ╬ô├╢├⌐
++╬ô├╢├⌐  to the specialized    ╬ô├╢├⌐
++╬ô├╢├⌐  language used in      ╬ô├╢├⌐
++╬ô├╢├⌐  biomedical science    ╬ô├╢├⌐
++╬ô├╢├⌐  and clinical          ╬ô├╢├⌐
++╬ô├╢├⌐  medicine, which       ╬ô├╢├⌐
++╬ô├╢├⌐  includes              ╬ô├╢├⌐
++╬ô├╢├⌐  terminology, jargon,  ╬ô├╢├⌐
++╬ô├╢├⌐  and acronyms not      ╬ô├╢├⌐
++╬ô├╢├⌐  commonly understood   ╬ô├╢├⌐
++╬ô├╢├⌐  by the general        ╬ô├╢├⌐
++╬ô├╢├⌐  public or new         ╬ô├╢├⌐
++╬ô├╢├⌐  medical students.',   ╬ô├╢├⌐
++╬ô├╢├⌐  'title': 'Medical     ╬ô├╢├⌐
++╬ô├╢├⌐  Terminology - an      ╬ô├╢├⌐
++╬ô├╢├⌐  overview |            ╬ô├╢├⌐
++╬ô├╢├⌐  ScienceDirect         ╬ô├╢├⌐
++╬ô├╢├⌐  Topics', 'link':      ╬ô├╢├⌐
++╬ô├╢├⌐  'https://www.science  ╬ô├╢├⌐
++╬ô├╢├⌐  direct.com/topics/so  ╬ô├╢├⌐
++╬ô├╢├⌐  cial-sciences/medica  ╬ô├╢├⌐
++╬ô├╢├⌐  l-terminology#:~:tex  ╬ô├╢├⌐
++╬ô├╢├⌐  t=Medical%20terminol  ╬ô├╢├⌐
++╬ô├╢├⌐  ogy%20refers%20to%20  ╬ô├╢├⌐
++╬ô├╢├⌐  the,public%20or%20ne  ╬ô├╢├⌐
++╬ô├╢├⌐  w%20medical%20studen  ╬ô├╢├⌐
++╬ô├╢├⌐  ts.'}, {'question':   ╬ô├╢├⌐
++╬ô├╢├⌐  'What is a MeSH term  ╬ô├╢├⌐
++╬ô├╢├⌐  in research?',        ╬ô├╢├⌐
++╬ô├╢├⌐  'snippet': '',        ╬ô├╢├⌐
++╬ô├╢├⌐  'title': '', 'link':  ╬ô├╢├⌐
++╬ô├╢├⌐  ''}],                 ╬ô├╢├⌐
++╬ô├╢├⌐  'relatedSearches':    ╬ô├╢├⌐
++╬ô├╢├⌐  [{'query': 'MeSH      ╬ô├╢├⌐
++╬ô├╢├⌐  Terms list'},         ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'MeSH       ╬ô├╢├⌐
++╬ô├╢├⌐  terms search'},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Medical    ╬ô├╢├⌐
++╬ô├╢├⌐  Subject Headings      ╬ô├╢├⌐
++╬ô├╢├⌐  PDF'}, {'query':      ╬ô├╢├⌐
++╬ô├╢├⌐  'How to search MeSH   ╬ô├╢├⌐
++╬ô├╢├⌐  terms in PubMed'},    ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Mesh       ╬ô├╢├⌐
++╬ô├╢├⌐  medical               ╬ô├╢├⌐
++╬ô├╢├⌐  abbreviation'},       ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'Examples   ╬ô├╢├⌐
++╬ô├╢├⌐  of MeSH terms'},      ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'MeSH       ╬ô├╢├⌐
++╬ô├╢├⌐  terms generator'},    ╬ô├╢├⌐
++╬ô├╢├⌐  {'query': 'MeSH       ╬ô├╢├⌐
++╬ô├╢├⌐  Terms browser'}],     ╬ô├╢├⌐
++╬ô├╢├⌐  'credits': 1}         ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++[35m[Finalize] todos_count=0, todos_with_results=0[0m
++╬ô├╢├«╬ô├╢├ç ╬ô┬ú├á Agent Final Answer╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Agent: Medical and    ╬ô├╢├⌐
++╬ô├╢├⌐  Nutritional Research  ╬ô├╢├⌐
++╬ô├╢├⌐  Specialist            ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Final Answer:         ╬ô├╢├⌐
++╬ô├╢├⌐  {"summary": "No       ╬ô├╢├⌐
++╬ô├╢├⌐  relevant information  ╬ô├╢├⌐
++╬ô├╢├⌐  was found for the     ╬ô├╢├⌐
++╬ô├╢├⌐  specific query        ╬ô├╢├⌐
++╬ô├╢├⌐  'asdkjfh qwerty       ╬ô├╢├⌐
++╬ô├╢├⌐  nonsense medical      ╬ô├╢├⌐
++╬ô├╢├⌐  term xyz123'. The     ╬ô├╢├⌐
++╬ô├╢├⌐  search results are    ╬ô├╢├⌐
++╬ô├╢├⌐  not related to the    ╬ô├╢├⌐
++╬ô├╢├⌐  query and only        ╬ô├╢├⌐
++╬ô├╢├⌐  provide general       ╬ô├╢├⌐
++╬ô├╢├⌐  information about     ╬ô├╢├⌐
++╬ô├╢├⌐  medical terminology,  ╬ô├╢├⌐
++╬ô├╢├⌐  dictionaries, and     ╬ô├╢├⌐
++╬ô├╢├⌐  literature            ╬ô├╢├⌐
++╬ô├╢├⌐  searching. While      ╬ô├╢├⌐
++╬ô├╢├⌐  there are             ╬ô├╢├⌐
++╬ô├╢├⌐  authoritative         ╬ô├╢├⌐
++╬ô├╢├⌐  sources for medical   ╬ô├╢├⌐
++╬ô├╢├⌐  terms and             ╬ô├╢├⌐
++╬ô├╢├⌐  definitions in the    ╬ô├╢├⌐
++╬ô├╢├⌐  search results,       ╬ô├╢├⌐
++╬ô├╢├⌐  there is no reliable  ╬ô├╢├⌐
++╬ô├╢├⌐  information found     ╬ô├╢├⌐
++╬ô├╢├⌐  for the specific      ╬ô├╢├⌐
++╬ô├╢├⌐  query 'xyz123         ╬ô├╢├⌐
++╬ô├╢├⌐  medical term'.        ╬ô├╢├⌐
++╬ô├╢├⌐  However, the search   ╬ô├╢├⌐
++╬ô├╢├⌐  results suggest that  ╬ô├╢├⌐
++╬ô├╢├⌐  'xyz123' is likely a  ╬ô├╢├⌐
++╬ô├╢├⌐  nonsensical or        ╬ô├╢├⌐
++╬ô├╢├⌐  invalid term, and     ╬ô├╢├⌐
++╬ô├╢├⌐  therefore, the query  ╬ô├╢├⌐
++╬ô├╢├⌐  is not well-defined   ╬ô├╢├⌐
++╬ô├╢├⌐  or relevant.          ╬ô├╢├⌐
++╬ô├╢├⌐  Therefore, the        ╬ô├╢├⌐
++╬ô├╢├⌐  'sources_found' is    ╬ô├╢├⌐
++╬ô├╢├⌐  set to False and the  ╬ô├╢├⌐
++╬ô├╢├⌐  'summary' states      ╬ô├╢├⌐
++╬ô├╢├⌐  that no relevant      ╬ô├╢├⌐
++╬ô├╢├⌐  information was       ╬ô├╢├⌐
++╬ô├╢├⌐  found for this        ╬ô├╢├⌐
++╬ô├╢├⌐  specific query.",     ╬ô├╢├⌐
++╬ô├╢├⌐  "sources_found":      ╬ô├╢├⌐
++╬ô├╢├⌐  false,                ╬ô├╢├⌐
++╬ô├╢├⌐  "source_notes":       ╬ô├╢├⌐
++╬ô├╢├⌐  null}                 ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç Γëí╞Æ├┤├» Task Completion ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Task Completed        ╬ô├╢├⌐
++╬ô├╢├⌐  Name:                 ╬ô├╢├⌐
++╬ô├╢├⌐  research_query_task   ╬ô├╢├⌐
++╬ô├╢├⌐  Agent: Medical and    ╬ô├╢├⌐
++╬ô├╢├⌐  Nutritional Research  ╬ô├╢├⌐
++╬ô├╢├⌐  Specialist            ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++
++RAW OUTPUT (truncated):
++{"summary": "No relevant information was found for the specific query 'asdkjfh qwerty nonsense medical term xyz123'. The search results are not related to the query and only provide general information about medical terminology, dictionaries, and literature searching. While there are authoritative sources for medical terms and definitions in the search results, there is no reliable information found for the specific query 'xyz123 medical term'. However, the search results suggest that 'xyz123' is likely a nonsensical or invalid term, and therefore, the query is not well-defined or relevant. Th
++
++PARSED:
++{
++  "summary": "No relevant information was found for the specific query 'asdkjfh qwerty nonsense medical term xyz123'. The search results are not related to the query and only provide general information about medical terminology, dictionaries, and literature searching. While there are authoritative sources for medical terms and definitions in the search results, there is no reliable information found for the specific query 'xyz123 medical term'. However, the search results suggest that 'xyz123' is likely a nonsensical or invalid term, and therefore, the query is not well-defined or relevant. Therefore, the 'sources_found' is set to False and the 'summary' states that no relevant information was found for this specific query.",
++  "sources_found": false,
++  "source_notes": null
++}
++
++  Result: ╬ô┬ú├á PASS
++
++================================================================================
++  RESEARCH CREW ╬ô├ç├╢ TEST RESULTS SUMMARY
++================================================================================
++  ID       Status    Description
++  ----------------------------------------------------------------------------
++  TC-R02   ╬ô┬ú├á PASS      meaningless query ╬ô├Ñ├å no reliable information
++  ----------------------------------------------------------------------------
++  TOTAL: 1/1 passed
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Crew Completion ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Crew Execution        ╬ô├╢├⌐
++╬ô├╢├⌐  Completed             ╬ô├╢├⌐
++╬ô├╢├⌐  Name: ResearchCrew    ╬ô├╢├⌐
++╬ô├╢├⌐  ID:                   ╬ô├╢├⌐
++╬ô├╢├⌐  8dc6d981-362f-411f-9  ╬ô├╢├⌐
++╬ô├╢├⌐  008-07ae46a1fde2      ╬ô├╢├⌐
++╬ô├╢├⌐  Final Output:         ╬ô├╢├⌐
++╬ô├╢├⌐  {"summary": "No       ╬ô├╢├⌐
++╬ô├╢├⌐  relevant information  ╬ô├╢├⌐
++╬ô├╢├⌐  was found for the     ╬ô├╢├⌐
++╬ô├╢├⌐  specific query        ╬ô├╢├⌐
++╬ô├╢├⌐  'asdkjfh qwerty       ╬ô├╢├⌐
++╬ô├╢├⌐  nonsense medical      ╬ô├╢├⌐
++╬ô├╢├⌐  term xyz123'. The     ╬ô├╢├⌐
++╬ô├╢├⌐  search results are    ╬ô├╢├⌐
++╬ô├╢├⌐  not related to the    ╬ô├╢├⌐
++╬ô├╢├⌐  query and only        ╬ô├╢├⌐
++╬ô├╢├⌐  provide general       ╬ô├╢├⌐
++╬ô├╢├⌐  information about     ╬ô├╢├⌐
++╬ô├╢├⌐  medical terminology,  ╬ô├╢├⌐
++╬ô├╢├⌐  dictionaries, and     ╬ô├╢├⌐
++╬ô├╢├⌐  literature            ╬ô├╢├⌐
++╬ô├╢├⌐  searching. While      ╬ô├╢├⌐
++╬ô├╢├⌐  there are             ╬ô├╢├⌐
++╬ô├╢├⌐  authoritative         ╬ô├╢├⌐
++╬ô├╢├⌐  sources for medical   ╬ô├╢├⌐
++╬ô├╢├⌐  terms and             ╬ô├╢├⌐
++╬ô├╢├⌐  definitions in the    ╬ô├╢├⌐
++╬ô├╢├⌐  search results,       ╬ô├╢├⌐
++╬ô├╢├⌐  there is no reliable  ╬ô├╢├⌐
++╬ô├╢├⌐  information found     ╬ô├╢├⌐
++╬ô├╢├⌐  for the specific      ╬ô├╢├⌐
++╬ô├╢├⌐  query 'xyz123         ╬ô├╢├⌐
++╬ô├╢├⌐  medical term'.        ╬ô├╢├⌐
++╬ô├╢├⌐  However, the search   ╬ô├╢├⌐
++╬ô├╢├⌐  results suggest that  ╬ô├╢├⌐
++╬ô├╢├⌐  'xyz123' is likely a  ╬ô├╢├⌐
++╬ô├╢├⌐  nonsensical or        ╬ô├╢├⌐
++╬ô├╢├⌐  invalid term, and     ╬ô├╢├⌐
++╬ô├╢├⌐  therefore, the query  ╬ô├╢├⌐
++╬ô├╢├⌐  is not well-defined   ╬ô├╢├⌐
++╬ô├╢├⌐  or relevant.          ╬ô├╢├⌐
++╬ô├╢├⌐  Therefore, the        ╬ô├╢├⌐
++╬ô├╢├⌐  'sources_found' is    ╬ô├╢├⌐
++╬ô├╢├⌐  set to False and the  ╬ô├╢├⌐
++╬ô├╢├⌐  'summary' states      ╬ô├╢├⌐
++╬ô├╢├⌐  that no relevant      ╬ô├╢├⌐
++╬ô├╢├⌐  information was       ╬ô├╢├⌐
++╬ô├╢├⌐  found for this        ╬ô├╢├⌐
++╬ô├╢├⌐  specific query.",     ╬ô├╢├⌐
++╬ô├╢├⌐  "sources_found":      ╬ô├╢├⌐
++╬ô├╢├⌐  false,                ╬ô├╢├⌐
++╬ô├╢├⌐  "source_notes":       ╬ô├╢├⌐
++╬ô├╢├⌐  null}                 ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
++
++╬ô├╢├«╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç Tracing Status ╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ë
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  Info: Tracing is      ╬ô├╢├⌐
++╬ô├╢├⌐  disabled.             ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├⌐  To enable tracing,    ╬ô├╢├⌐
++╬ô├╢├⌐  do any one of these:  ╬ô├╢├⌐
++╬ô├╢├⌐  ╬ô├ç├│ Set tracing=True    ╬ô├╢├⌐
++╬ô├╢├⌐  in your Crew/Flow     ╬ô├╢├⌐
++╬ô├╢├⌐  code                  ╬ô├╢├⌐
++╬ô├╢├⌐  ╬ô├ç├│ Set                 ╬ô├╢├⌐
++╬ô├╢├⌐  CREWAI_TRACING_ENABL  ╬ô├╢├⌐
++╬ô├╢├⌐  ED=true in your       ╬ô├╢├⌐
++╬ô├╢├⌐  project's .env file   ╬ô├╢├⌐
++╬ô├╢├⌐  ╬ô├ç├│ Run: crewai traces  ╬ô├╢├⌐
++╬ô├╢├⌐  enable                ╬ô├╢├⌐
++╬ô├╢├⌐                        ╬ô├╢├⌐
++╬ô├╢├╢╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├ç╬ô├╢├┐
+diff --git a/test_results.txt b/test_results.txt
+index 92394dd..23224eb 100644
+Binary files a/test_results.txt and b/test_results.txt differ
+diff --git a/tests/test_research_crew.py b/tests/test_research_crew.py
+new file mode 100644
+index 0000000..0591836
+--- /dev/null
++++ b/tests/test_research_crew.py
+@@ -0,0 +1,223 @@
++"""
++tests/test_research_crew.py
++Research Crew test suite ΓÇô TC-R01 through TC-R04.
++
++Rate-limit strategy:
++  ΓÇó 18 s gap between every test case (as required).
++  ΓÇó On a RateLimitError the test sleeps 65 s and retries, up to 5 times.
++  ΓÇó After all retries are exhausted the test is recorded as ERROR.
++"""
++
++import json
++import os
++import re
++import sys
++import time
++from pathlib import Path
++
++# ΓöÇΓöÇ Windows UTF-8 console ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++if sys.platform == "win32":
++    sys.stdout.reconfigure(encoding="utf-8")
++    sys.stderr.reconfigure(encoding="utf-8")
++
++# ΓöÇΓöÇ LiteLLM / cache-control patches (must happen before crewai imports) ΓöÇΓöÇΓöÇ
++os.environ.setdefault("DISABLE_PROMPT_CACHING", "True")
++os.environ.setdefault("LITELLM_DISABLE_PROMPT_CACHING", "True")
++os.environ.setdefault("LITELLM_DROP_PARAMS", "True")
++
++# Force a lightweight model during tests to stay inside rate limits
++os.environ["LLM_MODEL"] = "groq/llama-3.1-8b-instant"
++
++import litellm  # noqa: E402  (must be after env vars)
++
++def _clean_dict(obj):
++    if isinstance(obj, dict):
++        obj.pop("cache_control", None)
++        obj.pop("cache_breakpoint", None)
++        for v in list(obj.values()):
++            _clean_dict(v)
++    elif isinstance(obj, list):
++        for item in obj:
++            _clean_dict(item)
++
++_orig_completion = litellm.completion
++
++def _patched_completion(*args, **kwargs):
++    _clean_dict(kwargs)
++    return _orig_completion(*args, **kwargs)
++
++litellm.completion = _patched_completion
++litellm.drop_params = True
++
++# ΓöÇΓöÇ Load dotenv AFTER env overrides so LLM_MODEL isn't clobbered ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++from dotenv import load_dotenv  # noqa: E402
++
++load_dotenv(override=False)  # override=False ΓåÆ our os.environ values win
++os.environ["LLM_MODEL"] = "groq/llama-3.1-8b-instant"  # ensure it sticks
++
++# ΓöÇΓöÇ Add src/ to path ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
++
++from anemia_diet_system.crews.research_crew.research_crew import ResearchCrew  # noqa: E402
++
++
++# ΓöÇΓöÇ JSON parser ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++def parse_output(raw: str) -> dict:
++    raw = raw.strip()
++    # Strip markdown fences
++    if raw.startswith("```"):
++        lines = raw.splitlines()
++        raw = "\n".join(
++            l for l in lines if not l.strip().startswith("```")
++        )
++    try:
++        return json.loads(raw)
++    except json.JSONDecodeError:
++        m = re.search(r"\{.*\}", raw, re.DOTALL)
++        if m:
++            try:
++                return json.loads(m.group(0))
++            except json.JSONDecodeError:
++                pass
++    return {}
++
++
++# ΓöÇΓöÇ Test definitions ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++TEST_CASES = [
++    {
++        "id": "TC-R01",
++        "description": "iron absorption interactions ΓÇô vegan + celiac",
++        "query": "iron absorption interactions for a vegan patient with celiac disease",
++        "check": lambda out: (
++            out.get("sources_found") is True
++            and isinstance(out.get("summary"), str)
++            and len(out["summary"].strip()) > 0
++            and bool(out.get("source_notes"))
++        ),
++    },
++    {
++        "id": "TC-R02",
++        "description": "meaningless query ΓåÆ no reliable information",
++        "query": "asdkjfh qwerty nonsense medical term xyz123",
++        "check": lambda out: (
++            out.get("sources_found") is False
++            and isinstance(out.get("summary"), str)
++            and any(
++                phrase in out["summary"].lower()
++                for phrase in [
++                    "no reliable",
++                    "no information",
++                    "not found",
++                    "no evidence",
++                    "no authoritative",
++                    "nonsense",
++                    "unable to find",
++                    "could not find",
++                    "cannot find",
++                ]
++            )
++        ),
++    },
++    {
++        "id": "TC-R03",
++        "description": "ICMR-NIN iron intake for pregnant women ΓåÆ specific number",
++        "query": "ICMR-NIN recommended daily iron intake for pregnant women in India",
++        "check": lambda out: (
++            out.get("sources_found") is True
++            and isinstance(out.get("summary"), str)
++            and any(ch.isdigit() for ch in out["summary"])
++        ),
++    },
++    {
++        "id": "TC-R04",
++        "description": "thalassemia contraindication ΓåÆ no 'you have' language",
++        "query": "thalassemia and iron supplementation contraindication",
++        "check": lambda out: (
++            isinstance(out.get("summary"), str)
++            and "you have" not in out["summary"].lower()
++        ),
++    },
++]
++
++# ΓöÇΓöÇ Runner ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++MAX_ATTEMPTS   = 5
++RETRY_SLEEP_S  = 65   # seconds to wait after a rate-limit error
++BETWEEN_TC_S   = 18   # required gap between test cases
++
++
++def run_single(query: str) -> str:
++    """Kick off one crew run and return raw string output."""
++    crew = ResearchCrew()
++    result = crew.crew().kickoff(inputs={"research_query": query})
++    return result.raw if hasattr(result, "raw") else str(result)
++
++
++def run_tests():
++    results = []
++
++    for i, tc in enumerate(TEST_CASES):
++        if i > 0:
++            print(f"\nΓÅ│  Waiting {BETWEEN_TC_S}s before next test caseΓÇª")
++            time.sleep(BETWEEN_TC_S)
++
++        tc_id       = tc["id"]
++        description = tc["description"]
++        query       = tc["query"]
++
++        print(f"\n{'='*62}")
++        print(f"  {tc_id}: {description}")
++        print(f"{'='*62}")
++
++        raw    = ""
++        status = "Γ¥î FAIL"
++        error  = None
++
++        for attempt in range(1, MAX_ATTEMPTS + 1):
++            try:
++                raw = run_single(query)
++                break  # success
++            except Exception as exc:
++                err_str = str(exc).lower()
++                is_rate_limit = "rate_limit" in err_str or "429" in err_str
++                if is_rate_limit and attempt < MAX_ATTEMPTS:
++                    print(
++                        f"  ΓÜá∩╕Å  Rate-limit hit (attempt {attempt}/{MAX_ATTEMPTS}). "
++                        f"Sleeping {RETRY_SLEEP_S}sΓÇª"
++                    )
++                    time.sleep(RETRY_SLEEP_S)
++                else:
++                    error = exc
++                    break
++
++        if error is not None:
++            status = f"ΓÜá∩╕Å  ERROR: {error}"
++            results.append({"id": tc_id, "description": description, "status": "ERROR", "label": status})
++            print(f"\n  {status}\n")
++            continue
++
++        out = parse_output(raw)
++        print(f"\nRAW OUTPUT (truncated):\n{raw[:600]}\n")
++        print(f"PARSED:\n{json.dumps(out, indent=2)}\n")
++
++        passed = tc["check"](out)
++        status = "Γ£à PASS" if passed else "Γ¥î FAIL"
++        results.append({"id": tc_id, "description": description, "status": "PASS" if passed else "FAIL", "label": status})
++        print(f"  Result: {status}")
++
++    # ΓöÇΓöÇ Summary table ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
++    print("\n" + "=" * 80)
++    print("  RESEARCH CREW ΓÇö TEST RESULTS SUMMARY")
++    print("=" * 80)
++    print(f"  {'ID':<8} {'Status':<8}  Description")
++    print("  " + "-" * 76)
++    passed_cnt = 0
++    for r in results:
++        print(f"  {r['id']:<8} {r['label']:<10}  {r['description']}")
++        if r["status"] == "PASS":
++            passed_cnt += 1
++    print("  " + "-" * 76)
++    print(f"  TOTAL: {passed_cnt}/{len(results)} passed\n")
++
++
++if __name__ == "__main__":
++    run_tests()

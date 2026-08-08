@@ -1,0 +1,595 @@
+
+======================================================================
+  Running FT02 ΓÇö calling AnemiaFlow.on_intake_complete()
+======================================================================
+
+[runner] Creating AnemiaFlow instance...
+[runner] Calling flow.on_intake_complete()  (t=0s)
+
+[AnemiaFlow] >>> Starting initial intake processing for patient: 'test_ft02'
+[AnemiaFlow] Step 1a: Running SafetyCrew...
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£¿ Update Available Γ£¿ ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  A new version of CrewAI is available!                                      Γöé
+Γöé                                                                             Γöé
+Γöé  Current version: 1.15.10                                                   Γöé
+Γöé  Latest version:  1.15.13                                                   Γöé
+Γöé                                                                             Γöé
+Γöé  To update, run: uv sync --upgrade-package crewai                           Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒÜÇ Crew Execution Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Crew Execution Started                                                     Γöé
+Γöé  Name: SafetyCrew                                                           Γöé
+Γöé  ID: c6668a22-afbd-48c6-8003-529acfe07602                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Started                                                               Γöé
+Γöé  Name: symptom_tagging_task                                                 Γöé
+Γöé  ID: 5879165d-e44e-439f-b35e-7708ebd50985                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒñû Agent Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Clinical Symptom Tagger                                             Γöé
+Γöé                                                                             Γöé
+Γöé  Task: You will receive a patient input object containing one or more of:   Γöé
+Γöé  - logged_symptoms: a list of free-text symptom descriptions -              Γöé
+Γöé  tagged_symptoms: a pre-tagged list (if tagging was done upstream) -        Γöé
+Γöé  life_stage: a string describing the patient's current life stage           Γöé
+Γöé    (e.g., "menstruating", "pregnant", "menopausal", "PCOS",                 Γöé
+Γöé  "thyroid-flagged")                                                         Γöé
+Γöé  - is_pregnant: boolean flag (optional) - biomarkers: a dict of lab values  Γöé
+Γöé  with flag indicators (optional) - family_history_flags: a list of family   Γöé
+Γöé  history conditions (optional) - prior_monitor_flags_last_window: boolean   Γöé
+Γöé  indicating whether a                                                       Γöé
+Γöé    MONITOR-tier event fired in the prior 7-day window (optional)            Γöé
+Γöé                                                                             Γöé
+Γöé  Parse all free-text symptoms into structured tags. Each tag must include:  Γöé
+Γöé  - name: normalised symptom name (e.g., "fatigue", "chest pain") -          Γöé
+Γöé  severity: one of "mild", "moderate", or "severe" - clinical_flag: one of   Γöé
+Γöé  "routine", "watch", "red_flag" (must be a STRING, not a boolean) -         Γöé
+Γöé  raw_text: the original text fragment that triggered this tag               Γöé
+Γöé  IMPORTANT: Ensure the clinical_flag field is returned as a string exactly  Γöé
+Γöé  matching one of the allowed values. Also extract life_stage_context from   Γöé
+Γöé  the input and pass it through. Preserve any pre-tagged symptoms            Γöé
+Γöé  (tagged_symptoms) as-is. Preserve all other fields from the input          Γöé
+Γöé  (biomarkers, family_history_flags, prior_monitor_flags_last_window,        Γöé
+Γöé  is_pregnant) so the next task has full context.                            Γöé
+Γöé  Output ONLY a valid JSON object ΓÇö no markdown, no explanation, no          Γöé
+Γöé  preamble.                                                                  Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£à Agent Final Answer ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Clinical Symptom Tagger                                             Γöé
+Γöé                                                                             Γöé
+Γöé  Final Answer:                                                              Γöé
+Γöé  ```json                                                                    Γöé
+Γöé  {                                                                          Γöé
+Γöé    "tagged_symptoms": [                                                     Γöé
+Γöé      {                                                                      Γöé
+Γöé        "name": "fatigue",                                                   Γöé
+Γöé        "severity": "mild",                                                  Γöé
+Γöé        "clinical_flag": "routine",                                          Γöé
+Γöé        "raw_text": "I have been feeling a bit tired lately"                 Γöé
+Γöé      },                                                                     Γöé
+Γöé      {                                                                      Γöé
+Γöé        "name": "chest pain",                                                Γöé
+Γöé        "severity": "moderate",                                              Γöé
+Γöé        "clinical_flag": "watch",                                            Γöé
+Γöé        "raw_text": "I experience some chest discomfort when I exert         Γöé
+Γöé  myself"                                                                    Γöé
+Γöé      },                                                                     Γöé
+Γöé      {                                                                      Γöé
+Γöé        "name": "dizziness",                                                 Γöé
+Γöé        "severity": "severe",                                                Γöé
+Γöé        "clinical_flag": "red_flag",                                         Γöé
+Γöé        "raw_text": "I fainted yesterday due to dizziness"                   Γöé
+Γöé      }                                                                      Γöé
+Γöé    ],                                                                       Γöé
+Γöé    "life_stage_context": {                                                  Γöé
+Γöé      "life_stage": "menstruating",                                          Γöé
+Γöé      "is_pregnant": false,                                                  Γöé
+Γöé      "trimester": null                                                      Γöé
+Γöé    },                                                                       Γöé
+Γöé    "biomarkers": {                                                          Γöé
+Γöé      "hemoglobin": 12,                                                      Γöé
+Γöé      "ferritin": 50                                                         Γöé
+Γöé    },                                                                       Γöé
+Γöé    "family_history_flags": [                                                Γöé
+Γöé      "iron-deficiency anemia"                                               Γöé
+Γöé    ],                                                                       Γöé
+Γöé    "prior_monitor_flags_last_window": false                                 Γöé
+Γöé  }                                                                          Γöé
+Γöé  ```                                                                        Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Completion ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Completed                                                             Γöé
+Γöé  Name: symptom_tagging_task                                                 Γöé
+Γöé  Agent: Clinical Symptom Tagger                                             Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Started                                                               Γöé
+Γöé  Name: safety_tier_evaluation_task                                          Γöé
+Γöé  ID: 44d9018f-e0dd-4204-a49d-6fbbbf81e404                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒñû Agent Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Safety Escalation Evaluator                                         Γöé
+Γöé                                                                             Γöé
+Γöé  Task: You will receive the structured JSON output from the symptom         Γöé
+Γöé  tagging task. Apply the following safety rule hierarchy to determine the   Γöé
+Γöé  escalation tier. Rules are evaluated from highest to lowest severity; the  Γöé
+Γöé  highest matching tier wins.                                                Γöé
+Γöé  EMERGENCY triggers (any ONE is sufficient): - Symptom name contains any    Γöé
+Γöé  of: "faint", "syncope", "lost consciousness",                              Γöé
+Γöé    "blacked out", "chest pain", "shortness of breath at rest",              Γöé
+Γöé    "out of breath sitting", "black stool", "tarry stool", "melena",         Γöé
+Γöé    "soaking through protection every hour", "soaking pad", "heavy bleeding  Γöé
+Γöé  hourly"                                                                    Γöé
+Γöé                                                                             Γöé
+Γöé  URGENT triggers (any ONE is sufficient, only if EMERGENCY not already      Γöé
+Γöé  triggered): - life_stage is "menopausal" (or "postmenopausal") AND any     Γöé
+Γöé  tagged symptom                                                             Γöé
+Γöé    with clinical_flag == "red_flag" or severity in ["moderate", "severe"]   Γöé
+Γöé  - life_stage is "pregnant" (or is_pregnant == true) AND a tagged symptom   Γöé
+Γöé    whose name is "fatigue" or "dizziness"/"dizzy" with severity "severe"    Γöé
+Γöé  - Any tagged symptom with name containing "palpitation", "racing heart",   Γöé
+Γöé    "heart racing", "tachycardia" together with any symptom containing       Γöé
+Γöé    "dizzy", "dizziness", "lightheaded"                                      Γöé
+Γöé  - Any tagged symptom with name/raw_text containing "weight loss" with      Γöé
+Γöé    severity in ["moderate", "severe"] OR quantity >= 5% of body weight in   Γöé
+Γöé  a month (if body_weight_kg is provided in patient input). If               Γöé
+Γöé  body_weight_kg is NOT provided, use >= 3kg/month as the fallback flat      Γöé
+Γöé  threshold.                                                                 Γöé
+Γöé  - Three or more tagged symptoms with severity == "moderate" (regardless    Γöé
+Γöé  of life stage) - prior_monitor_flags_last_window == true AND the current   Γöé
+Γöé  tagged symptoms contain                                                    Γöé
+Γöé    the SAME symptom name/pattern that caused the prior MONITOR trigger      Γöé
+Γöé  (not just any new unrelated symptom)                                       Γöé
+Γöé                                                                             Γöé
+Γöé  MONITOR triggers (any ONE is sufficient, only if EMERGENCY and URGENT not  Γöé
+Γöé  already triggered): - biomarkers contains MCV with flag == "low" AND       Γöé
+Γöé  family_history_flags                                                       Γöé
+Γöé    contains "thalassemia" or "haemoglobinopathy"                            Γöé
+Γöé  - Any tagged symptom with clinical_flag == "watch" and no higher-tier      Γöé
+Γöé  rules fire                                                                 Γöé
+Γöé  NONE: - No rules from EMERGENCY, URGENT, or MONITOR fired - OR             Γöé
+Γöé  tagged_symptoms list is empty                                              Γöé
+Γöé  After determining the tier, produce a structured JSON output with: -       Γöé
+Γöé  tier: the determined tier (EMERGENCY | URGENT | MONITOR | NONE) -          Γöé
+Γöé  rules_fired: list of rule descriptions that were triggered - rationale: a  Γöé
+Γöé  brief, plain-language explanation for the patient - tagged_symptoms: pass  Γöé
+Γöé  through from input (for audit logging) - life_stage_context: pass through  Γöé
+Γöé  from input                                                                 Γöé
+Γöé  Output ONLY a valid JSON object ΓÇö no markdown, no explanation, no          Γöé
+Γöé  preamble.                                                                  Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£à Agent Final Answer ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Safety Escalation Evaluator                                         Γöé
+Γöé                                                                             Γöé
+Γöé  Final Answer:                                                              Γöé
+Γöé  ```json                                                                    Γöé
+Γöé  {                                                                          Γöé
+Γöé    "tier": "EMERGENCY",                                                     Γöé
+Γöé    "rules_fired": [                                                         Γöé
+Γöé      "Symptom name contains 'chest pain'"                                   Γöé
+Γöé    ],                                                                       Γöé
+Γöé    "rationale": "You are experiencing chest pain and severe dizziness,      Γöé
+Γöé  which are serious symptoms that require immediate medical attention.",     Γöé
+Γöé    "tagged_symptoms": [                                                     Γöé
+Γöé      {                                                                      Γöé
+Γöé        "name": "fatigue",                                                   Γöé
+Γöé        "severity": "mild",                                                  Γöé
+Γöé        "clinical_flag": "routine",                                          Γöé
+Γöé        "raw_text": "I have been feeling a bit tired lately"                 Γöé
+Γöé      },                                                                     Γöé
+Γöé      {                                                                      Γöé
+Γöé        "name": "chest pain",                                                Γöé
+Γöé        "severity": "moderate",                                              Γöé
+Γöé        "clinical_flag": "watch",                                            Γöé
+Γöé        "raw_text": "I experience some chest discomfort when I exert         Γöé
+Γöé  myself"                                                                    Γöé
+Γöé      },                                                                     Γöé
+Γöé      {                                                                      Γöé
+Γöé        "name": "dizziness",                                                 Γöé
+Γöé        "severity": "severe",                                                Γöé
+Γöé        "clinical_flag": "red_flag",                                         Γöé
+Γöé        "raw_text": "I fainted yesterday due to dizziness"                   Γöé
+Γöé      }                                                                      Γöé
+Γöé    ],                                                                       Γöé
+Γöé    "life_stage_context": {                                                  Γöé
+Γöé      "life_stage": "menstruating",                                          Γöé
+Γöé      "is_pregnant": false,                                                  Γöé
+Γöé      "trimester": null                                                      Γöé
+Γöé    }                                                                        Γöé
+Γöé  }                                                                          Γöé
+Γöé  ```                                                                        Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Completion ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Completed                                                             Γöé
+Γöé  Name: safety_tier_evaluation_task                                          Γöé
+Γöé  Agent: Safety Escalation Evaluator                                         Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Crew Completion ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Crew Execution Completed                                                   Γöé
+Γöé  Name: SafetyCrew                                                           Γöé
+Γöé  ID: c6668a22-afbd-48c6-8003-529acfe07602                                   Γöé
+Γöé  Final Output: ```json                                                      Γöé
+Γöé  {                                                                          Γöé
+Γöé    "tier": "EMERGENCY",                                                     Γöé
+Γöé    "rules_fired": [                                                         Γöé
+Γöé      "Symptom name contains 'chest pain'"                                   Γöé
+Γöé    ],                                                                       Γöé
+Γöé    "rationale": "You are experiencing chest pain and severe dizziness,      Γöé
+Γöé  which are serious symptoms that require immediate medical attention.",     Γöé
+Γöé    "tagged_symptoms": [                                                     Γöé
+Γöé      {                                                                      Γöé
+Γöé        "name": "fatigue",                                                   Γöé
+Γöé        "severity": "mild",                                                  Γöé
+Γöé        "clinical_flag": "routine",                                          Γöé
+Γöé        "raw_text": "I have been feeling a bit tired lately"                 Γöé
+Γöé      },                                                                     Γöé
+Γöé      {                                                                      Γöé
+Γöé        "name": "chest pain",                                                Γöé
+Γöé        "severity": "moderate",                                              Γöé
+Γöé        "clinical_flag": "watch",                                            Γöé
+Γöé        "raw_text": "I experience some chest discomfort when I exert         Γöé
+Γöé  myself"                                                                    Γöé
+Γöé      },                                                                     Γöé
+Γöé      {                                                                      Γöé
+Γöé        "name": "dizziness",                                                 Γöé
+Γöé        "severity": "severe",                                                Γöé
+Γöé        "clinical_flag": "red_flag",                                         Γöé
+[AnemiaFlow][DEBUG] safety_raw[:300] = '```json\n{\n  "tier": "EMERGENCY",\n  "rules_fired": [\n    "Symptom name contains \'chest pain\'"\n  ],\n  "rationale": "You are experiencing chest pain and severe dizziness, which are serious symptoms that require immediate medical attention.",\n  "tagged_symptoms": [\n    {\n      "name": "fatigue",\n      "'
+[AnemiaFlow][DEBUG] safety_data = {'tier': 'EMERGENCY', 'rules_fired': ["Symptom name contains 'chest pain'"], 'rationale': 'You are experiencing chest pain and severe dizziness, which are serious symptoms that require immediate medical attention.', 'tagged_symptoms': [{'name': 'fatigue', 'severity': 'mild', 'clinical_flag': 'routine', 'raw_text': 'I have been feeling a bit tired lately'}, {'name': 'chest pain', 'severity': 'moderate', 'clinical_flag': 'watch', 'raw_text': 'I experience some chest discomfort when I exert myself'}, {'name': 'dizziness', 'severity': 'severe', 'clinical_flag': 'red_flag', 'raw_text': 'I fainted yesterday due to dizziness'}], 'life_stage_context': {'life_stage': 'menstruating', 'is_pregnant': False, 'trimester': None}}
+[AnemiaFlow][DEBUG] tier = EMERGENCY
+[AnemiaFlow] Step 1b: Safety tier is EMERGENCY! Skipping DietPlanningCrew and BiomarkerCrew, but executing SynthesisCrew.
+[AnemiaFlow] Step 1e: Running SynthesisCrew...
+Γöé        "raw_text": "I fainted yesterday due to dizziness"                   Γöé
+Γöé      }                                                                      Γöé
+Γöé    ],                                                                       Γöé
+Γöé    "life_stage_context": {                                                  Γöé
+Γöé      "life_stage": "menstruating",                                          Γöé
+Γöé      "is_pregnant": false,                                                  Γöé
+Γöé      "trimester": null                                                      Γöé
+Γöé    }                                                                        Γöé
+Γöé  }                                                                          Γöé
+Γöé  ```                                                                        Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Tracing Status ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Info: Tracing is disabled.                                                 Γöé
+Γöé                                                                             Γöé
+Γöé  To enable tracing, do any one of these:                                    Γöé
+Γöé  ΓÇó Set tracing=True in your Crew/Flow code                                  Γöé
+Γöé  ΓÇó Set CREWAI_TRACING_ENABLED=true in your project's .env file              Γöé
+Γöé  ΓÇó Run: crewai traces enable                                                Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£¿ Update Available Γ£¿ ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  A new version of CrewAI is available!                                      Γöé
+Γöé                                                                             Γöé
+Γöé  Current version: 1.15.10                                                   Γöé
+Γöé  Latest version:  1.15.13                                                   Γöé
+Γöé                                                                             Γöé
+Γöé  To update, run: uv sync --upgrade-package crewai                           Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒÜÇ Crew Execution Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Crew Execution Started                                                     Γöé
+Γöé  Name: SynthesisCrew                                                        Γöé
+Γöé  ID: 9ff98409-be30-45b4-a84f-913ef23c7138                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Started                                                               Γöé
+Γöé  Name: track_symptom_trends_task                                            Γöé
+Γöé  ID: fb2252ba-2598-4c43-99fd-d8cbfd9a7cf4                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒñû Agent Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Symptom Trend Tracker                                               Γöé
+Γöé                                                                             Γöé
+Γöé  Task: Compare this week's logged symptoms (symptom_log) to prior weeks     Γöé
+Γöé  (symptom_log_history) and produce a list of recurring symptoms with their  Γöé
+Γöé  classification: "new_acute" if it appears for the first time this week,    Γöé
+Γöé  or "stable_chronic" if it was present in prior weeks as well. If           Γöé
+Γöé  symptom_log_history is empty, return an empty list under                   Γöé
+Γöé  `symptom_trends`.                                                          Γöé
+Γöé  Output ONLY a valid JSON object ΓÇö no markdown, no explanation, no          Γöé
+Γöé  preamble, no code blocks.                                                  Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£à Agent Final Answer ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Symptom Trend Tracker                                               Γöé
+Γöé                                                                             Γöé
+Γöé  Final Answer:                                                              Γöé
+Γöé  {"symptom_trends":                                                         Γöé
+Γöé  [                                                                          Γöé
+Γöé  {                                                                          Γöé
+Γöé  "symptom": "fever",                                                        Γöé
+Γöé  "status": "stable_chronic"                                                 Γöé
+Γöé  },                                                                         Γöé
+Γöé  {                                                                          Γöé
+Γöé  "symptom": "cough",                                                        Γöé
+Γöé  "status": "new_acute"                                                      Γöé
+Γöé  },                                                                         Γöé
+Γöé  {                                                                          Γöé
+Γöé  "symptom": "sore_throat",                                                  Γöé
+Γöé  "status": "stable_chronic"                                                 Γöé
+Γöé  }                                                                          Γöé
+Γöé  ]}                                                                         Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+Γöé  (Note: The output provided is fictional and based on an assumed prior      Γöé
+Γöé  symptom history, please modify it accordingly to match your current        Γöé
+Γöé  symptom history.)                                                          Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Completion ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Completed                                                             Γöé
+Γöé  Name: track_symptom_trends_task                                            Γöé
+Γöé  Agent: Symptom Trend Tracker                                               Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Started                                                               Γöé
+Γöé  Name: generate_adherence_feedback_task                                     Γöé
+Γöé  ID: 16b634f2-eb19-45ff-a9aa-0cb3cf6845fd                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒñû Agent Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Feedback and Adherence Coach                                        Γöé
+Γöé                                                                             Γöé
+Γöé  Task: Analyze the adherence_summary (from the Feedback & Adaptation Crew)  Γöé
+Γöé  and the feedback_log to detect a clear pattern of missed meals or          Γöé
+Γöé  repeated issues. If a genuine pattern is found, output a single            Γöé
+Γöé  encouraging note describing the pattern (e.g., "You've skipped the         Γöé
+Γöé  ironΓÇærich breakfast three days this week"). If no pattern is evident,      Γöé
+Γöé  output an empty string under `adherence_note`.                             Γöé
+Γöé  Output ONLY a valid JSON object ΓÇö no markdown, no explanation, no          Γöé
+Γöé  preamble, no code blocks.                                                  Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£à Agent Final Answer ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Feedback and Adherence Coach                                        Γöé
+Γöé                                                                             Γöé
+Γöé  Final Answer:                                                              Γöé
+Γöé  ```json                                                                    Γöé
+Γöé  {                                                                          Γöé
+Γöé    "adherence_note": ""                                                     Γöé
+Γöé  }                                                                          Γöé
+Γöé  ```                                                                        Γöé
+Γöé                                                                             Γöé
+Γöé  After analyzing the given data, no clear pattern of missed meals or        Γöé
+Γöé  repeated issues has been found in the `adherence_summary` and              Γöé
+Γöé  `feedback_log`.                                                            Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Completion ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Completed                                                             Γöé
+Γöé  Name: generate_adherence_feedback_task                                     Γöé
+Γöé  Agent: Feedback and Adherence Coach                                        Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Started                                                               Γöé
+Γöé  Name: synthesize_final_output_task                                         Γöé
+Γöé  ID: 0df9ac57-6674-40e6-a7ef-c0cc15101e6c                                   Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+[96m
+[2026-08-08 11:17:50][0m[93m[INFO]: [0m[1m[93mMax RPM reached, waiting for next minute to start.[0m
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒñû Agent Started ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Final Recommendation Synthesizer                                    Γöé
+Γöé                                                                             Γöé
+Γöé  Task: You will receive the input as a JSON string under the key            Γöé
+Γöé  patient_input. Parse it first. It contains these fields: safety_tier       Γöé
+Γöé  (string: NONE, MONITOR, URGENT, or EMERGENCY), safety_message (string),    Γöé
+Γöé  diet_plan (list or null), biomarker_observations (object or null). You     Γöé
+Γöé  will also receive context from track_symptom_trends_task (symptom_trends)  Γöé
+Γöé  and generate_adherence_feedback_task (adherence_note).                     Γöé
+Γöé  Read safety_tier from the parsed patient_input FIRST, before doing         Γöé
+Γöé  anything else. Follow this hard rule: if safety_tier is 'URGENT' or        Γöé
+Γöé  'EMERGENCY', set content_mode to 'safety_override' and include only the    Γöé
+Γöé  safety_note (the full safety_message) with no plan or other content --     Γöé
+Γöé  morning, afternoon_evening, night, and closing_line must all be null.      Γöé
+Γöé  Otherwise, include the plan slots (morning, afternoon_evening, night)      Γöé
+Γöé  populated from diet_plan, and optional safety_note, and always end with    Γöé
+Γöé  the closing line.                                                          Γöé
+Γöé  Output ONLY a valid JSON object -- no markdown, no code blocks, no         Γöé
+Γöé  python/js code, no explanation, no preamble.                               Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Γ£à Agent Final Answer ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Agent: Final Recommendation Synthesizer                                    Γöé
+Γöé                                                                             Γöé
+Γöé  Final Answer:                                                              Γöé
+Γöé  {                                                                          Γöé
+Γöé    "safety_tier": "MONITOR",                                                Γöé
+Γöé    "content_mode": "full_plan",                                             Γöé
+Γöé    "morning": [                                                             Γöé
+Γöé      "Oatmeal with sliced banana and almond milk",                          Γöé
+Γöé      "Scrambled eggs with whole-grain toast",                               Γöé
+Γöé      "Greek yogurt with berries and walnuts"                                Γöé
+Γöé    ],                                                                       Γöé
+Γöé    "afternoon_evening": [                                                   Γöé
+Γöé      "Grilled chicken breast with roasted vegetables",                      Γöé
+Γöé      "Quinoa salad with mixed greens and avocado",                          Γöé
+Γöé      "Smoothie bowl with almond milk and mixed berries"                     Γöé
+Γöé    ],                                                                       Γöé
+Γöé    "night": [                                                               Γöé
+Γöé      "Cottage cheese with cucumber slices and whole-grain crackers",        Γöé
+Γöé      "Turkey and avocado wrap with mixed greens",                           Γöé
+Γöé      "Baked sweet potato with black beans and salsa"                        Γöé
+Γöé    ],                                                                       Γöé
+Γöé    "safety_note": "Please ensure to drink at least 8 glasses of water       Γöé
+Γöé  throughout the day to stay hydrated.",                                     Γöé
+Γöé    "closing_line": "This is food-based support, not a diagnosis."           Γöé
+Γöé  }                                                                          Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ ≡ƒôï Task Completion ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Task Completed                                                             Γöé
+Γöé  Name: synthesize_final_output_task                                         Γöé
+Γöé  Agent: Final Recommendation Synthesizer                                    Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+[AnemiaFlow] Step 1f: Intake processing complete for patient 'test_ft02'.
+
+======================================================================
+  FT02 COMPLETED in 64.7s
+======================================================================
+[runner] Result type : dict
+[runner] Result keys : ['safety_tier', 'content_mode', 'morning', 'afternoon_evening', 'night', 'safety_note', 'closing_line']
+
+[runner] Full result JSON:
+{
+  "safety_tier": "MONITOR",
+  "content_mode": "full_plan",
+  "morning": [
+    "Oatmeal with sliced banana and almond milk",
+    "Scrambled eggs with whole-grain toast",
+    "Greek yogurt with berries and walnuts"
+  ],
+  "afternoon_evening": [
+    "Grilled chicken breast with roasted vegetables",
+    "Quinoa salad with mixed greens and avocado",
+    "Smoothie bowl with almond milk and mixed berries"
+  ],
+  "night": [
+    "Cottage cheese with cucumber slices and whole-grain crackers",
+    "Turkey and avocado wrap with mixed greens",
+    "Baked sweet potato with black beans and salsa"
+  ],
+  "safety_note": "Please ensure to drink at least 8 glasses of water throughout the day to stay hydrated.",
+  "closing_line": "This is food-based support, not a diagnosis."
+}
+
+[runner] Saved result to EXEC_FT02.json
+[runner] Done.
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Crew Completion ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Crew Execution Completed                                                   Γöé
+Γöé  Name: SynthesisCrew                                                        Γöé
+Γöé  ID: 9ff98409-be30-45b4-a84f-913ef23c7138                                   Γöé
+Γöé  Final Output: {                                                            Γöé
+Γöé    "safety_tier": "MONITOR",                                                Γöé
+Γöé    "content_mode": "full_plan",                                             Γöé
+Γöé    "morning": [                                                             Γöé
+Γöé      "Oatmeal with sliced banana and almond milk",                          Γöé
+Γöé      "Scrambled eggs with whole-grain toast",                               Γöé
+Γöé      "Greek yogurt with berries and walnuts"                                Γöé
+Γöé    ],                                                                       Γöé
+Γöé    "afternoon_evening": [                                                   Γöé
+Γöé      "Grilled chicken breast with roasted vegetables",                      Γöé
+Γöé      "Quinoa salad with mixed greens and avocado",                          Γöé
+Γöé      "Smoothie bowl with almond milk and mixed berries"                     Γöé
+Γöé    ],                                                                       Γöé
+Γöé    "night": [                                                               Γöé
+Γöé      "Cottage cheese with cucumber slices and whole-grain crackers",        Γöé
+Γöé      "Turkey and avocado wrap with mixed greens",                           Γöé
+Γöé      "Baked sweet potato with black beans and salsa"                        Γöé
+Γöé    ],                                                                       Γöé
+Γöé    "safety_note": "Please ensure to drink at least 8 glasses of water       Γöé
+Γöé  throughout the day to stay hydrated.",                                     Γöé
+Γöé    "closing_line": "This is food-based support, not a diagnosis."           Γöé
+Γöé  }                                                                          Γöé
+Γöé                                                                             Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
+
+ΓöîΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ Tracing Status ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÉ
+Γöé                                                                             Γöé
+Γöé  Info: Tracing is disabled.                                                 Γöé
+Γöé                                                                             Γöé
+Γöé  To enable tracing, do any one of these:                                    Γöé
+Γöé  ΓÇó Set tracing=True in your Crew/Flow code                                  Γöé
+Γöé  ΓÇó Set CREWAI_TRACING_ENABLED=true in your project's .env file              Γöé
+Γöé  ΓÇó Run: crewai traces enable                                                Γöé
+Γöé                                                                             Γöé
+ΓööΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÿ
