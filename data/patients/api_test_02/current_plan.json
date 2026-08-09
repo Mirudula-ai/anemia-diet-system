@@ -1,0 +1,9 @@
+{
+  "safety_tier": "EMERGENCY",
+  "content_mode": "safety_override",
+  "morning": null,
+  "afternoon_evening": null,
+  "night": null,
+  "safety_note": "",
+  "closing_line": null
+}

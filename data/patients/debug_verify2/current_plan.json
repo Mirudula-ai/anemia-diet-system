@@ -1,0 +1,133 @@
+{
+  "safety_tier": "NONE",
+  "content_mode": "full_plan",
+  "morning": [
+    {
+      "name": "Lentils with Red Palm Oil",
+      "time_slot": "morning",
+      "enhancers": [
+        "red palm oil, sesame seeds"
+      ],
+      "inhibitors": [
+        "calcium, phytates"
+      ]
+    },
+    {
+      "name": "Fortified Vegetable Daliya with Sesame Seeds",
+      "time_slot": "morning",
+      "enhancers": [
+        "sesame seeds"
+      ],
+      "inhibitors": [
+        "calcium, phytates"
+      ]
+    },
+    {
+      "name": "Fortified Vegetable Stew with Egg and Spinach",
+      "time_slot": "morning",
+      "enhancers": [
+        "red palm oil, sesame seeds"
+      ],
+      "inhibitors": [
+        "calcium, phytates"
+      ]
+    },
+    {
+      "name": "Spirulina with Amaranth Porridge",
+      "time_slot": "morning",
+      "enhancers": [
+        "fortified nutritional yeast, sesame seeds"
+      ],
+      "inhibitors": [
+        "calcium, phytates"
+      ]
+    },
+    {
+      "name": "Fortified Almond Milk with Dried Dates",
+      "time_slot": "morning",
+      "enhancers": [
+        "dates"
+      ],
+      "inhibitors": [
+        "tea, coffee"
+      ]
+    },
+    {
+      "name": "Spinach with Fortified Nutritional Yeast",
+      "time_slot": "morning",
+      "enhancers": [
+        "fortified nutritional yeast"
+      ],
+      "inhibitors": [
+        "calcium, phytates"
+      ]
+    }
+  ],
+  "afternoon_evening": [
+    {
+      "name": "Spinach with Amaranth",
+      "time_slot": "afternoon-evening",
+      "enhancers": [
+        "fortified nutritional yeast, sesame seeds"
+      ],
+      "inhibitors": [
+        "tea, coffee"
+      ]
+    },
+    {
+      "name": "Spinach with Red Palm Oil and Egg",
+      "time_slot": "evening",
+      "enhancers": [
+        "red palm oil, sesame seeds"
+      ],
+      "inhibitors": []
+    },
+    {
+      "name": "Egg Curry with Daliya and Sesame Seeds",
+      "time_slot": "evening",
+      "enhancers": [
+        "red palm oil, sesame seeds"
+      ],
+      "inhibitors": []
+    },
+    {
+      "name": "Fortified Vegetable Stew with Egg and Spinach",
+      "time_slot": "morning",
+      "enhancers": [
+        "red palm oil, sesame seeds"
+      ],
+      "inhibitors": [
+        "calcium, phytates"
+      ]
+    },
+    {
+      "name": "Egg with Spirulina and Spinach Omelet",
+      "time_slot": "evening",
+      "enhancers": [
+        "red palm oil, sesame seeds"
+      ],
+      "inhibitors": [
+        "calcium, phytates"
+      ]
+    },
+    {
+      "name": "Eggetarian Lentil Curry with Spinach",
+      "time_slot": "evening",
+      "enhancers": [
+        "red palm oil, sesame seeds"
+      ],
+      "inhibitors": []
+    },
+    {
+      "name": "Black Bean Curry with Sesame Oil",
+      "time_slot": "evening",
+      "enhancers": [
+        "sesame seeds"
+      ],
+      "inhibitors": []
+    }
+  ],
+  "night": [],
+  "safety_note": "No symptoms or risk factors were identified that require immediate medical attention, urgent care, or ongoing monitoring.",
+  "closing_line": "This is food-based support, not a diagnosis."
+}

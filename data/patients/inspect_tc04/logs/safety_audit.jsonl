@@ -1,0 +1,1 @@
+{"timestamp": "2026-08-09T16:25:45.394439+00:00", "patient_id": "inspect_tc04", "tier": "URGENT", "rules_fired": ["life_stage is 'menopausal' AND any tagged symptom with clinical_flag == 'watch' or severity in ['moderate', 'severe']"], "redacted_input": [{"name": "BREATHLESSNESS", "severity": "mild"}]}

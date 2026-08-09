@@ -1,0 +1,13 @@
+{
+  "patient_id": "api_test_05",
+  "diet_type": "vegetarian",
+  "pregnancy_status": "not_pregnant",
+  "existing_conditions": [],
+  "allergies": [],
+  "current_medications": [],
+  "symptom_log": [
+    "fainted this morning",
+    "chest pain"
+  ],
+  "biomarkers": {}
+}

@@ -1,0 +1,12 @@
+{
+  "patient_id": "debug_test2",
+  "diet_type": "vegetarian",
+  "pregnancy_status": "not_pregnant",
+  "existing_conditions": [],
+  "allergies": [],
+  "current_medications": [],
+  "symptom_log": [
+    "slightly tired today"
+  ],
+  "biomarkers": {}
+}

@@ -185,6 +185,7 @@ TEST_CASES = [
         "input": {
             "tagged_symptoms": [{"name": "fatigue", "severity": "moderate"}],
             "prior_monitor_flags_last_window": True,
+            "prior_monitor_symptom_name": "fatigue",
             "life_stage": "menstruating",
         },
         "expected_tier": "URGENT",

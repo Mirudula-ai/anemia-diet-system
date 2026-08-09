@@ -1,0 +1,9 @@
+{
+  "safety_tier": "URGENT",
+  "content_mode": "safety_override",
+  "morning": null,
+  "afternoon_evening": null,
+  "night": null,
+  "safety_note": "You are experiencing severe abdominal pain and dizziness, which are symptoms that require urgent attention, especially when combined with your current life stage and other symptoms.",
+  "closing_line": null
+}

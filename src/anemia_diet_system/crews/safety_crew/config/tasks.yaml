@@ -1,6 +1,8 @@
 symptom_tagging_task:
   description: >
     You will receive a patient input object containing one or more of:
+    The actual input is provided here as a JSON string: {patient_input}
+    Parse this JSON first before doing anything else.
     - logged_symptoms: a list of free-text symptom descriptions
     - tagged_symptoms: a pre-tagged list (if tagging was done upstream)
     - life_stage: a string describing the patient's current life stage
@@ -12,10 +14,12 @@ symptom_tagging_task:
       MONITOR-tier event fired in the prior 7-day window (optional)
 
     Parse all free-text symptoms into structured tags. Each tag must include:
-    - name: normalised symptom name (e.g., "fatigue", "chest pain")
+    - name: normalised symptom name (e.g., "SYMPTOM_NAME_EXAMPLE")
     - severity: one of "mild", "moderate", or "severe"
     - clinical_flag: one of "routine", "watch", "red_flag" (must be a STRING, not a boolean)
     - raw_text: the original text fragment that triggered this tag
+
+    CRITICAL: Only tag symptoms that literally appear in the patient's actual logged_symptoms or tagged_symptoms input. Do NOT include example symptoms from this instruction text (such as any symptom names mentioned as formatting examples) unless the patient actually reported them. If the patient's input is empty or contains only one symptom, your output must reflect exactly that -- one tag, not multiple. Never invent a raw_text quote that does not appear verbatim in the patient's actual input.
 
     IMPORTANT: Ensure the clinical_flag field is returned as a string exactly matching one of the allowed values.
     Also extract life_stage_context from the input and pass it through.
@@ -54,9 +58,9 @@ safety_tier_evaluation_task:
     tier wins.
 
     EMERGENCY triggers (any ONE is sufficient):
-    - Symptom name contains any of: "faint", "syncope", "lost consciousness",
+    - Symptom name or raw_text contains any of: "faint", "syncope", "lost consciousness",
       "blacked out", "chest pain", "shortness of breath at rest",
-      "out of breath sitting", "black stool", "tarry stool", "melena",
+      "out of breath sitting", "out of breath", "breathless", "black stool", "tarry stool", "melena",
       "soaking through protection every hour", "soaking pad", "heavy bleeding hourly"
 
     URGENT triggers (any ONE is sufficient, only if EMERGENCY not already triggered):

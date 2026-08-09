@@ -1,0 +1,1 @@
+{"timestamp": "2026-08-09T16:26:09.502695+00:00", "patient_id": "inspect_tc10", "tier": "MONITOR", "rules_fired": ["Any tagged symptom with clinical_flag == 'watch' and no higher-tier rules fire"], "redacted_input": [{"name": "fatigue", "severity": "moderate"}, {"name": "brain fog", "severity": "moderate"}, {"name": "brittle nails", "severity": "moderate"}]}

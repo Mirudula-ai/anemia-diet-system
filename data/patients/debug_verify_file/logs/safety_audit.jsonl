@@ -1,0 +1,1 @@
+{"timestamp": "2026-08-08T08:16:44.984179+00:00", "patient_id": "debug_verify_file", "tier": "EMERGENCY", "rules_fired": ["Symptom name contains 'chest pain'"], "redacted_input": [{"name": "fatigue", "severity": "mild"}, {"name": "dizziness", "severity": "moderate"}, {"name": "chest pain", "severity": "severe"}]}

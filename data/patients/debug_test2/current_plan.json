@@ -1,0 +1,49 @@
+{
+  "safety_tier": "MONITOR",
+  "content_mode": "full_plan",
+  "morning": [
+    {
+      "name": "Fortified Vegetable Milk",
+      "time_slot": "morning",
+      "enhancers": [
+        "B12"
+      ],
+      "inhibitors": []
+    },
+    {
+      "name": "Lentils",
+      "time_slot": "morning",
+      "enhancers": [
+        "vitamin C (e.g., orange)"
+      ],
+      "inhibitors": [
+        "calcium (consider a 2-hour interval), phytates (consider a 3-hour interval or soak and cook to reduce phytate content)",
+        "tea, coffee (follow the 60+ minute spacing rule for coffee or tea prior to lentil consumption)"
+      ]
+    }
+  ],
+  "afternoon_evening": [
+    {
+      "name": "Roasted Chickpeas",
+      "time_slot": "afternoon-evening",
+      "enhancers": [
+        "vitamin C (e.g., bell pepper)"
+      ],
+      "inhibitors": [
+        "calcium (consider a 2-hour interval)"
+      ]
+    }
+  ],
+  "night": [
+    {
+      "name": "Methi Leaves",
+      "time_slot": "night",
+      "enhancers": [
+        "vitamin C (e.g., lemon)"
+      ],
+      "inhibitors": []
+    }
+  ],
+  "safety_note": "You're experiencing fatigue with a 'watch' clinical flag, which requires monitoring due to the potential for underlying conditions. Please consult a healthcare professional for further evaluation.",
+  "closing_line": "This is food-based support, not a diagnosis."
+}

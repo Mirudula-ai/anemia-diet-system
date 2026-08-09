@@ -1,0 +1,165 @@
+uv : C:\Users\Mirudula\Downloads\untitled_pr
+oject_v1_crewai-project\.venv\Lib\site-packa
+ges\fastapi\testclient.py:1: 
+StarletteDeprecationWarning: Using `httpx` 
+with `starlette.testclient` is deprecated; 
+install `httpx2` instead.
+At line:1 char:1
++ uv run python -u -c "from 
+fastapi.testclient import TestClient; from  
+...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: 
+    (C:\Users\Mirudu...ttpx2` instead.:Str  
+  ing) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommand 
+   Error
+ 
+  from starlette.testclient import 
+TestClient as TestClient  # noqa
+
+[AnemiaFlow] >>> Starting initial intake processing for patient: 'debug_verify_file'
+[AnemiaFlow] Step 1a: Running SafetyCrew...
++--------------------------+--------------------------[CrewAIEventsBus] Sync handler error in on_crew_started: 'charmap' codec can't 
+encode character '\u2728' in position 1: character maps to <undefined>
++--------------------------[CrewAIEventsBus] Sync handler error in on_task_started: 'charmap' codec can't 
+encode character '\u2728' in position 1: character maps to <undefined>
++--------------------------[CrewAIEventsBus] Sync handler error in on_agent_logs_started: 'charmap' codec 
+can't encode character '\u2728' in position 1: character maps to <undefined>
+[92m13:46:42 - LiteLLM:INFO[0m: 
+utils.py:3995 - 
+LiteLLM completion() model= 
+llama-3.3-70b-versatile; provider = groq
+2026-08-08 13:46:42,501 [INFO] LiteLLM ù 
+LiteLLM completion() model= 
+llama-3.3-70b-versatile; provider = groq
+[92m13:46:43 - LiteLLM:INFO[0m: 
+utils.py:1656 - Wrapper: Completed Call, 
+calling success_handler
+2026-08-08 13:46:43,978 [INFO] LiteLLM ù 
+Wrapper: Completed Call, calling 
+success_handler
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
++--------------------------[CrewAIEventsBus] Sync handler error in on_agent_logs_execution: 'charmap' 
+codec can't encode character '\u2728' in position 1: character maps to 
+<undefined>
++--------------------------[CrewAIEventsBus] Sync handler error in on_task_completed: 'charmap' codec 
+can't encode character '\u2728' in position 1: character maps to <undefined>
++--------------------------[CrewAIEventsBus] Sync handler error in on_task_started: 'charmap' codec can't 
+encode character '\u2728' in position 1: character maps to <undefined>
++-----------------------------[CrewAIEventsBus] Sync handler error in on_agent_logs_started: 'charmap' codec 
+can't encode character '\U0001f916' in position 1: character maps to 
+<undefined>
+[92m13:46:44 - LiteLLM:INFO[0m: 
+utils.py:3995 - 
+LiteLLM completion() model= 
+llama-3.3-70b-versatile; provider = groq
+2026-08-08 13:46:44,112 [INFO] LiteLLM ù 
+LiteLLM completion() model= 
+llama-3.3-70b-versatile; provider = groq
+[92m13:46:44 - LiteLLM:INFO[0m: 
+utils.py:1656 - Wrapper: Completed Call, 
+calling success_handler
+2026-08-08 13:46:44,922 [INFO] LiteLLM ù 
+Wrapper: Completed Call, calling 
+success_handler
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
++--------------------------[CrewAIEventsBus] Sync handler error in on_agent_logs_execution: 'charmap' 
+codec can't encode character '\u2728' in position 1: character maps to 
+<undefined>
++-----------------------------[CrewAIEventsBus] Sync handler error in on_task_completed: 'charmap' codec 
+can't encode character '\U0001f916' in position 1: character maps to 
+<undefined>
++--------------------------[CrewAIEventsBus] Sync handler error in on_crew_completed: 'charmap' codec 
+can't encode character '\u2728' in position 1: character maps to <undefined>
+[AnemiaFlow][DEBUG] safety_raw[:300] = '```json\n{\n  "tier": "EMERGENCY",\n  "rules_fired": [\n    "Symptom name contains \'chest pain\'"\n  ],\n  "rationale": "You are experiencing severe chest pain, which is a serious symptom that requires immediate medical attention.",\n  "tagged_symptoms": [\n    {\n      "name": "fatigue",\n      "severity": "m'
+[AnemiaFlow][DEBUG] safety_data = {'tier': 'EMERGENCY', 'rules_fired': ["Symptom name contains 'chest pain'"], 'rationale': 'You are experiencing severe chest pain, which is a serious symptom that requires immediate medical attention.', 'tagged_symptoms': [{'name': 'fatigue', 'severity': 'mild', 'clinical_flag': 'routine', 'raw_text': "I've been feeling a bit tired lately"}, {'name': 'dizziness', 'severity': 'moderate', 'clinical_flag': 'watch', 'raw_text': 'I feel dizzy when I stand up quickly'}, {'name': 'chest pain', 'severity': 'severe', 'clinical_flag': 'red_flag', 'raw_text': "I have a sharp pain in my chest that won't go away"}], 'life_stage_context': {'life_stage': 'menstruating', 'is_pregnant': False, 'trimester': None}}
+[AnemiaFlow][DEBUG] tier = EMERGENCY
+[AnemiaFlow] Step 1b: Safety tier is EMERGENCY! Skipping DietPlanningCrew and BiomarkerCrew, but executing SynthesisCrew.
+[AnemiaFlow] Step 1e: Running SynthesisCrew...
++-----------------------------+-----------------------------[CrewAIEventsBus] Sync handler error in on_crew_started: 'charmap' codec can't 
+encode character '\U0001f916' in position 1: character maps to <undefined>
++--------------------------[CrewAIEventsBus] Sync handler error in on_task_started: 'charmap' codec can't 
+encode character '\u2728' in position 1: character maps to <undefined>
++--------------------------[CrewAIEventsBus] Sync handler error in on_agent_logs_started: 'charmap' codec 
+can't encode character '\u2728' in position 1: character maps to <undefined>
+[92m13:46:45 - LiteLLM:INFO[0m: 
+utils.py:3995 - 
+LiteLLM completion() model= 
+llama-3.1-8b-instant; provider = groq
+2026-08-08 13:46:45,207 [INFO] LiteLLM ù 
+LiteLLM completion() model= 
+llama-3.1-8b-instant; provider = groq
+[92m13:46:45 - LiteLLM:INFO[0m: 
+utils.py:1656 - Wrapper: Completed Call, 
+calling success_handler
+2026-08-08 13:46:45,508 [INFO] LiteLLM ù 
+Wrapper: Completed Call, calling 
+success_handler
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
++-----------------------------[CrewAIEventsBus] Sync handler error in on_agent_logs_execution: 'charmap' 
+codec can't encode character '\U0001f916' in position 1: character maps to 
+<undefined>
++-----------------------------[CrewAIEventsBus] Sync handler error in on_task_completed: 'charmap' codec 
+can't encode character '\U0001f916' in position 1: character maps to 
+<undefined>
++--------------------------[CrewAIEventsBus] Sync handler error in on_task_started: 'charmap' codec can't 
+encode character '\u2728' in position 1: character maps to <undefined>
++-----------------------------[CrewAIEventsBus] Sync handler error in on_agent_logs_started: 'charmap' codec 
+can't encode character '\U0001f916' in position 1: character maps to 
+<undefined>
+[92m13:46:45 - LiteLLM:INFO[0m: 
+utils.py:3995 - 
+LiteLLM completion() model= 
+llama-3.1-8b-instant; provider = groq
+2026-08-08 13:46:45,595 [INFO] LiteLLM ù 
+LiteLLM completion() model= 
+llama-3.1-8b-instant; provider = groq
+[92m13:46:45 - LiteLLM:INFO[0m: 
+utils.py:1656 - Wrapper: Completed Call, 
+calling success_handler
+2026-08-08 13:46:45,915 [INFO] LiteLLM ù 
+Wrapper: Completed Call, calling 
+success_handler
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
++--------------------------[CrewAIEventsBus] Sync handler error in on_agent_logs_execution: 'charmap' 
+codec can't encode character '\u2728' in position 1: character maps to 
+<undefined>
++--------------------------[CrewAIEventsBus] Sync handler error in on_task_completed: 'charmap' codec 
+can't encode character '\u2728' in position 1: character maps to <undefined>
++-----------------------------[CrewAIEventsBus] Sync handler error in on_task_started: 'charmap' codec can't 
+encode character '\U0001f916' in position 1: character maps to <undefined>
+[96m
+[2026-08-08 13:46:45][0m[93m[INFO]: [0m[1m[93mMax RPM reached, waiting for next minute to start.[0m
++-----------------------------[CrewAIEventsBus] Sync handler error in on_agent_logs_started: 'charmap' codec 
+can't encode character '\U0001f916' in position 1: character maps to 
+<undefined>
+[92m13:47:46 - LiteLLM:INFO[0m: 
+utils.py:3995 - 
+LiteLLM completion() model= 
+llama-3.1-8b-instant; provider = groq
+2026-08-08 13:47:46,001 [INFO] LiteLLM ù 
+LiteLLM completion() model= 
+llama-3.1-8b-instant; provider = groq
+[92m13:47:46 - LiteLLM:INFO[0m: 
+utils.py:1656 - Wrapper: Completed Call, 
+calling success_handler
+2026-08-08 13:47:46,945 [INFO] LiteLLM ù 
+Wrapper: Completed Call, calling 
+success_handler
+[35m[Finalize] todos_count=0, todos_with_results=0[0m
++--------------------------[CrewAIEventsBus] Sync handler error in on_agent_logs_execution: 'charmap' 
+codec can't encode character '\u2728' in position 1: character maps to 
+<undefined>
++--------------------------[CrewAIEventsBus] Sync handler error in on_task_completed: 'charmap' codec 
+can't encode character '\u2728' in position 1: character maps to <undefined>
++-----------------------------[CrewAIEventsBus] Sync handler error in on_crew_completed: 'charmap' codec 
+can't encode character '\U0001f916' in position 1: character maps to [AnemiaFlow] Step 1f: Intake processing complete for patient 'debug_verify_file'.
+<
+undefined>
+2026-08-08 13:47:47,022 [INFO] 
+anemia_diet_system.api ù Intake complete 
+for patient 'debug_verify_file'.
+200
+{'patient_id': 'debug_verify_file', 'result': {'safety_tier': 'EMERGENCY', 'content_mode': 'safety_override', 'morning': None, 'afternoon_evening': None, 'night': None, 'safety_note': 'You are experiencing severe chest pain, which is a serious symptom that requires immediate medical attention.', 'closing_line': None}}
