@@ -3,3 +3,4 @@
 {"timestamp": "2026-08-09T16:20:11.722398+00:00", "patient_id": "test_tc03", "tier": "EMERGENCY", "rules_fired": ["Symptom name contains 'chest pain'"], "redacted_input": [{"name": "CHEST_PAIN", "severity": "moderate"}]}
 {"timestamp": "2026-08-09T16:32:11.570115+00:00", "patient_id": "test_tc03", "tier": "EMERGENCY", "rules_fired": ["Symptom name or raw_text contains 'chest pain'"], "redacted_input": [{"name": "CHEST_PAIN", "severity": "moderate"}]}
 {"timestamp": "2026-08-09T16:37:35.655950+00:00", "patient_id": "test_tc03", "tier": "EMERGENCY", "rules_fired": ["Symptom name or raw_text contains 'chest pain'"], "redacted_input": [{"name": "CHEST_PAIN", "severity": "moderate"}]}
+{"timestamp": "2026-08-10T08:21:01.247814+00:00", "patient_id": "test_tc03", "tier": "EMERGENCY", "rules_fired": ["Symptom name or raw_text contains any of: 'chest pain'"], "redacted_input": [{"name": "CHEST_PAIN", "severity": "moderate"}]}

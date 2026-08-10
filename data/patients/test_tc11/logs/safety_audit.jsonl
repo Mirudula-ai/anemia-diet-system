@@ -1,2 +1,3 @@
 {"timestamp": "2026-08-09T16:22:51.107735+00:00", "patient_id": "test_tc11", "tier": "MONITOR", "rules_fired": ["biomarkers contains MCV with flag == 'low' AND family_history_flags contains 'thalassemia' or 'haemoglobinopathy'"], "redacted_input": []}
 {"timestamp": "2026-08-09T16:34:51.796542+00:00", "patient_id": "test_tc11", "tier": "MONITOR", "rules_fired": ["biomarkers contains MCV with flag == 'low' AND family_history_flags contains 'thalassemia' or 'haemoglobinopathy'"], "redacted_input": []}
+{"timestamp": "2026-08-10T08:23:41.819654+00:00", "patient_id": "test_tc11", "tier": "MONITOR", "rules_fired": ["biomarkers contains MCV with flag == 'low' AND family_history_flags contains 'thalassemia' or 'haemoglobinopathy'"], "redacted_input": []}
