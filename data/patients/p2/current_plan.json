@@ -1,0 +1,49 @@
+{
+  "safety_tier": "NONE",
+  "content_mode": "full_plan",
+  "morning": [
+    {
+      "name": "Amaranth",
+      "time_slot": "morning",
+      "enhancers": [
+        "Vitamin C-rich foods",
+        "Betacyanin (red or pink foods)"
+      ],
+      "inhibitors": []
+    },
+    {
+      "name": "Quinoa",
+      "time_slot": "morning",
+      "enhancers": [
+        "Vitamin C-rich foods",
+        "Betacyanin (red or pink foods)"
+      ],
+      "inhibitors": []
+    }
+  ],
+  "afternoon_evening": [
+    {
+      "name": "Bitter gourd",
+      "time_slot": "evening",
+      "enhancers": [
+        "Vitamin A-rich foods"
+      ],
+      "inhibitors": [
+        "Tea, 60+ minutes before"
+      ]
+    },
+    {
+      "name": "Bitter gourd",
+      "time_slot": "evening",
+      "enhancers": [
+        "Vitamin A-rich foods"
+      ],
+      "inhibitors": [
+        "Tea, 60+ minutes before"
+      ]
+    }
+  ],
+  "night": null,
+  "safety_note": null,
+  "closing_line": "This is food-based support, not a diagnosis."
+}

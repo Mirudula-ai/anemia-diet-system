@@ -1,0 +1,14 @@
+{
+  "patient_id": "p3",
+  "diet_type": "vegetarian",
+  "pregnancy_status": "not_pregnant",
+  "existing_conditions": [
+    "CKD"
+  ],
+  "allergies": [],
+  "current_medications": [],
+  "symptom_log": [
+    "fatigue"
+  ],
+  "biomarkers": {}
+}

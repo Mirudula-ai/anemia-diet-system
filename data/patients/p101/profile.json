@@ -1,0 +1,12 @@
+{
+  "patient_id": "p101",
+  "diet_type": "non-vegetarian",
+  "pregnancy_status": "not_pregnant",
+  "existing_conditions": [],
+  "allergies": [
+    "peanut"
+  ],
+  "current_medications": [],
+  "symptom_log": [],
+  "biomarkers": {}
+}

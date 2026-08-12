@@ -12,6 +12,9 @@ dependencies = [
     "python-dotenv",
     "fastapi>=0.111.0",
     "uvicorn[standard]>=0.29.0",
+    "streamlit>=1.35.0",
+    "requests>=2.31.0",
+    "deep-translator>=1.11.4",
 ]
 
 [project.optional-dependencies]

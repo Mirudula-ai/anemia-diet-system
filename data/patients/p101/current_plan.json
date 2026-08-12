@@ -1,0 +1,16 @@
+{
+  "safety_tier": "NONE",
+  "content_mode": "full_plan",
+  "morning": [],
+  "afternoon_evening": [
+    {
+      "food": "apple"
+    },
+    {
+      "food": "carrot"
+    }
+  ],
+  "night": [],
+  "safety_note": "No symptoms or conditions were reported that would require immediate attention or monitoring.",
+  "closing_line": "This is food-based support, not a diagnosis."
+}

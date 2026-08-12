@@ -1,0 +1,15 @@
+{
+  "patient_id": "p12",
+  "diet_type": "non-vegetarian",
+  "pregnancy_status": "not_pregnant",
+  "existing_conditions": [],
+  "allergies": [
+    "peanut",
+    "curd"
+  ],
+  "current_medications": [],
+  "symptom_log": [
+    "dizziness"
+  ],
+  "biomarkers": {}
+}

@@ -1,0 +1,57 @@
+{
+  "safety_tier": "NONE",
+  "content_mode": "full_plan",
+  "morning": [
+    {
+      "name": "Lentils (Khumbli)",
+      "iron_type": "heme",
+      "time_slot": "morning",
+      "time_slot_additional_info": null,
+      "enhancers": [
+        "none"
+      ],
+      "inhibitors": [
+        "none"
+      ],
+      "medication_interactions": "none"
+    },
+    {
+      "name": "Spinach (Palak)",
+      "iron_type": "non-heme",
+      "folate_status": "rich",
+      "time_slot": "morning",
+      "time_slot_additional_info": null,
+      "enhancers": [
+        "Vitamin C (orange, bell pepper)"
+      ],
+      "inhibitors": [
+        "none"
+      ],
+      "medication_interactions": "none"
+    }
+  ],
+  "afternoon_evening": [
+    {
+      "name": "Lentil soups with low glycemic sweet potatoes",
+      "type": "suggestion",
+      "note": "Added low-glycemic source for diabetes management",
+      "pregnancy_note": "In pregnancy, emphasize pairing with vitamin C sources to enhance iron absorption",
+      "time_slot": "afternoon-evening",
+      "time_slot_additional_info": null,
+      "enhancers": [
+        "Vitamin C (bell pepper, citrus fruits)",
+        "Avoid tea or coffee for at least 60 minutes before and after to facilitate iron absorption"
+      ],
+      "inhibitors": [
+        "Calcium (dairy, fortified plant milk) to be consumed 2+ hours beforehand or after",
+        "Phytates (whole grains, beans) to be soaked, sprouted or fermented to reduce phytate levels"
+      ],
+      "medication_interactions": [
+        "Cephalosporins (oral), Tetracyclines (oral), Levodopa, (oral) - flag for pharmacist referral"
+      ]
+    }
+  ],
+  "night": null,
+  "safety_note": "No emergency, urgent, or monitor rules were triggered based on the provided symptoms and life stage context.",
+  "closing_line": "This is food-based support, not a diagnosis."
+}

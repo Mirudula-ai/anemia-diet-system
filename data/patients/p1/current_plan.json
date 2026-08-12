@@ -1,0 +1,168 @@
+{
+  "safety_tier": "NONE",
+  "content_mode": "full_plan",
+  "morning": [
+    {
+      "name": "Spinach (Palak)",
+      "time_slot": "morning",
+      "enhancers": [
+        "lemon juice",
+        "bell peppers"
+      ],
+      "inhibitors": [
+        "calcium",
+        "phytates"
+      ]
+    },
+    {
+      "name": "Fortified Oatmeal",
+      "time_slot": "morning",
+      "enhancers": [
+        "lemon juice",
+        "berries"
+      ],
+      "inhibitors": [
+        "phytates"
+      ]
+    },
+    {
+      "name": "Sprouted Ragi (Finger Millet) Porridge",
+      "time_slot": "morning",
+      "enhancers": [
+        "lemon juice",
+        "berries"
+      ],
+      "inhibitors": [
+        "phytates"
+      ]
+    },
+    {
+      "name": "Fruit smoothie with Spinach",
+      "time_slot": "morning",
+      "enhancers": [
+        "lemon juice",
+        "bell peppers"
+      ],
+      "inhibitors": [
+        "calcium",
+        "phytates"
+      ]
+    },
+    {
+      "name": "Scrambled eggs on Spinach",
+      "time_slot": "morning",
+      "enhancers": [
+        "lemon juice",
+        "tomato"
+      ],
+      "inhibitors": [
+        "tea",
+        "coffee"
+      ]
+    },
+    {
+      "name": "Tea (Catechin content: 60+ minutes before iron-containing food)",
+      "time_slot": "morning",
+      "enhancers": [],
+      "inhibitors": [
+        "iron"
+      ]
+    },
+    {
+      "name": "Coffee (Catechin content: 60+ minutes before iron-containing food)",
+      "time_slot": "morning",
+      "enhancers": [],
+      "inhibitors": [
+        "iron"
+      ]
+    },
+    {
+      "name": "Clams",
+      "time_slot": "morning",
+      "enhancers": [],
+      "inhibitors": [
+        "tea",
+        "coffee"
+      ]
+    }
+  ],
+  "afternoon_evening": [
+    {
+      "name": "Amaranth Leaves (Chaulai)",
+      "time_slot": "afternoon",
+      "enhancers": [
+        "tomato sauce"
+      ],
+      "inhibitors": [
+        "calcium",
+        "phytates"
+      ]
+    },
+    {
+      "name": "Pumpkin Seeds (Kaddu Beej)",
+      "time_slot": "afternoon",
+      "enhancers": [
+        "hummus"
+      ],
+      "inhibitors": [
+        "phytates"
+      ]
+    },
+    {
+      "name": "Oysters",
+      "time_slot": "afternoon",
+      "enhancers": [],
+      "inhibitors": [
+        "tea",
+        "coffee"
+      ]
+    },
+    {
+      "name": "Calcium-rich foods like yogurt",
+      "time_slot": "afternoon",
+      "enhancers": [],
+      "inhibitors": [
+        "non-heme iron"
+      ]
+    }
+  ],
+  "night": [
+    {
+      "name": "Dark Chocolate (Cocoa contains small amounts of heme iron)",
+      "time_slot": "evening",
+      "enhancers": [],
+      "inhibitors": []
+    },
+    {
+      "name": "Mushroom Biryani",
+      "time_slot": "evening",
+      "enhancers": [
+        "mint chutney"
+      ],
+      "inhibitors": []
+    },
+    {
+      "name": "Red Meat (Liver)",
+      "time_slot": "evening",
+      "enhancers": [],
+      "inhibitors": [
+        "tea",
+        "coffee"
+      ]
+    },
+    {
+      "name": "Lentil Soup (Dal)",
+      "time_slot": "dinner",
+      "enhancers": [
+        "lemon juice",
+        "carrot juice"
+      ],
+      "inhibitors": [
+        "calcium",
+        "phytates"
+      ]
+    }
+  ],
+  "safety_note": null,
+  "closing_line": "This is food-based support, not a diagnosis."
+}

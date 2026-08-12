@@ -1,0 +1,12 @@
+{
+  "patient_id": "p1",
+  "diet_type": "non-vegetarian",
+  "pregnancy_status": "not_pregnant",
+  "existing_conditions": [
+    "Thyroid disorder"
+  ],
+  "allergies": [],
+  "current_medications": [],
+  "symptom_log": [],
+  "biomarkers": {}
+}

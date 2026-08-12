@@ -1,0 +1,12 @@
+{
+  "patient_id": "p2",
+  "diet_type": "non-vegetarian",
+  "pregnancy_status": "not_pregnant",
+  "existing_conditions": [
+    "PCOS"
+  ],
+  "allergies": [],
+  "current_medications": [],
+  "symptom_log": [],
+  "biomarkers": {}
+}
