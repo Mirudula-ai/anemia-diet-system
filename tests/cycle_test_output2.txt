@@ -1,0 +1,26 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\Mirudula\Downloads\untitled_project_v1_crewai-project\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\Mirudula\Downloads\untitled_project_v1_crewai-project
+configfile: pyproject.toml
+plugins: anyio-4.14.2
+collecting ... collected 16 items
+
+tests/test_cycle_calculator.py::test_cyc01_day1_menstruation PASSED      [  6%]
+tests/test_cycle_calculator.py::test_cyc02_day3_menstruation PASSED      [ 12%]
+tests/test_cycle_calculator.py::test_cyc03_day10_follicular PASSED       [ 18%]
+tests/test_cycle_calculator.py::test_cyc04_day15_ovulation PASSED        [ 25%]
+tests/test_cycle_calculator.py::test_cyc05_day25_luteal PASSED           [ 31%]
+tests/test_cycle_calculator.py::test_cyc06_rollover_day29 PASSED         [ 37%]
+tests/test_cycle_calculator.py::test_cyc07_24day_proportional_scaling PASSED [ 43%]
+tests/test_cycle_calculator.py::test_cyc08_future_start_raises PASSED    [ 50%]
+tests/test_cycle_calculator.py::test_cyc09_invalid_cycle_length_raises PASSED [ 56%]
+tests/test_cycle_calculator.py::test_cyc09b_cycle_length_too_long_raises PASSED [ 62%]
+tests/test_cycle_calculator.py::test_cyc10_no_phase_change PASSED        [ 68%]
+tests/test_cycle_calculator.py::test_cyc11_phase_changed PASSED          [ 75%]
+tests/test_cycle_calculator.py::test_next_period_date_first_cycle PASSED [ 81%]
+tests/test_cycle_calculator.py::test_next_period_date_after_rollover PASSED [ 87%]
+tests/test_cycle_calculator.py::test_same_day_start_is_valid PASSED      [ 93%]
+tests/test_cycle_calculator.py::test_last_day_of_cycle_is_luteal PASSED  [100%]
+
+============================= 16 passed in 0.03s ==============================
