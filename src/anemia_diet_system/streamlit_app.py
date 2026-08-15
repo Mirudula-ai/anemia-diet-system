@@ -20,7 +20,7 @@ from anemia_diet_system.i18n import t, translate_dynamic
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
-API_BASE = "http://localhost:8000"
+API_BASE = "https://anemia-diet-system.onrender.com"
 INTAKE_TIMEOUT = 240
 DEFAULT_TIMEOUT = 30
 
