@@ -1,0 +1,19 @@
+{
+  "patient_id": "auto_test_05",
+  "diet_type": "vegetarian",
+  "pregnancy_status": "not_pregnant",
+  "trimester": null,
+  "existing_conditions": [
+    "Anemia"
+  ],
+  "allergies": [
+    "dairy"
+  ],
+  "current_medications": [],
+  "symptom_log": [],
+  "biomarkers": {
+    "ferritin": 12
+  },
+  "cycle_start_date": "2026-08-01",
+  "average_cycle_length": 28
+}

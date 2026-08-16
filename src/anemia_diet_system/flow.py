@@ -504,6 +504,19 @@ class AnemiaFlow(Flow):
         patient_id = inputs.get("patient_id", "unknown")
         print(f"\n[AnemiaFlow] >>> Routine cycle-phase plan update for patient '{patient_id}'")
 
+        safety_tier = str(inputs.get("safety_tier", "NONE")).upper()
+        if safety_tier in ("URGENT", "EMERGENCY"):
+            print(
+                f"[AnemiaFlow] on_cycle_update: safety_tier is "
+                f"{safety_tier}, refusing to regenerate. Returning "
+                f"existing safety state unchanged."
+            )
+            return {
+                "updated": False,
+                "reason": "safety_override_active",
+                "safety_tier": safety_tier,
+            }
+
         diet_payload = {
             "patient_id": patient_id,
             "diet_type": inputs.get("diet_type", "vegetarian"),

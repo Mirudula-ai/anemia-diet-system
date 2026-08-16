@@ -33,6 +33,7 @@ sys.path.insert(0, str(project_root / "src"))
 from fastapi.testclient import TestClient
 from anemia_diet_system.main import app
 from anemia_diet_system import storage, cycle_calculator
+from anemia_diet_system.flow import AnemiaFlow
 
 client = TestClient(app)
 
@@ -178,6 +179,24 @@ def test_tc_auto06() -> None:
     assert data2.get("reason") == "no_change"
 
 
+def test_tc_auto07() -> None:
+    """TC-AUTO07: Direct call to AnemiaFlow.on_cycle_update with safety_tier='EMERGENCY' -> returns updated=false, reason='safety_override_active'."""
+    flow = AnemiaFlow()
+    inputs = {
+        "patient_id": "auto_test_07",
+        "safety_tier": "EMERGENCY",
+        "diet_type": "vegetarian",
+    }
+    with patch("anemia_diet_system.flow.DietPlanningCrew") as mock_diet, \
+         patch("anemia_diet_system.flow.SynthesisCrew") as mock_synth:
+        res = flow.on_cycle_update(inputs)
+        assert res.get("updated") is False
+        assert res.get("reason") == "safety_override_active"
+        assert res.get("safety_tier") == "EMERGENCY"
+        mock_diet.assert_not_called()
+        mock_synth.assert_not_called()
+
+
 TEST_CASES = [
     ("TC-AUTO01", "Pregnant patient -> updated=false, reason='not_applicable'", test_tc_auto01),
     ("TC-AUTO02", "Patient with no cycle_start_date -> updated=false, reason='not_applicable'", test_tc_auto02),
@@ -185,6 +204,7 @@ TEST_CASES = [
     ("TC-AUTO04", "Stale phase setup -> updated=true, new_phase != previous_phase, storage updated", test_tc_auto04),
     ("TC-AUTO05", "Stale phase with EMERGENCY safety_tier -> updated=false, reason='safety_override_active'", test_tc_auto05),
     ("TC-AUTO06", "Calling check-updates twice in a row -> second call returns updated=false, reason='no_change'", test_tc_auto06),
+    ("TC-AUTO07", "Direct AnemiaFlow.on_cycle_update call with EMERGENCY -> updated=false, reason='safety_override_active'", test_tc_auto07),
 ]
 
 
@@ -236,7 +256,7 @@ def run_auto_update_tests() -> None:
     print(f"  TOTAL: {passed_cnt}/{len(results)} passed\n")
 
     # Clean up test directories
-    for i in range(1, 7):
+    for i in range(1, 8):
         pid = f"auto_test_0{i}"
         shutil.rmtree(project_root / "data" / "patients" / pid, ignore_errors=True)
 

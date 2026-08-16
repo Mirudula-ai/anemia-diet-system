@@ -1,0 +1,17 @@
+{
+  "patient_id": "auto_test_02",
+  "diet_type": "vegetarian",
+  "pregnancy_status": "not_pregnant",
+  "trimester": null,
+  "existing_conditions": [
+    "Anemia"
+  ],
+  "allergies": [
+    "dairy"
+  ],
+  "current_medications": [],
+  "symptom_log": [],
+  "biomarkers": {
+    "ferritin": 12
+  }
+}
