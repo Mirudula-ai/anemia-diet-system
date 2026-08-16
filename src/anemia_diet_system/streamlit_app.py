@@ -557,6 +557,38 @@ def api_give_feedback(patient_id: str, feedback_text: str) -> tuple[dict | None,
     except requests.exceptions.RequestException:
         return None, _generic_error_msg()
 
+def api_get_profile(patient_id: str) -> tuple[dict | None, str]:
+    try:
+        resp = requests.get(f"{API_BASE}/patient/{patient_id}/profile", timeout=DEFAULT_TIMEOUT)
+        if resp.status_code == 200:
+            return resp.json().get("result", {}), ""
+        if resp.status_code == 404:
+            return None, "Patient profile not found."
+        return None, _generic_error_msg()
+    except requests.exceptions.ConnectionError:
+        return None, _connection_refused_msg()
+    except requests.exceptions.Timeout:
+        return None, t("err_timeout_check")
+    except requests.exceptions.RequestException:
+        return None, _generic_error_msg()
+
+def api_update_profile(patient_id: str, updates: dict) -> tuple[dict | None, str]:
+    try:
+        resp = requests.put(f"{API_BASE}/patient/{patient_id}/profile", json=updates, timeout=DEFAULT_TIMEOUT)
+        if resp.status_code == 200:
+            return resp.json().get("result", {}), ""
+        try:
+            detail = resp.json().get("detail", _generic_error_msg())
+        except Exception:
+            detail = _generic_error_msg()
+        return None, str(detail)
+    except requests.exceptions.ConnectionError:
+        return None, _connection_refused_msg()
+    except requests.exceptions.Timeout:
+        return None, t("err_timeout_short")
+    except requests.exceptions.RequestException:
+        return None, _generic_error_msg()
+
 # ---------------------------------------------------------------------------
 # UI Helpers
 # ---------------------------------------------------------------------------
@@ -1065,13 +1097,18 @@ def screen_home() -> None:
             f"<p style='color:#475569;font-size:1.15rem;margin-bottom:1rem;'>{t('home_subtitle')}</p>",
             unsafe_allow_html=True,
         )
-        if st.button(t("view_plan_btn"), key="home_view_plan"):
-            plan, err = api_get_plan(st.session_state["patient_id"])
-            if err:
-                _show_error(err)
-            else:
-                st.session_state["current_plan"] = plan
-                _goto("plan")
+        c_plan, c_prof = st.columns(2)
+        with c_plan:
+            if st.button(t("view_plan_btn"), key="home_view_plan"):
+                plan, err = api_get_plan(st.session_state["patient_id"])
+                if err:
+                    _show_error(err)
+                else:
+                    st.session_state["current_plan"] = plan
+                    _goto("plan")
+        with c_prof:
+            if st.button(t("my_profile_btn"), key="home_my_profile"):
+                _goto("profile")
 
     st.markdown("<br>", unsafe_allow_html=True)
     col_sym, col_feed = st.columns(2, gap="medium")
@@ -1192,6 +1229,319 @@ def screen_home() -> None:
                         st.session_state["feedback_confirm_msg"] = ""
                         st.rerun()
 
+# ===========================================================================
+# SCREEN 5: DASHBOARD PROFILE
+# ===========================================================================
+def screen_dashboard_profile() -> None:
+    patient_id = st.session_state.get("patient_id", "")
+    if not patient_id:
+        _goto("login")
+        return
+
+    col_title, col_nav = st.columns([4, 1])
+    with col_title:
+        st.markdown(f"## {t('profile_heading')}")
+    with col_nav:
+        if st.button(t("back_to_home_btn"), key="prof_back_home"):
+            st.session_state["prof_save_msg"] = ""
+            st.session_state["prof_plan_note"] = ""
+            _goto("home")
+
+    profile, err = api_get_profile(patient_id)
+    if err:
+        _show_error(err)
+        return
+
+    if st.session_state.get("prof_save_msg"):
+        _show_success(st.session_state["prof_save_msg"])
+    if st.session_state.get("prof_plan_note"):
+        st.markdown(
+            f'<div class="glass-card-info" style="border-left: 4px solid #D97706; background: rgba(254, 243, 199, 0.7);">'
+            f'💡 <strong>{st.session_state["prof_plan_note"]}</strong>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+
+    diet_display_map = {
+        "vegetarian": t("diet_vegetarian"),
+        "non-vegetarian": t("diet_non_vegetarian"),
+        "vegan": t("diet_vegan"),
+        "eggetarian": t("diet_eggetarian"),
+    }
+    preg_display_map = {
+        "not_pregnant": t("preg_not_pregnant"),
+        "pregnant": t("preg_pregnant"),
+        "lactating": t("preg_lactating"),
+    }
+    trim_display_map = {
+        "1st": t("trimester_1st"),
+        "2nd": t("trimester_2nd"),
+        "3rd": t("trimester_3rd"),
+    }
+
+    # Section 1: Basics
+    with _card(variant="info"):
+        is_editing_basics = st.session_state.get("editing_sec_basics", False)
+        if not is_editing_basics:
+            col_t, col_b = st.columns([5, 1])
+            with col_t:
+                st.markdown(f"### {t('review_basics_title')}")
+                curr_d = profile.get("diet_type", "vegetarian")
+                curr_p = profile.get("pregnancy_status", "not_pregnant")
+                curr_tr = profile.get("trimester", "1st")
+                st.markdown(f"{t('review_diet_type')} **{diet_display_map.get(curr_d, curr_d)}**")
+                st.markdown(f"{t('review_pregnancy')} **{preg_display_map.get(curr_p, curr_p)}**")
+                if curr_p == "pregnant":
+                    st.markdown(f"{t('review_trimester')} **{trim_display_map.get(curr_tr, curr_tr)}**")
+            with col_b:
+                if st.button(t("edit_btn"), key="prof_edit_basics"):
+                    st.session_state["editing_sec_basics"] = True
+                    st.session_state["prof_save_msg"] = ""
+                    st.session_state["prof_plan_note"] = ""
+                    st.rerun()
+        else:
+            st.markdown(f"### {t('review_basics_title')} — Edit")
+            st.markdown(f"<label>{t('diet_type_label')}</label>", unsafe_allow_html=True)
+            diet_opts = [
+                ("vegetarian", t("diet_vegetarian")),
+                ("non-vegetarian", t("diet_non_vegetarian")),
+                ("vegan", t("diet_vegan")),
+                ("eggetarian", t("diet_eggetarian")),
+            ]
+            sel_diet = st.session_state.get("edit_diet_type", profile.get("diet_type", "vegetarian"))
+            d_cols = st.columns(len(diet_opts))
+            for col, (val, label) in zip(d_cols, diet_opts):
+                with col:
+                    cls = "chip-selected" if (sel_diet == val) else "chip-unselected"
+                    st.markdown(f'<div class="{cls}">', unsafe_allow_html=True)
+                    if st.button(label, key=f"prof_btn_diet_{val}"):
+                        st.session_state["edit_diet_type"] = val
+                        st.rerun()
+                    st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown(f"<label>{t('pregnancy_label')}</label>", unsafe_allow_html=True)
+            preg_opts = [
+                ("not_pregnant", t("preg_not_pregnant")),
+                ("pregnant", t("preg_pregnant")),
+                ("lactating", t("preg_lactating")),
+            ]
+            sel_preg = st.session_state.get("edit_pregnancy_status", profile.get("pregnancy_status", "not_pregnant"))
+            p_cols = st.columns(len(preg_opts))
+            for col, (val, label) in zip(p_cols, preg_opts):
+                with col:
+                    cls = "chip-selected" if (sel_preg == val) else "chip-unselected"
+                    st.markdown(f'<div class="{cls}">', unsafe_allow_html=True)
+                    if st.button(label, key=f"prof_btn_preg_{val}"):
+                        st.session_state["edit_pregnancy_status"] = val
+                        st.rerun()
+                    st.markdown('</div>', unsafe_allow_html=True)
+
+            sel_trim = st.session_state.get("edit_trimester", profile.get("trimester", "1st"))
+            if sel_preg == "pregnant":
+                st.markdown("<br>", unsafe_allow_html=True)
+                st.markdown(f"<label>{t('trimester_label')}</label>", unsafe_allow_html=True)
+                trim_opts = [("1st", t("trimester_1st")), ("2nd", t("trimester_2nd")), ("3rd", t("trimester_3rd"))]
+                t_cols = st.columns(len(trim_opts))
+                for col, (val, label) in zip(t_cols, trim_opts):
+                    with col:
+                        cls = "chip-selected" if (sel_trim == val) else "chip-unselected"
+                        st.markdown(f'<div class="{cls}">', unsafe_allow_html=True)
+                        if st.button(label, key=f"prof_btn_trim_{val}"):
+                            st.session_state["edit_trimester"] = val
+                            st.rerun()
+                        st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            c_save, c_cancel = st.columns(2)
+            with c_save:
+                if st.button(t("save_btn"), key="prof_save_basics"):
+                    updates = {
+                        "diet_type": sel_diet,
+                        "pregnancy_status": sel_preg,
+                    }
+                    if sel_preg == "pregnant":
+                        updates["trimester"] = sel_trim
+                    else:
+                        updates["trimester"] = None
+
+                    res, err_msg = api_update_profile(patient_id, updates)
+                    if err_msg:
+                        _show_error(err_msg)
+                    else:
+                        st.session_state["editing_sec_basics"] = False
+                        st.session_state["prof_save_msg"] = t("profile_updated_success")
+                        if isinstance(res, dict) and res.get("plan_may_need_update"):
+                            st.session_state["prof_plan_note"] = t("profile_plan_update_note")
+                        else:
+                            st.session_state["prof_plan_note"] = ""
+                        st.rerun()
+            with c_cancel:
+                if st.button(t("cancel_btn"), key="prof_cancel_basics"):
+                    st.session_state["editing_sec_basics"] = False
+                    st.rerun()
+
+    # Section 2: Health Context
+    with _card(variant="info"):
+        is_editing_health = st.session_state.get("editing_sec_health", False)
+        if not is_editing_health:
+            col_t, col_b = st.columns([5, 1])
+            with col_t:
+                st.markdown(f"### {t('review_health_title')}")
+                conds = profile.get("existing_conditions", [])
+                allergies = profile.get("allergies", [])
+                meds = profile.get("current_medications", [])
+                cond_str = ", ".join(conds) if conds else t("none_label")
+                all_str = ", ".join(allergies) if allergies else t("none_label")
+                med_str = ", ".join(meds) if meds else t("none_label")
+                st.markdown(f"{t('review_conditions')} **{cond_str}**")
+                st.markdown(f"{t('review_allergies')} **{all_str}**")
+                st.markdown(f"{t('review_medications')} **{med_str}**")
+            with col_b:
+                if st.button(t("edit_btn"), key="prof_edit_health"):
+                    st.session_state["editing_sec_health"] = True
+                    st.session_state["edit_conditions"] = list(profile.get("existing_conditions", []))
+                    st.session_state["edit_allergies"] = ", ".join(profile.get("allergies", []))
+                    st.session_state["edit_meds"] = ", ".join(profile.get("current_medications", []))
+                    st.session_state["prof_save_msg"] = ""
+                    st.session_state["prof_plan_note"] = ""
+                    st.rerun()
+        else:
+            st.markdown(f"### {t('review_health_title')} — Edit")
+            st.markdown(f"<label>{t('conditions_label')}</label>", unsafe_allow_html=True)
+            curr_edit_conds = list(st.session_state.get("edit_conditions", []))
+            c_cols = st.columns(3)
+            for idx, cond in enumerate(COMMON_CONDITIONS):
+                with c_cols[idx % 3]:
+                    is_sel = (cond in curr_edit_conds)
+                    cls = "chip-selected" if is_sel else "chip-unselected"
+                    st.markdown(f'<div class="{cls}">', unsafe_allow_html=True)
+                    if st.button(cond, key=f"prof_btn_cond_{cond}"):
+                        if cond in curr_edit_conds:
+                            curr_edit_conds.remove(cond)
+                        else:
+                            curr_edit_conds.append(cond)
+                        st.session_state["edit_conditions"] = curr_edit_conds
+                        st.rerun()
+                    st.markdown('</div>', unsafe_allow_html=True)
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            other_cond = st.text_input(
+                t("other_conditions_label"),
+                value=st.session_state.get("edit_conditions_other", ""),
+                placeholder=t("other_conditions_placeholder"),
+                key="prof_input_other_cond",
+            )
+            st.session_state["edit_conditions_other"] = other_cond
+
+            allergies_in = st.text_input(
+                t("allergies_label"),
+                value=st.session_state.get("edit_allergies", ""),
+                placeholder=t("allergies_placeholder"),
+                key="prof_input_allergies",
+            )
+            st.session_state["edit_allergies"] = allergies_in
+
+            meds_in = st.text_input(
+                t("medications_label"),
+                value=st.session_state.get("edit_meds", ""),
+                placeholder=t("medications_placeholder"),
+                key="prof_input_meds",
+            )
+            st.session_state["edit_meds"] = meds_in
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            c_save, c_cancel = st.columns(2)
+            with c_save:
+                if st.button(t("save_btn"), key="prof_save_health"):
+                    final_conds = list(st.session_state.get("edit_conditions", []))
+                    if other_cond.strip():
+                        final_conds.append(other_cond.strip())
+                    final_allergies = [a.strip() for a in allergies_in.split(",") if a.strip()]
+                    final_meds = [m.strip() for m in meds_in.split(",") if m.strip()]
+
+                    updates = {
+                        "existing_conditions": final_conds,
+                        "allergies": final_allergies,
+                        "current_medications": final_meds,
+                    }
+                    res, err_msg = api_update_profile(patient_id, updates)
+                    if err_msg:
+                        _show_error(err_msg)
+                    else:
+                        st.session_state["editing_sec_health"] = False
+                        st.session_state["prof_save_msg"] = t("profile_updated_success")
+                        if isinstance(res, dict) and res.get("plan_may_need_update"):
+                            st.session_state["prof_plan_note"] = t("profile_plan_update_note")
+                        else:
+                            st.session_state["prof_plan_note"] = ""
+                        st.rerun()
+            with c_cancel:
+                if st.button(t("cancel_btn"), key="prof_cancel_health"):
+                    st.session_state["editing_sec_health"] = False
+                    st.rerun()
+
+    # Section 3: Cycle Information
+    with _card(variant="info"):
+        is_editing_cycle = st.session_state.get("editing_sec_cycle", False)
+        if not is_editing_cycle:
+            col_t, col_b = st.columns([5, 1])
+            with col_t:
+                st.markdown(f"### {t('cycle_info_title')}")
+                start_date = profile.get("cycle_start_date") or t("none_label")
+                cycle_len = profile.get("average_cycle_length")
+                len_str = f"{cycle_len} days" if cycle_len else t("none_label")
+                st.markdown(f"{t('cycle_start_date_label')}: **{start_date}**")
+                st.markdown(f"{t('average_cycle_length_label')}: **{len_str}**")
+            with col_b:
+                if st.button(t("edit_btn"), key="prof_edit_cycle"):
+                    st.session_state["editing_sec_cycle"] = True
+                    st.session_state["edit_cycle_start"] = profile.get("cycle_start_date", "")
+                    st.session_state["edit_cycle_len"] = str(profile.get("average_cycle_length", ""))
+                    st.session_state["prof_save_msg"] = ""
+                    st.session_state["prof_plan_note"] = ""
+                    st.rerun()
+        else:
+            st.markdown(f"### {t('cycle_info_title')} — Edit")
+            c_date = st.text_input(
+                t("cycle_start_date_label"),
+                value=st.session_state.get("edit_cycle_start", ""),
+                placeholder="YYYY-MM-DD",
+                key="prof_input_cycle_start",
+            )
+            c_len_str = st.text_input(
+                t("average_cycle_length_label"),
+                value=st.session_state.get("edit_cycle_len", ""),
+                placeholder="e.g. 28",
+                key="prof_input_cycle_len",
+            )
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            c_save, c_cancel = st.columns(2)
+            with c_save:
+                if st.button(t("save_btn"), key="prof_save_cycle"):
+                    updates = {}
+                    if c_date.strip():
+                        updates["cycle_start_date"] = c_date.strip()
+                    if c_len_str.strip().isdigit():
+                        updates["average_cycle_length"] = int(c_len_str.strip())
+
+                    res, err_msg = api_update_profile(patient_id, updates)
+                    if err_msg:
+                        _show_error(err_msg)
+                    else:
+                        st.session_state["editing_sec_cycle"] = False
+                        st.session_state["prof_save_msg"] = t("profile_updated_success")
+                        if isinstance(res, dict) and res.get("plan_may_need_update"):
+                            st.session_state["prof_plan_note"] = t("profile_plan_update_note")
+                        else:
+                            st.session_state["prof_plan_note"] = ""
+                        st.rerun()
+            with c_cancel:
+                if st.button(t("cancel_btn"), key="prof_cancel_cycle"):
+                    st.session_state["editing_sec_cycle"] = False
+                    st.rerun()
+
 # ---------------------------------------------------------------------------
 # Card context-manager helper — THE single root-cause fix
 # ---------------------------------------------------------------------------
@@ -1248,6 +1598,8 @@ def main() -> None:
         screen_plan()
     elif screen == "home":
         screen_home()
+    elif screen == "profile":
+        screen_dashboard_profile()
     else:
         st.error(f"{t('err_unknown_screen')} {screen!r}")
         if st.button(t("return_to_login_btn")):

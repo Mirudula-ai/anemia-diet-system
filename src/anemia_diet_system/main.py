@@ -106,11 +106,13 @@ class IntakeRequest(BaseModel):
     patient_id: str = Field(..., description="Unique patient identifier")
     diet_type: str = Field("vegetarian", description="vegetarian / non-vegetarian / vegan / eggetarian")
     pregnancy_status: str = Field("not_pregnant", description="not_pregnant / pregnant / lactating")
+    trimester: Optional[str] = Field(None, description="1st / 2nd / 3rd")
     existing_conditions: List[str] = Field(default_factory=list)
     allergies: List[str] = Field(default_factory=list)
     current_medications: List[str] = Field(default_factory=list)
     symptom_log: List[str] = Field(default_factory=list, description="Initial symptom descriptions")
     biomarkers: Dict[str, Any] = Field(default_factory=dict, description="Optional lab values, e.g. {'ferritin': 12}")
+
 
 
 class LabReportRequest(BaseModel):
@@ -130,6 +132,17 @@ class FeedbackRequest(BaseModel):
     patient_id: str
     raw_feedback_text: str = Field(..., description="Free-text feedback from the patient")
     logged_meals: List[Any] = Field(default_factory=list, description="Optional list of meals the patient actually ate")
+
+
+class ProfileUpdateRequest(BaseModel):
+    diet_type: Optional[str] = Field(None, description="vegetarian / non-vegetarian / vegan / eggetarian")
+    pregnancy_status: Optional[str] = Field(None, description="not_pregnant / pregnant / lactating")
+    trimester: Optional[str] = Field(None, description="1st / 2nd / 3rd")
+    existing_conditions: Optional[List[str]] = Field(None)
+    allergies: Optional[List[str]] = Field(None)
+    current_medications: Optional[List[str]] = Field(None)
+    cycle_start_date: Optional[str] = Field(None)
+    average_cycle_length: Optional[int] = Field(None)
 
 
 # Generic response — crews return heterogeneous JSON so we accept Any.
@@ -319,6 +332,40 @@ def get_current_plan(patient_id: str) -> FlowResponse:
             ),
         )
     return FlowResponse(patient_id=patient_id, result=plan)
+
+
+@app.get("/patient/{patient_id}/profile", response_model=FlowResponse, tags=["Patient"])
+def get_patient_profile(patient_id: str) -> FlowResponse:
+    """
+    Retrieve the full stored profile for a patient. 404 if patient doesn't exist.
+    """
+    profile = _require_patient(patient_id)
+    return FlowResponse(patient_id=patient_id, result=profile)
+
+
+@app.put("/patient/{patient_id}/profile", response_model=FlowResponse, tags=["Patient"])
+def update_patient_profile(patient_id: str, req: ProfileUpdateRequest) -> FlowResponse:
+    """
+    Update selected profile fields without full replacement.
+    Does NOT automatically regenerate the diet plan.
+    Includes 'plan_may_need_update' boolean flag in response.
+    """
+    _require_patient(patient_id)
+    updates = req.model_dump(exclude_unset=True)
+
+    plan_affecting_fields = {"diet_type", "allergies", "existing_conditions", "pregnancy_status", "trimester"}
+    plan_may_need_update = any(k in plan_affecting_fields for k in updates.keys())
+
+    try:
+        updated_profile = storage.update_patient_profile(patient_id, updates)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    result = {
+        **updated_profile,
+        "plan_may_need_update": plan_may_need_update,
+    }
+    return FlowResponse(patient_id=patient_id, result=result)
 
 
 # ---------------------------------------------------------------------------

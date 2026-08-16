@@ -168,6 +168,20 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
             "Thank you! Your feedback has been recorded and your plan may be updated."
         ),
 
+        # Profile screen
+        "my_profile_btn":                  "👤 My Profile",
+        "profile_heading":                 "👤 My Profile",
+        "save_btn":                        "Save",
+        "cancel_btn":                      "Cancel",
+        "back_to_home_btn":                "← Back to Home",
+        "profile_updated_success":         "Profile updated successfully.",
+        "profile_plan_update_note":        (
+            "This change may affect your diet plan. Visit 'View my current plan' to see if an update is recommended."
+        ),
+        "cycle_info_title":                "📅 Cycle Information",
+        "cycle_start_date_label":          "Cycle Start Date",
+        "average_cycle_length_label":      "Average Cycle Length (days)",
+
         # Error / connection messages
         "err_connection_refused":          (
             "Cannot connect to the server. "
@@ -327,6 +341,20 @@ TRANSLATIONS: dict[str, dict[str, str]] = {
         "feedback_thankyou_msg":           (
             "நன்றி! உங்கள் கருத்து பதிவு செய்யப்பட்டது; உங்கள் திட்டம் புதுப்பிக்கப்படலாம்."
         ),
+
+        # Profile screen
+        "my_profile_btn":                  "👤 என் சுயவிவரம்",
+        "profile_heading":                 "👤 என் சுயவிவரம்",
+        "save_btn":                        "சேமி",
+        "cancel_btn":                      "ரத்து செய்",
+        "back_to_home_btn":                "← முகப்புக்குத் திரும்பு",
+        "profile_updated_success":         "சுயவிவரம் வெற்றிகரமாக புதுப்பிக்கப்பட்டது.",
+        "profile_plan_update_note":        (
+            "இந்த மாற்றம் உங்கள் உணவுத் திட்டத்தை பாதிக்கலாம். புதுப்பிப்பு பரிந்துரைக்கப்படுகிறதா என்று பார்க்க 'என் திட்டத்தை காண்க' பகுதிக்குச் செல்லவும்."
+        ),
+        "cycle_info_title":                "📅 மாதவிடாய் சுழற்சி விவரங்கள்",
+        "cycle_start_date_label":          "சுழற்சி தொடக்க தேதி",
+        "average_cycle_length_label":      "சராசரி சுழற்சி காலம் (நாட்கள்)",
 
         # Error / connection messages
         "err_connection_refused":          (

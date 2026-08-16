@@ -71,6 +71,28 @@ def load_patient_profile(patient_id: str) -> Optional[Dict[str, Any]]:
     return _read_json(_patient_dir(patient_id) / "profile.json")
 
 
+def update_patient_profile(patient_id: str, updates: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Merge *updates* into existing patient profile and persist it.
+    Only overwrites fields present in updates, preserving everything else.
+    Raises ValueError if no existing profile is found.
+    """
+    existing = load_patient_profile(patient_id)
+    if existing is None:
+        raise ValueError(
+            f"Patient profile for '{patient_id}' not found. Cannot update a non-existent profile."
+        )
+
+    updated = dict(existing)
+    for key, val in updates.items():
+        updated[key] = val
+
+    save_patient_profile(patient_id, updated)
+    return updated
+
+
+
+
 def save_current_plan(patient_id: str, plan_dict: Dict[str, Any]) -> None:
     """Overwrite current_plan.json with the latest synthesis result."""
     with _lock_for(patient_id):
