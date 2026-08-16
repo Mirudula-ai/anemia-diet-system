@@ -488,3 +488,52 @@ class AnemiaFlow(Flow):
         res = rc.crew().kickoff(inputs={"research_query": query})
         raw = res.raw if hasattr(res, "raw") else str(res)
         return parse_json(raw)
+
+    def on_cycle_update(self, inputs: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Entry point 6: Cycle phase change auto-update.
+
+        Re-runs DietPlanningCrew and SynthesisCrew using existing patient inputs,
+        safety tier/message, and biomarker/symptom history.
+        """
+        if inputs is None:
+            inputs = getattr(self, "state", {}) or {}
+        if isinstance(inputs, str):
+            inputs = parse_json(inputs)
+
+        patient_id = inputs.get("patient_id", "unknown")
+        print(f"\n[AnemiaFlow] >>> Routine cycle-phase plan update for patient '{patient_id}'")
+
+        diet_payload = {
+            "patient_id": patient_id,
+            "diet_type": inputs.get("diet_type", "vegetarian"),
+            "allergies": inputs.get("allergies", []),
+            "existing_conditions": inputs.get("existing_conditions", []),
+            "pregnancy_status": inputs.get("pregnancy_status", "not_pregnant"),
+            "trimester": inputs.get("trimester"),
+            "current_medications": inputs.get("current_medications", []),
+        }
+
+        dc = DietPlanningCrew()
+        dc._patient_id = patient_id
+        diet_res = dc.crew().kickoff(inputs={"patient_input": json.dumps(diet_payload, default=str)})
+        diet_data = parse_json(diet_res.raw if hasattr(diet_res, "raw") else str(diet_res))
+        new_plan = diet_data.get("timed_foods", diet_data)
+
+        synthesis_payload = {
+            "patient_id": patient_id,
+            "safety_tier": inputs.get("safety_tier", "NONE"),
+            "safety_message": inputs.get("safety_message", ""),
+            "diet_plan": new_plan,
+            "biomarker_observations": inputs.get("biomarker_observations"),
+            "symptom_log": inputs.get("symptom_log") or inputs.get("logged_symptoms") or [],
+            "symptom_log_history": inputs.get("symptom_log_history") or [],
+            "adherence_summary": inputs.get("adherence_summary") or [],
+            "feedback_log": inputs.get("feedback_log") or [],
+        }
+
+        sc = SynthesisCrew()
+        syn_res = sc.crew().kickoff(inputs={"patient_input": json.dumps(synthesis_payload, default=str)})
+        syn_raw = syn_res.raw if hasattr(syn_res, "raw") else str(syn_res)
+        return parse_json(syn_raw)
+

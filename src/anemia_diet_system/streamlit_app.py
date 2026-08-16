@@ -454,6 +454,8 @@ def _init_state() -> None:
         "sym_draft": "",
         "feed_draft": "",
         "api_error": "",
+        "last_update_check_date": None,
+        "cycle_update_msg": "",
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -588,6 +590,15 @@ def api_update_profile(patient_id: str, updates: dict) -> tuple[dict | None, str
         return None, t("err_timeout_short")
     except requests.exceptions.RequestException:
         return None, _generic_error_msg()
+
+def api_check_updates(patient_id: str) -> tuple[dict | None, str]:
+    try:
+        resp = requests.get(f"{API_BASE}/patient/{patient_id}/check-updates", timeout=DEFAULT_TIMEOUT)
+        if resp.status_code == 200:
+            return resp.json(), ""
+        return None, _generic_error_msg()
+    except Exception as exc:
+        return None, str(exc)
 
 # ---------------------------------------------------------------------------
 # UI Helpers
@@ -1083,6 +1094,19 @@ def screen_plan() -> None:
 # SCREEN 4: DAILY HOME
 # ===========================================================================
 def screen_home() -> None:
+    from datetime import date
+    today_str = date.today().isoformat()
+    if st.session_state.get("last_update_check_date") != today_str:
+        st.session_state["last_update_check_date"] = today_str
+        patient_id = st.session_state.get("patient_id")
+        if patient_id:
+            res, err = api_check_updates(patient_id)
+            if res and isinstance(res, dict) and res.get("updated"):
+                new_phase = res.get("new_phase", "")
+                if "plan" in res:
+                    st.session_state["current_plan"] = res["plan"]
+                st.session_state["cycle_update_msg"] = f"Your plan has been refreshed for today's cycle phase ({new_phase})."
+
     name = st.session_state.get("patient_name", "")
 
     greeting = t("home_welcome")
@@ -1091,6 +1115,14 @@ def screen_home() -> None:
         f"<h1 style='color:#0F766E;'>{greeting}{name_part}!</h1>",
         unsafe_allow_html=True,
     )
+
+    if st.session_state.get("cycle_update_msg"):
+        st.markdown(
+            f'<div class="glass-card-info" style="border-left: 4px solid #0F766E;">'
+            f'✨ <strong>{st.session_state["cycle_update_msg"]}</strong>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
 
     with _card():
         st.markdown(

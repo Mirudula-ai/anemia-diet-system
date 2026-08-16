@@ -93,8 +93,14 @@ def update_patient_profile(patient_id: str, updates: Dict[str, Any]) -> Dict[str
 
 
 
-def save_current_plan(patient_id: str, plan_dict: Dict[str, Any]) -> None:
+def save_current_plan(
+    patient_id: str,
+    plan_dict: Dict[str, Any],
+    cycle_phase: Optional[str] = None,
+) -> None:
     """Overwrite current_plan.json with the latest synthesis result."""
+    if cycle_phase is not None and isinstance(plan_dict, dict):
+        plan_dict["_generated_at_cycle_phase"] = cycle_phase
     with _lock_for(patient_id):
         _write_json(_patient_dir(patient_id) / "current_plan.json", plan_dict)
 
@@ -102,6 +108,17 @@ def save_current_plan(patient_id: str, plan_dict: Dict[str, Any]) -> None:
 def load_current_plan(patient_id: str) -> Optional[Dict[str, Any]]:
     """Return the most-recently saved plan, or None if none exists."""
     return _read_json(_patient_dir(patient_id) / "current_plan.json")
+
+
+def get_last_known_cycle_phase(patient_id: str) -> Optional[str]:
+    """
+    Read the _generated_at_cycle_phase from the most-recently saved plan.
+    Returns None if not present or no plan exists.
+    """
+    plan = load_current_plan(patient_id)
+    if plan and isinstance(plan, dict):
+        return plan.get("_generated_at_cycle_phase")
+    return None
 
 
 def append_symptom_log(patient_id: str, symptom_entry: Any) -> None:

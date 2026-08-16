@@ -24,7 +24,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from anemia_diet_system.flow import AnemiaFlow
-from anemia_diet_system import storage
+from anemia_diet_system import cycle_calculator, storage
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -366,6 +366,82 @@ def update_patient_profile(patient_id: str, req: ProfileUpdateRequest) -> FlowRe
         "plan_may_need_update": plan_may_need_update,
     }
     return FlowResponse(patient_id=patient_id, result=result)
+
+
+@app.get("/patient/{patient_id}/check-updates", tags=["Patient"])
+def check_patient_updates(patient_id: str) -> Dict[str, Any]:
+    """
+    Check if a patient's cycle phase has changed since their plan was last generated.
+
+    If the phase changed and no active safety override exists, silently regenerates
+    the diet plan.
+    """
+    profile = _require_patient(patient_id)
+
+    pregnancy_status = profile.get("pregnancy_status", "not_pregnant")
+    cycle_start_date = profile.get("cycle_start_date")
+
+    if pregnancy_status in ("pregnant", "lactating") or not cycle_start_date:
+        return {"updated": False, "reason": "not_applicable"}
+
+    avg_length = profile.get("average_cycle_length") or 28
+    cycle_info = cycle_calculator.calculate_cycle_info(
+        cycle_start_date=cycle_start_date,
+        average_cycle_length=avg_length,
+    )
+    current_phase = cycle_info["cycle_phase"]
+    last_known_phase = storage.get_last_known_cycle_phase(patient_id)
+
+    if last_known_phase is None or last_known_phase == current_phase:
+        if last_known_phase is None:
+            plan = storage.load_current_plan(patient_id)
+            if plan and isinstance(plan, dict):
+                storage.save_current_plan(patient_id, plan, cycle_phase=current_phase)
+        return {"updated": False, "reason": "no_change", "current_phase": current_phase}
+
+    # Phase has changed
+    current_plan = storage.load_current_plan(patient_id)
+    safety_tier = storage.get_last_known_safety_tier(patient_id)
+    safety_message = storage.get_last_known_safety_message(patient_id)
+
+    if safety_tier in ("URGENT", "EMERGENCY"):
+        return {"updated": False, "reason": "safety_override_active"}
+
+    symptom_logs = storage.load_symptom_logs(patient_id)
+    biomarker_obs = (
+        current_plan.get("biomarker_observations")
+        if isinstance(current_plan, dict)
+        else None
+    )
+
+    flow_inputs: Dict[str, Any] = {
+        **profile,
+        "patient_id": patient_id,
+        "safety_tier": safety_tier,
+        "safety_message": safety_message,
+        "biomarker_observations": biomarker_obs,
+        "symptom_log": symptom_logs["symptom_log"],
+        "symptom_log_history": symptom_logs["symptom_log_history"],
+        "feedback_log": storage.load_feedback_log(patient_id),
+    }
+
+    new_plan = _run_flow("GET /check-updates", "on_cycle_update", flow_inputs)
+    storage.save_current_plan(patient_id, new_plan, cycle_phase=current_phase)
+
+    logger.info(
+        "Cycle phase update completed for patient '%s' (%s -> %s).",
+        patient_id,
+        last_known_phase,
+        current_phase,
+    )
+
+    return {
+        "updated": True,
+        "new_phase": current_phase,
+        "previous_phase": last_known_phase,
+        "plan": new_plan,
+    }
+
 
 
 # ---------------------------------------------------------------------------
